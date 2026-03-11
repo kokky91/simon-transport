@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "recommended": "qwen3:4b",
+  "models": [
+    {
+      "id": "gpt-oss:120b-cloud",
+      "label": "gpt-oss:120b-cloud",
+      "recommended": false
+    },
+    {
+      "id": "gpt-oss:20b-cloud",
+      "label": "gpt-oss:20b-cloud",
+      "recommended": false
+    },
+    {
+      "id": "deepseek-v3.1:671b-cloud",
+      "label": "deepseek-v3.1:671b-cloud",
+      "recommended": false
+    },
+    {
+      "id": "qwen3-coder:480b-cloud",
+      "label": "qwen3-coder:480b-cloud",
+      "recommended": false
+    },
+    {
+      "id": "qwen3-vl:235b-cloud",
+      "label": "qwen3-vl:235b-cloud",
+      "recommended": false
+    },
+    {
+      "id": "minimax-m2:cloud",
+      "label": "minimax-m2:cloud",
+      "recommended": false
+    },
+    {
+      "id": "qwen3:4b",
+      "label": "qwen3:4b (aanbevolen)",
+      "recommended": true
+    },
+    {
+      "id": "gemma:2b",
+      "label": "gemma:2b",
+      "recommended": false
+    }
+  ]
+}

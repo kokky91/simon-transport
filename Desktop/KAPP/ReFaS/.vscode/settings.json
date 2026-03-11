@@ -1,0 +1,30 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python-envs.pythonProjects": [
+        {
+            "path": ".",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ],
+    "cSpell.language": "en,nl",
+    "cSpell.words": [
+        "apiRequest",
+        "apiRequestFormData",
+        "dev-mode",
+        "endpointfuncties",
+        "farmplatform",
+        "frontend",
+        "osagro",
+        "padnamen",
+        "payloads",
+        "popleft",
+        "pnpm",
+        "prometheus",
+        "psycopg",
+        "pydantic",
+        "pypdf",
+        "realtime",
+        "repo-root"
+    ]
+}

@@ -1,0 +1,97 @@
+name: Load Test Stress
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage_1_target:
+        description: "Stage 1 target VUs"
+        required: false
+        default: "50"
+      stage_2_target:
+        description: "Stage 2 target VUs"
+        required: false
+        default: "100"
+      stage_3_target:
+        description: "Stage 3 target VUs"
+        required: false
+        default: "200"
+      stage_4_target:
+        description: "Stage 4 target VUs"
+        required: false
+        default: "300"
+      stage_duration:
+        description: "Duration per stage (e.g. 2m)"
+        required: false
+        default: "2m"
+
+jobs:
+  k6-stress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: cp .env.example .env
+
+      - name: Build & start stack
+        run: docker compose -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for API, realtime and prometheus health
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          wait_for() {
+            local url="$1"
+            local name="$2"
+            for i in {1..50}; do
+              if curl -fsS "$url" >/dev/null; then
+                echo "$name is healthy"
+                return 0
+              fi
+              sleep 3
+            done
+            echo "$name did not become healthy in time"
+            return 1
+          }
+
+          wait_for "http://localhost:8002/health" "api"
+          wait_for "http://localhost:8003/health" "realtime"
+          wait_for "http://localhost:9090/-/healthy" "prometheus"
+
+      - name: Generate JWT for stress tenant
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip pyjwt
+          TOKEN=$(python -c "import jwt; print(jwt.encode({'tenantId':'tenant-stress'}, 'supersecretkey', algorithm='HS256'))")
+          echo "AUTH_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Run k6 stress profile
+        run: |
+          docker run --rm --network host \
+            -e BASE_URL=http://localhost:8002 \
+            -e REALTIME_METRICS_URL=http://localhost:8003/metrics/ \
+            -e PROM_URL=http://localhost:9090 \
+            -e AUTH_TOKEN=${AUTH_TOKEN} \
+            -e TEST_TENANT_ID=tenant-stress \
+            -e STAGE_1_TARGET=${{ github.event.inputs.stage_1_target || '50' }} \
+            -e STAGE_2_TARGET=${{ github.event.inputs.stage_2_target || '100' }} \
+            -e STAGE_3_TARGET=${{ github.event.inputs.stage_3_target || '200' }} \
+            -e STAGE_4_TARGET=${{ github.event.inputs.stage_4_target || '300' }} \
+            -e STAGE_1_DURATION=${{ github.event.inputs.stage_duration || '2m' }} \
+            -e STAGE_2_DURATION=${{ github.event.inputs.stage_duration || '2m' }} \
+            -e STAGE_3_DURATION=${{ github.event.inputs.stage_duration || '2m' }} \
+            -e STAGE_4_DURATION=${{ github.event.inputs.stage_duration || '2m' }} \
+            -v "${{ github.workspace }}/infrastructure/loadtest:/scripts" \
+            grafana/k6 run /scripts/k6-stress.js
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

@@ -1,0 +1,74 @@
+groups:
+  - name: realtime-platform-alerts
+    rules:
+      - alert: HighPublishLatencyP95
+        expr: histogram_quantile(0.95, rate(event_publish_latency_seconds_bucket[5m])) > 0.3
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High publish latency (p95 > 300ms)"
+          description: "Event publish latency p95 is above 300ms for 2 minutes."
+
+      - alert: NoEventConsumption
+        expr: rate(events_published_total[2m]) > 0 and rate(events_consumed_total[2m]) == 0
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "No event consumption detected"
+          description: "Events are being published but none are consumed."
+
+      - alert: BroadcastMismatch
+        expr: abs(rate(events_consumed_total[1m]) - rate(events_broadcast_total[1m])) > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mismatch between consumed and broadcast rate"
+          description: "Consumed events significantly differ from broadcast rate."
+
+      - alert: WebSocketAuthRejectionSpike
+        expr: rate(ws_auth_rejections_total[1m]) > 5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "WebSocket auth rejection spike"
+          description: "High number of WS authentication rejections detected."
+
+      - alert: ApiRateLimitRejectionSpike
+        expr: sum(rate(api_rate_limit_rejections_total[1m])) > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API rate-limit rejection spike"
+          description: "API write endpoints are rejecting requests due to rate limits above expected baseline."
+
+      - alert: WebSocketRateLimitRejectionSpike
+        expr: sum(rate(ws_rate_limit_rejections_total[1m])) > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "WebSocket rate-limit rejection spike"
+          description: "WebSocket handshake or max-connection guard is rejecting requests above expected baseline."
+
+      - alert: WorkerScaleUpRecommended
+        expr: (sum(rate(events_published_total[2m])) - sum(rate(events_consumed_total[2m]))) > 10
+        for: 3m
+        labels:
+          severity: info
+        annotations:
+          summary: "Worker scale-up recommended"
+          description: "Publish/consume gap suggests worker saturation; scale-out is recommended."
+
+      - alert: WorkerScaleDownRecommended
+        expr: sum(rate(events_published_total[5m])) < 3 and (sum(rate(events_published_total[5m])) - sum(rate(events_consumed_total[5m]))) <= 0.5
+        for: 5m
+        labels:
+          severity: info
+        annotations:
+          summary: "Worker scale-down recommended"
+          description: "Low sustained load and no backlog growth detected; scale-in can be considered."

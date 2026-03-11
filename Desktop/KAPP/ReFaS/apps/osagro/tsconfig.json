@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "types": ["vite/client"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@constants/*": ["features/plants/constants/*"],
+      "@store/*": ["store/*"],
+      "@lib/*": ["lib/*"],
+      "@features/ai/*": ["features/ai/*"],
+      "@features/simulations/*": ["features/simulations/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}

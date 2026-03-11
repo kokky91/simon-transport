@@ -1,0 +1,10 @@
+[importlinter]
+root_package = app
+
+[contract:api_layers]
+name = API must not depend on worker internals
+type = forbidden
+source_modules =
+    app.routes
+forbidden_modules =
+    app.worker

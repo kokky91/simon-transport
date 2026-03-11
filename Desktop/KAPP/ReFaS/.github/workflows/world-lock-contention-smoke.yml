@@ -1,0 +1,77 @@
+name: World Lock Contention Smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  world-lock-contention:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp .env.example .env
+          {
+            echo "GAME_TICK_RATE_SECONDS=0.2"
+            echo "GAME_WORLD_LOCK_TTL_SECONDS=2"
+            echo "GAME_TICK_SIMULATED_WORK_SECONDS=0.35"
+          } >> .env
+
+      - name: Build and start stack with 2 workers
+        run: docker compose -f docker-compose.dev.yml up -d --build --scale worker=2 db redis worker
+
+      - name: Apply database migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat database/migrations/20260302_create_game_commands.sql | docker compose -f docker-compose.dev.yml exec -T db psql -U postgres -d farmplatform -v ON_ERROR_STOP=1
+          cat database/migrations/20260302_add_game_command_retry_deadletter.sql | docker compose -f docker-compose.dev.yml exec -T db psql -U postgres -d farmplatform -v ON_ERROR_STOP=1
+
+      - name: Allow contention window
+        run: sleep 12
+
+      - name: Validate lock contention metrics across workers
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          worker_ids=$(docker compose -f docker-compose.dev.yml ps -q worker)
+          if [ -z "$worker_ids" ]; then
+            echo "No worker containers found"
+            exit 1
+          fi
+
+          acquired_total=0
+          skipped_total=0
+
+          for id in $worker_ids; do
+            values=$(docker exec "$id" python -c "import urllib.request as u;m=u.urlopen('http://localhost:9102/metrics').read().decode('utf-8');a=sum(float(l.rsplit(' ',1)[-1]) for l in m.splitlines() if l.startswith('game_world_lock_acquired_total{'));s=sum(float(l.rsplit(' ',1)[-1]) for l in m.splitlines() if l.startswith('game_world_lock_skipped_total{'));print(f'{a}|{s}')")
+
+            acquired=$(echo "$values" | cut -d'|' -f1)
+            skipped=$(echo "$values" | cut -d'|' -f2)
+
+            acquired_total=$(awk "BEGIN { print ${acquired_total} + ${acquired} }")
+            skipped_total=$(awk "BEGIN { print ${skipped_total} + ${skipped} }")
+
+            echo "worker=$id acquired=$acquired skipped=$skipped"
+          done
+
+          echo "acquired_total=$acquired_total"
+          echo "skipped_total=$skipped_total"
+
+            awk "BEGIN { exit !(${acquired_total} > 0) }" || { echo "Expected lock acquisitions > 0"; exit 1; }
+            awk "BEGIN { exit !(${skipped_total} > 0) }" || { echo "Expected lock contention skips > 0"; exit 1; }
+            echo "World lock contention smoke passed"
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

@@ -1,0 +1,116 @@
+name: BlueGreen Gates
+
+on:
+  workflow_dispatch:
+
+jobs:
+  candidate-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: cp .env.example .env
+
+      - name: Build & start stack
+        run: docker compose -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for API and Realtime health
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          wait_for() {
+            local url="$1"
+            local name="$2"
+
+            for i in {1..40}; do
+              if curl -fsS "$url" >/dev/null; then
+                echo "$name is healthy"
+                return 0
+              fi
+              sleep 3
+            done
+
+            echo "$name did not become healthy in time"
+            return 1
+          }
+
+          wait_for "http://localhost:8002/health" "api"
+          wait_for "http://localhost:8003/health" "realtime"
+
+      - name: Security smoke gate
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # 1) Allowed CORS origin -> 200 and allow-origin header
+          ALLOWED_HEADERS=$(mktemp)
+          ALLOWED_STATUS=$(curl -sS -o /dev/null -D "$ALLOWED_HEADERS" -X OPTIONS \
+            "http://localhost:8002/health" \
+            -H "Origin: http://localhost:3000" \
+            -H "Access-Control-Request-Method: GET" \
+            -w "%{http_code}")
+          test "$ALLOWED_STATUS" = "200"
+          grep -i "^access-control-allow-origin: http://localhost:3000" "$ALLOWED_HEADERS"
+
+          # 2) Blocked CORS origin -> 400
+          BLOCKED_STATUS=$(curl -sS -o /dev/null -X OPTIONS \
+            "http://localhost:8002/health" \
+            -H "Origin: http://evil.local" \
+            -H "Access-Control-Request-Method: GET" \
+            -w "%{http_code}")
+          test "$BLOCKED_STATUS" = "400"
+
+          # 3) Trusted host reject -> 400
+          HOST_STATUS=$(curl -sS -o /dev/null \
+            "http://localhost:8002/health" \
+            -H "Host: evil.local" \
+            -w "%{http_code}")
+          test "$HOST_STATUS" = "400"
+
+          # 4) Security headers present
+          SEC_HEADERS=$(mktemp)
+          curl -sS -o /dev/null -D "$SEC_HEADERS" "http://localhost:8002/health"
+          grep -i "^x-content-type-options: nosniff" "$SEC_HEADERS"
+          grep -i "^x-frame-options: DENY" "$SEC_HEADERS"
+          grep -i "^referrer-policy: no-referrer" "$SEC_HEADERS"
+
+          # 5) WS origin reject -> 403
+          python .github/scripts/ws_origin_smoke.py
+
+      - name: Integration smoke gate
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl -fsS -X POST http://localhost:8002/dev/publish-event \
+            -H "Content-Type: application/json" \
+            -d '{"type":"MARKET_PRICE_UPDATED","version":1,"timestamp":"2024-01-01T00:00:00Z","traceId":"bg-gate-trace","tenantId":"tenant-gate","payload":{"cropId":"corn","newPrice":123}}'
+
+      - name: Generate JWT for load sanity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip pyjwt
+          TOKEN=$(python -c "import jwt; print(jwt.encode({'tenantId':'tenant-bluegreen-gate'}, 'supersecretkey', algorithm='HS256'))")
+          echo "AUTH_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: k6 baseline sanity gate
+        run: |
+          docker run --rm --network host \
+            -e BASE_URL=http://localhost:8002 \
+            -e AUTH_TOKEN=${AUTH_TOKEN} \
+            -e TEST_TENANT_ID=tenant-bluegreen-gate \
+            -v "${{ github.workspace }}/infrastructure/loadtest:/scripts" \
+            grafana/k6 run /scripts/k6-baseline.js
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

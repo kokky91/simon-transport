@@ -1,0 +1,79 @@
+name: Load Test Soak
+
+on:
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: "Soak duration (e.g. 10m, 15m)"
+        required: false
+        default: "15m"
+      vus:
+        description: "Concurrent virtual users"
+        required: false
+        default: "15"
+
+jobs:
+  k6-soak:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: cp .env.example .env
+
+      - name: Build & start stack
+        run: docker compose -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for API, realtime and prometheus health
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          wait_for() {
+            local url="$1"
+            local name="$2"
+            for i in {1..50}; do
+              if curl -fsS "$url" >/dev/null; then
+                echo "$name is healthy"
+                return 0
+              fi
+              sleep 3
+            done
+            echo "$name did not become healthy in time"
+            return 1
+          }
+
+          wait_for "http://localhost:8002/health" "api"
+          wait_for "http://localhost:8003/health" "realtime"
+          wait_for "http://localhost:9090/-/healthy" "prometheus"
+
+      - name: Generate JWT for soak tenant
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip pyjwt
+          TOKEN=$(python -c "import jwt; print(jwt.encode({'tenantId':'tenant-soak'}, 'supersecretkey', algorithm='HS256'))")
+          echo "AUTH_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Run k6 soak profile
+        run: |
+          docker run --rm --network host \
+            -e BASE_URL=http://localhost:8002 \
+            -e REALTIME_METRICS_URL=http://localhost:8003/metrics/ \
+            -e PROM_URL=http://localhost:9090 \
+            -e AUTH_TOKEN=${AUTH_TOKEN} \
+            -e TEST_TENANT_ID=tenant-soak \
+            -e K6_VUS=${{ github.event.inputs.vus || '15' }} \
+            -e K6_DURATION=${{ github.event.inputs.duration || '15m' }} \
+            -v "${{ github.workspace }}/infrastructure/loadtest:/scripts" \
+            grafana/k6 run /scripts/k6-soak.js
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

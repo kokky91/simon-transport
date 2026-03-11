@@ -1,0 +1,9 @@
+ALTER TABLE game_commands
+    ADD COLUMN IF NOT EXISTS retry_count INT NOT NULL DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS max_retries INT NOT NULL DEFAULT 3,
+    ADD COLUMN IF NOT EXISTS next_attempt_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    ADD COLUMN IF NOT EXISTS failed_at TIMESTAMP NULL;
+
+UPDATE game_commands
+SET next_attempt_at = NOW()
+WHERE next_attempt_at IS NULL;
