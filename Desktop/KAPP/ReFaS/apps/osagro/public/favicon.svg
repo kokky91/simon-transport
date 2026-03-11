@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Osagro icon">
+  <rect width="64" height="64" rx="12" fill="#0f1720"/>
+  <path d="M12 42c10-14 30-18 40-22-4 16-16 30-34 30-2 0-4 0-6-1 0-2 0-5 0-7z" fill="#22c55e"/>
+  <circle cx="44" cy="20" r="6" fill="#f59e0b"/>
+</svg>

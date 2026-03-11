@@ -1,0 +1,83 @@
+name: Integration Smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: cp .env.example .env
+
+      - name: Build & start stack
+        run: docker compose -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for API and Realtime health
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          wait_for() {
+            local url="$1"
+            local name="$2"
+
+            for i in {1..40}; do
+              if curl -fsS "$url" >/dev/null; then
+                echo "$name is healthy"
+                return 0
+              fi
+              sleep 3
+            done
+
+            echo "$name did not become healthy in time"
+            return 1
+          }
+
+          wait_for "http://localhost:8002/health" "api"
+          wait_for "http://localhost:8003/health" "realtime"
+
+      - name: Smoke publish (dev endpoint)
+        run: |
+          curl -fsS -X POST http://localhost:8002/dev/publish-event \
+            -H "Content-Type: application/json" \
+            -d '{"type":"MARKET_PRICE_UPDATED","version":1,"timestamp":"2024-01-01T00:00:00Z","traceId":"smoke-dev-trace","tenantId":"tenant-ci","payload":{"cropId":"corn","newPrice":123}}'
+
+      - name: Install smoke test python deps
+        run: python -m pip install --upgrade pip pyjwt websockets
+
+      - name: Auth publish + trace propagation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TOKEN=$(python -c "import jwt; print(jwt.encode({'tenantId':'tenant-ci'}, 'supersecretkey', algorithm='HS256'))")
+
+          TRACE_ID="smoke-auth-trace"
+          RESPONSE_HEADERS=$(mktemp)
+
+          RESPONSE_BODY=$(curl -fsS -D "$RESPONSE_HEADERS" -X POST \
+            "http://localhost:8002/market/price-update?crop_id=wheat&new_price=88.8" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-Trace-Id: $TRACE_ID")
+
+          grep -i "^X-Trace-Id: $TRACE_ID" "$RESPONSE_HEADERS"
+          echo "$RESPONSE_BODY" | grep -q '"traceId":"smoke-auth-trace"'
+
+      - name: WebSocket tenant isolation (full)
+        run: |
+          python .github/scripts/ws_tenant_isolation_smoke.py
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

@@ -1,0 +1,5 @@
+psycopg2-binary==2.9.10
+pypdf==5.3.1
+redis==6.2.0
+pydantic==2.11.7
+prometheus-client==0.22.1

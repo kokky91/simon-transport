@@ -1,0 +1,43 @@
+name: DR Smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dr-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: cp .env.example .env
+
+      - name: Build and start db
+        run: docker compose -f docker-compose.dev.yml up -d --build db
+
+      - name: Run DR smoke (backup -> destroy -> restore -> assert)
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/dr_smoke_test.sh
+
+      - name: Upload backup artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dr-backup-dumps
+          path: storage/*.dump
+          if-no-files-found: ignore
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color db
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

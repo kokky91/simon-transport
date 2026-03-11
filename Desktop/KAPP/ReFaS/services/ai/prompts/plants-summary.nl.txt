@@ -1,0 +1,9 @@
+Maak een feitelijke NL samenvatting voor plant '{plant_name}'.
+Gebruik ALLEEN feiten die letterlijk in de tekst staan.
+Geef exact 5 bullets, elke regel begint met '- '.
+Geen markdown behalve '- ' bullets.
+Gebruik GEEN meta-tekst over AI, model, dataset of database.
+Als iets onbekend is: schrijf 'n.v.t.'.
+
+Tekst:
+{text_snippet}

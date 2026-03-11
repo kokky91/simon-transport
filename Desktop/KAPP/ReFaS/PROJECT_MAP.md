@@ -1,0 +1,181 @@
+# 🧭 Project Map
+
+Automatisch gegenereerde projectstructuur.
+
+## 🚀 Apps
+
+- ./apps/farmsim
+- ./apps/mobile
+- ./apps/osagro
+
+## ⚙️ Services
+
+- ./services/agro-core
+- ./services/ai
+- ./services/api
+- ./services/data-extractor
+- ./services/farmsim-engine
+- ./services/game
+- ./services/pricing
+- ./services/realtime
+- ./services/worker
+
+## 📦 Packages
+
+- ./packages/contracts
+- ./packages/scoring
+- ./packages/shared-logic
+
+## 🧩 Features
+
+- ./apps/osagro/src/features/admin
+- ./apps/osagro/src/features/admin/api
+- ./apps/osagro/src/features/admin/components
+- ./apps/osagro/src/features/admin/constants
+- ./apps/osagro/src/features/admin/hooks
+- ./apps/osagro/src/features/admin/route
+- ./apps/osagro/src/features/admin/store
+- ./apps/osagro/src/features/ai
+- ./apps/osagro/src/features/ai/api
+- ./apps/osagro/src/features/ai/components
+- ./apps/osagro/src/features/ai/constants
+- ./apps/osagro/src/features/ai/hooks
+- ./apps/osagro/src/features/ai/route
+- ./apps/osagro/src/features/ai/store
+- ./apps/osagro/src/features/animals
+- ./apps/osagro/src/features/animals/api
+- ./apps/osagro/src/features/animals/components
+- ./apps/osagro/src/features/animals/constants
+- ./apps/osagro/src/features/animals/hooks
+- ./apps/osagro/src/features/animals/route
+- ./apps/osagro/src/features/animals/store
+- ./apps/osagro/src/features/auth
+- ./apps/osagro/src/features/crops
+- ./apps/osagro/src/features/crops/api
+- ./apps/osagro/src/features/crops/components
+- ./apps/osagro/src/features/crops/constants
+- ./apps/osagro/src/features/crops/hooks
+- ./apps/osagro/src/features/crops/route
+- ./apps/osagro/src/features/crops/store
+- ./apps/osagro/src/features/crops/ui
+- ./apps/osagro/src/features/dashboard
+- ./apps/osagro/src/features/dashboard/api
+- ./apps/osagro/src/features/dashboard/components
+- ./apps/osagro/src/features/dashboard/constants
+- ./apps/osagro/src/features/dashboard/hooks
+- ./apps/osagro/src/features/dashboard/route
+- ./apps/osagro/src/features/dashboard/store
+- ./apps/osagro/src/features/dashboard/ui
+- ./apps/osagro/src/features/farmchat
+- ./apps/osagro/src/features/farmchat/api
+- ./apps/osagro/src/features/farmchat/components
+- ./apps/osagro/src/features/farmchat/constants
+- ./apps/osagro/src/features/farmchat/hooks
+- ./apps/osagro/src/features/farmchat/route
+- ./apps/osagro/src/features/farmchat/store
+- ./apps/osagro/src/features/farmchat/ui
+- ./apps/osagro/src/features/farms
+- ./apps/osagro/src/features/farms/api
+- ./apps/osagro/src/features/farms/components
+- ./apps/osagro/src/features/farms/constants
+- ./apps/osagro/src/features/farms/hooks
+- ./apps/osagro/src/features/farms/route
+- ./apps/osagro/src/features/farms/store
+- ./apps/osagro/src/features/farms/ui
+- ./apps/osagro/src/features/fields
+- ./apps/osagro/src/features/fields/api
+- ./apps/osagro/src/features/fields/components
+- ./apps/osagro/src/features/fields/constants
+- ./apps/osagro/src/features/fields/hooks
+- ./apps/osagro/src/features/fields/route
+- ./apps/osagro/src/features/fields/store
+- ./apps/osagro/src/features/fields/ui
+- ./apps/osagro/src/features/finance
+- ./apps/osagro/src/features/finance/api
+- ./apps/osagro/src/features/finance/components
+- ./apps/osagro/src/features/finance/constants
+- ./apps/osagro/src/features/finance/hooks
+- ./apps/osagro/src/features/finance/route
+- ./apps/osagro/src/features/finance/store
+- ./apps/osagro/src/features/finance/ui
+- ./apps/osagro/src/features/flows
+- ./apps/osagro/src/features/flows/api
+- ./apps/osagro/src/features/flows/components
+- ./apps/osagro/src/features/flows/constants
+- ./apps/osagro/src/features/flows/hooks
+- ./apps/osagro/src/features/flows/route
+- ./apps/osagro/src/features/flows/store
+- ./apps/osagro/src/features/flows/ui
+- ./apps/osagro/src/features/market
+- ./apps/osagro/src/features/market/api
+- ./apps/osagro/src/features/market/components
+- ./apps/osagro/src/features/market/constants
+- ./apps/osagro/src/features/market/hooks
+- ./apps/osagro/src/features/market/route
+- ./apps/osagro/src/features/market/store
+- ./apps/osagro/src/features/market/ui
+- ./apps/osagro/src/features/plants
+- ./apps/osagro/src/features/plants/api
+- ./apps/osagro/src/features/plants/components
+- ./apps/osagro/src/features/plants/constants
+- ./apps/osagro/src/features/plants/hooks
+- ./apps/osagro/src/features/plants/pages
+- ./apps/osagro/src/features/plants/route
+- ./apps/osagro/src/features/plants/store
+- ./apps/osagro/src/features/plants/ui
+- ./apps/osagro/src/features/settings
+- ./apps/osagro/src/features/settings/api
+- ./apps/osagro/src/features/settings/components
+- ./apps/osagro/src/features/settings/constants
+- ./apps/osagro/src/features/settings/hooks
+- ./apps/osagro/src/features/settings/route
+- ./apps/osagro/src/features/settings/store
+- ./apps/osagro/src/features/settings/ui
+- ./apps/osagro/src/features/simulations
+- ./apps/osagro/src/features/simulations/api
+- ./apps/osagro/src/features/simulations/components
+- ./apps/osagro/src/features/simulations/constants
+- ./apps/osagro/src/features/simulations/hooks
+- ./apps/osagro/src/features/simulations/route
+- ./apps/osagro/src/features/simulations/store
+- ./apps/osagro/src/features/simulations/ui
+- ./apps/osagro/src/features/tasks
+- ./apps/osagro/src/features/tasks/api
+- ./apps/osagro/src/features/tasks/components
+- ./apps/osagro/src/features/tasks/constants
+- ./apps/osagro/src/features/tasks/hooks
+- ./apps/osagro/src/features/tasks/route
+- ./apps/osagro/src/features/tasks/store
+- ./apps/osagro/src/features/tasks/ui
+
+## 📚 Documentation
+
+- ./PROJECT_MAP.md
+- ./README.md
+- ./apps/README.md
+- ./apps/farmsim/README.md
+- ./apps/mobile/README.md
+- ./apps/osagro/DEVELOPMENT.md
+- ./apps/osagro/README.md
+- ./apps/osagro/UI_SYSTEM.md
+- ./apps/osagro/src/features/plants/readme.plants..md
+- ./database/README.md
+- ./infrastructure/README.md
+- ./infrastructure/deploy/bluegreen-runbook.md
+- ./infrastructure/deploy/multi-region-readiness.md
+- ./infrastructure/deploy/pentest-checklist.md
+- ./infrastructure/monitoring/autoscaling/worker-autoscaling.md
+- ./observability.md
+- ./packages/contracts/README.md
+- ./packages/scoring/README.md
+- ./packages/shared-logic/README.md
+- ./services/agro-core/README.md
+- ./services/ai/INVENTORY.md
+- ./services/ai/README.md
+- ./services/ai/evaluation/README.md
+- ./services/api/README.md
+- ./services/farmsim-engine/README.md
+- ./services/game/README.md
+- ./services/pricing/README.md
+- ./services/realtime/README.md
+- ./services/worker/README.md

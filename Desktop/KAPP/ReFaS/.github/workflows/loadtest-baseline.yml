@@ -1,0 +1,57 @@
+name: Load Test Baseline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  k6-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: cp .env.example .env
+
+      - name: Build & start stack
+        run: docker compose -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for API health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in {1..40}; do
+            if curl -fsS http://localhost:8002/health >/dev/null; then
+              echo "api is healthy"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "api did not become healthy in time"
+          exit 1
+
+      - name: Generate JWT for load test tenant
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip pyjwt
+          TOKEN=$(python -c "import jwt; print(jwt.encode({'tenantId':'tenant-loadtest'}, 'supersecretkey', algorithm='HS256'))")
+          echo "AUTH_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Run k6 baseline
+        run: |
+          docker run --rm --network host \
+            -e BASE_URL=http://localhost:8002 \
+            -e AUTH_TOKEN=${AUTH_TOKEN} \
+            -e TEST_TENANT_ID=tenant-loadtest \
+            -v "${{ github.workspace }}/infrastructure/loadtest:/scripts" \
+            grafana/k6 run /scripts/k6-baseline.js
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

@@ -1,0 +1,106 @@
+name: Security Smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  security-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare env
+        run: cp .env.example .env
+
+      - name: Start stack
+        run: docker compose -f docker-compose.dev.yml up -d --build
+
+      - name: Wait for API and Realtime
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          wait_for() {
+            local url="$1"
+            local name="$2"
+
+            for i in {1..30}; do
+              if curl -fsS "$url" >/dev/null; then
+                echo "$name is healthy"
+                return 0
+              fi
+              sleep 2
+            done
+
+            echo "$name did not become healthy in time"
+            return 1
+          }
+
+          wait_for "http://localhost:8002/health" "api"
+          wait_for "http://localhost:8003/health" "realtime"
+
+      - name: Test allowed CORS origin
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RESPONSE_HEADERS=$(mktemp)
+          STATUS=$(curl -sS -o /dev/null -D "$RESPONSE_HEADERS" -X OPTIONS \
+            "http://localhost:8002/health" \
+            -H "Origin: http://localhost:3000" \
+            -H "Access-Control-Request-Method: GET" \
+            -w "%{http_code}")
+
+          test "$STATUS" = "200"
+          grep -i "^access-control-allow-origin: http://localhost:3000" "$RESPONSE_HEADERS"
+
+      - name: Test blocked CORS origin
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          STATUS=$(curl -sS -o /dev/null -X OPTIONS \
+            "http://localhost:8002/health" \
+            -H "Origin: http://evil.local" \
+            -H "Access-Control-Request-Method: GET" \
+            -w "%{http_code}")
+
+          test "$STATUS" = "400"
+
+      - name: Test trusted host reject
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          STATUS=$(curl -sS -o /dev/null \
+            "http://localhost:8002/health" \
+            -H "Host: evil.local" \
+            -w "%{http_code}")
+
+          test "$STATUS" = "400"
+
+      - name: Test security headers present
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RESPONSE_HEADERS=$(mktemp)
+          curl -sS -o /dev/null -D "$RESPONSE_HEADERS" "http://localhost:8002/health"
+          grep -i "^x-content-type-options: nosniff" "$RESPONSE_HEADERS"
+          grep -i "^x-frame-options: DENY" "$RESPONSE_HEADERS"
+          grep -i "^referrer-policy: no-referrer" "$RESPONSE_HEADERS"
+
+      - name: Test WS origin reject
+        run: python .github/scripts/ws_origin_smoke.py
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color
+
+      - name: Shutdown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

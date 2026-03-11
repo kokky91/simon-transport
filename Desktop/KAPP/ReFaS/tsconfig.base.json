@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@contracts/*": ["packages/contracts/src/*"],
+      "@shared/*": ["packages/shared-logic/src/*"],
+      "@scoring/*": ["packages/scoring/src/*"],
+      "@components/*": ["apps/osagro/src/components/*"],
+      "@constants/*": ["apps/osagro/src/features/plants/constants/*"],
+      "@store/*": ["apps/osagro/src/store/*"],
+      "@plants/store/*": ["apps/osagro/src/features/plants/store/*"],
+      "@lib/*": ["apps/osagro/src/lib/*"]
+    }
+  }
+}

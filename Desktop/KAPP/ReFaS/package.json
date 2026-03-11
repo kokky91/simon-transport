@@ -1,0 +1,25 @@
+{
+  "name": "farmplatform",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "eslint": "eslint --no-error-on-unmatched-pattern \"apps/**/*.{ts,tsx}\" \"packages/**/*.{ts,tsx}\" \"services/**/*.{ts,tsx}\"",
+    "lint:architecture": "eslint .",
+    "check:extractor": "python services/data-extractor/app/check_consistency.py",
+    "smoke:plants:e2e": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/smoke_plants_e2e.ps1",
+    "smoke:plants:versioning": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/smoke_plants_versioning_checks.ps1",
+    "smoke:plants:all": "pnpm run smoke:plants:e2e && pnpm run smoke:plants:versioning"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^10.0.3",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "prettier": "^3.8.1"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
+    "lucide-react": "^0.577.0"
+  }
+}
