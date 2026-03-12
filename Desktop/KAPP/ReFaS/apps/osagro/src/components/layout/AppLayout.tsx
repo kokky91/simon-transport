@@ -1,83 +1,106 @@
-import { Link, Outlet } from "react-router-dom";
-import { AUTH_STORAGE_KEY } from "../../features/auth/auth.types";
+import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Tractor,
+  MapPin,
+  Leaf,
+  PawPrint,
+  CheckSquare,
+  DollarSign,
+  Activity,
+  Zap,
+  TrendingUp,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  Sprout,
+  ShieldCheck,
+} from "lucide-react";
 import { useSessionStore } from "../../store/sessionStore";
 import { useTenantStore } from "../../store/tenantStore";
 import FarmChatButton from "../../features/farmchat/components/FarmChatButton";
+import { useTheme } from "../app/useTheme";
 
-const links = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/farms", label: "Farms" },
-  { to: "/fields", label: "Fields" },
-  { to: "/plants", label: "Plants" },
-  { to: "/animals", label: "Animals" },
-  { to: "/tasks", label: "Tasks" },
-  { to: "/finance", label: "Finance" },
-  { to: "/simulations", label: "Simulations" },
-  { to: "/simulations/live", label: "Live View" }
+const navLinks = [
+  { to: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
+  { to: "/farms", label: "Farms", Icon: Tractor },
+  { to: "/fields", label: "Fields", Icon: MapPin },
+  { to: "/plants", label: "Plants", Icon: Leaf },
+  { to: "/animals", label: "Animals", Icon: PawPrint },
+  { to: "/tasks", label: "Tasks", Icon: CheckSquare },
+  { to: "/crops", label: "Crops", Icon: Zap },
+  { to: "/finance", label: "Finance", Icon: DollarSign },
+  { to: "/simulations", label: "Simulations", Icon: Activity },
+  { to: "/market", label: "Market", Icon: TrendingUp },
+  { to: "/settings", label: "Settings", Icon: Settings },
 ];
 
-function decodeRoleFromToken(token: string | null): string | null {
-  if (!token) {
-    return null;
-  }
-
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    return null;
-  }
-
-  try {
-    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const payload = JSON.parse(atob(base64)) as { role?: unknown };
-    return typeof payload.role === "string" ? payload.role : null;
-  } catch {
-    return null;
-  }
-}
-
 export function AppLayout() {
-  const accessToken = useSessionStore((state) => state.accessToken);
-  const role = decodeRoleFromToken(accessToken);
+  const [collapsed, setCollapsed] = useState(false);
+  useTheme();
 
   return (
-    <div className="os-shell">
+    <div className={`os-shell${collapsed ? " collapsed" : ""}`}>
       <aside className="os-sidebar">
-        <strong>Osagro</strong>
+        <div className="os-sidebar-header">
+          <div className="os-sidebar-logo">
+            <Sprout size={16} />
+          </div>
+          <span className="os-sidebar-brand">Osagro</span>
+          <button
+            type="button"
+            className="os-sidebar-toggle"
+            onClick={() => setCollapsed((c) => !c)}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          </button>
+        </div>
+
         <nav className="os-nav">
-          {links.map((link) => (
-            <Link key={link.to} to={link.to}>
-              {link.label}
-            </Link>
+          {navLinks.map(({ to, label, Icon }) => (
+            <NavLink key={to} to={to}>
+              <Icon size={18} className="os-nav-icon" />
+              <span className="os-nav-label">{label}</span>
+            </NavLink>
           ))}
-          {role === "admin" ? <Link to="/admin">Admin</Link> : null}
         </nav>
+
+        <div className="os-sidebar-footer">
+          <LogoutButton collapsed={collapsed} />
+        </div>
       </aside>
+
       <main className="os-main">
         <header className="os-main-header">
           <span />
-          <LogoutButton />
         </header>
-        <Outlet />
+        <div className="os-main-content">
+          <Outlet />
+        </div>
       </main>
-      {/* FarmChatButton als vaste button rechtsonder */}
+
       <FarmChatButton />
     </div>
   );
 }
 
-function LogoutButton() {
+function LogoutButton({ collapsed }: { collapsed: boolean }) {
   const clearSession = useSessionStore((state) => state.clearSession);
   const clearTenant = useTenantStore((state) => state.clearTenant);
 
   function logout() {
     clearSession();
     clearTenant();
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.clear();
   }
 
   return (
-    <button type="button" onClick={logout}>
-      Logout
+    <button type="button" className="os-logout-btn" onClick={logout} title="Logout">
+      <LogOut size={18} className="os-nav-icon" />
+      {!collapsed && <span className="os-logout-label">Logout</span>}
     </button>
   );
 }
