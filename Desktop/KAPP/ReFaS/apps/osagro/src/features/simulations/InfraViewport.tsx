@@ -276,15 +276,6 @@ export default function InfraViewport({
           dragEntity={dragEntity}
           onEntityMouseDown={handleEntityMouseDown}
         />
-        <BuildingsLayer
-          buildings={buildings}
-          scale={baseScale}
-          zoom={zoom}
-          highlightId={highlightId}
-          dragMode={dragMode}
-          dragEntity={dragEntity}
-          onEntityMouseDown={handleEntityMouseDown}
-        />
       </div>
       {dragDebugText ? <p className="infra-drag-debug">{dragDebugText}</p> : null}
       {dragError ? <p className="infra-drag-error">{dragError}</p> : null}
@@ -371,61 +362,6 @@ const FieldPlotsLayer = React.memo(
             }
           >
             {index + 1}
-          </div>
-        );
-      })}
-    </>
-  )
-);
-
-const BuildingsLayer = React.memo(
-  ({
-    buildings,
-    scale,
-    zoom,
-    highlightId,
-    dragMode,
-    dragEntity,
-    onEntityMouseDown,
-  }: {
-    buildings: Building[];
-    scale: number;
-    zoom: number;
-    highlightId?: string;
-    dragMode: boolean;
-    dragEntity: DragEntity | null;
-    onEntityMouseDown: (event: React.MouseEvent, descriptor: DragDescriptor) => void;
-  }) => (
-    <>
-      {buildings.map((building) => {
-        const isDragging = dragEntity?.kind === "building" && dragEntity.id === building.id;
-        const currentX = isDragging ? dragEntity.x_m : building.x_m;
-        const currentY = isDragging ? dragEntity.y_m : building.y_m;
-        return (
-          <div
-            key={building.id}
-            className={`infra-building ${highlightId === building.id ? "highlight" : ""} ${
-              dragMode ? "draggable" : ""
-            } ${isDragging ? "dragging" : ""}`}
-            title={building.type}
-            style={{
-              left: currentX * scale,
-              top: currentY * scale,
-              width: building.width_m * scale,
-              height: building.height_m * scale,
-            }}
-            onMouseDown={(event) =>
-              onEntityMouseDown(event, {
-                kind: "building",
-                id: building.id,
-                x_m: building.x_m,
-                y_m: building.y_m,
-                width_m: building.width_m,
-                height_m: building.height_m,
-              })
-            }
-          >
-            {zoom >= 0.6 ? <span className="infra-building-label">{building.type}</span> : null}
           </div>
         );
       })}
