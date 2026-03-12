@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Tractor,
@@ -9,6 +9,7 @@ import {
   CheckSquare,
   DollarSign,
   Activity,
+  Radio,
   Zap,
   TrendingUp,
   Settings,
@@ -18,8 +19,7 @@ import {
   Sprout,
   ShieldCheck,
 } from "lucide-react";
-import { useSessionStore } from "../../store/sessionStore";
-import { useTenantStore } from "../../store/tenantStore";
+import { useAuth } from "../../features/auth/hooks/useAuth";
 import FarmChatButton from "../../features/farmchat/components/FarmChatButton";
 import { useTheme } from "../app/useTheme";
 
@@ -33,6 +33,7 @@ const navLinks = [
   { to: "/crops", label: "Crops", Icon: Zap },
   { to: "/finance", label: "Finance", Icon: DollarSign },
   { to: "/simulations", label: "Simulations", Icon: Activity },
+  { to: "/simulations/live", label: "Live View", Icon: Radio },
   { to: "/market", label: "Market", Icon: TrendingUp },
   { to: "/settings", label: "Settings", Icon: Settings },
 ];
@@ -88,17 +89,16 @@ export function AppLayout() {
 }
 
 function LogoutButton({ collapsed }: { collapsed: boolean }) {
-  const clearSession = useSessionStore((state) => state.clearSession);
-  const clearTenant = useTenantStore((state) => state.clearTenant);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-  function logout() {
-    clearSession();
-    clearTenant();
-    localStorage.clear();
+  function handleLogout() {
+    logout();
+    navigate("/auth");
   }
 
   return (
-    <button type="button" className="os-logout-btn" onClick={logout} title="Logout">
+    <button type="button" className="os-logout-btn" onClick={handleLogout} title="Logout">
       <LogOut size={18} className="os-nav-icon" />
       {!collapsed && <span className="os-logout-label">Logout</span>}
     </button>
