@@ -9,8 +9,9 @@ import { useDeleteFieldMutation } from "../hooks/useDeleteFieldMutation";
 import { useFields } from "../hooks/useFields";
 import { useBeds } from "../hooks/useBeds";
 import { useDeleteBedMutation } from "../hooks/useDeleteBedMutation";
-import { FieldListView } from "../components/FieldListView";
 import { FieldGridView } from "../components/FieldGridView";
+import { FieldTypeFilter } from "../components/FieldTypeFilter";
+import { GroupedFieldList } from "../components/GroupedFieldList";
 import type { FieldPlot } from "../api/fieldsApi";
 import type { Bed } from "../api/bedsApi";
 import { getFieldTypeColor } from "../constants/fieldTypeColors";
@@ -63,6 +64,9 @@ export function FieldsPage() {
 
   // ── View toggle ──────────────────────────────────────────────────────────────
   const [view, setView] = useState<"list" | "grid">("list");
+
+  // ── Filter state ──────────────────────────────────────────────────────────────
+  const [selectedFilter, setSelectedFilter] = useState("All");
 
   // ── Data + mutations ─────────────────────────────────────────────────────────
   const { data: fields = [], isLoading } = useFields();
@@ -381,54 +385,31 @@ export function FieldsPage() {
         {isLoading ? (
           <div>Velden laden...</div>
         ) : view === "list" ? (
-          <FieldListView fields={fields} onEdit={setEditingField} onDelete={(id) => deleteField.mutate({ id, mode: "real" })} />
+          <>
+            <div className={styles.filterContainer}>
+              <FieldTypeFilter
+                value={selectedFilter}
+                onChange={setSelectedFilter}
+                fields={fields}
+                bedCount={beds.length}
+              />
+            </div>
+            <GroupedFieldList
+              fields={fields}
+              beds={beds}
+              filter={selectedFilter}
+              onEdit={setEditingField}
+              onDelete={(id) => deleteField.mutate({ id, mode: "real" })}
+              onBedEdit={setEditingBed}
+              onBedDelete={(id) => deleteBed.mutate(id)}
+            />
+          </>
         ) : (
-          <FieldGridView fields={fields} onEdit={setEditingField} onDelete={(id) => deleteField.mutate({ id, mode: "real" })} />
-        )}
-      </div>
-
-      {/* ── Bedden sectie ──────────────────────────────────────────────────── */}
-      <div className={styles.bedsSection}>
-        <h3 className={styles.bedsSectionTitle}>Bedden</h3>
-        {beds.length === 0 ? (
-          <div className={styles.emptyNote}>Nog geen bedden toegevoegd.</div>
-        ) : (
-          <ul className={styles.bedsList}>
-            {beds.map((bed) => {
-              const bedTypeStyle = getFieldTypeColor("bed");
-              return (
-                <li key={bed.id} className={styles.bedItem}>
-                  <div className={styles.bedInfo}>
-                    <strong>{bed.label}</strong>
-                    <div className={`mt-1 px-2 py-1 rounded text-sm font-medium w-fit ${bedTypeStyle.bg} ${bedTypeStyle.text}`}>
-                      Bed
-                    </div>
-                    <span className={styles.bedMeta}>
-                      {bed.width_m}m × {bed.length_m}m · diepte {bed.depth_cm}cm · pad {bed.path_cm}cm
-                    </span>
-                  </div>
-                  <div className={styles.bedActions}>
-                    <button
-                      type="button"
-                      title="Bewerk bed"
-                      onClick={() => setEditingBed(bed)}
-                      className={styles.editBtn}
-                    >
-                      <Settings size={16} />
-                    </button>
-                    <button
-                      type="button"
-                      title="Verwijder bed"
-                      onClick={() => deleteBed.mutate(bed.id)}
-                      className={styles.deleteBtn}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+          <FieldGridView
+            fields={fields}
+            onEdit={setEditingField}
+            onDelete={(id) => deleteField.mutate({ id, mode: "real" })}
+          />
         )}
       </div>
     </section>

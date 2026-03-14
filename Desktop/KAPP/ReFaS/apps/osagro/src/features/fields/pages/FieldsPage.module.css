@@ -1,0 +1,347 @@
+.bedsSection {
+  margin-top: 32px;
+}
+
+.bedsSectionTitle {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--os-color-text);
+}
+
+.bedsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bedItem {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--os-color-border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bedInfo {
+  flex: 1;
+}
+
+.bedMeta {
+  margin-left: 8px;
+  font-size: 0.85rem;
+  color: var(--os-color-text-muted);
+}
+
+.bedActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.editBtn {
+  background: transparent;
+  border: 1px solid var(--os-color-border);
+  cursor: pointer;
+  color: var(--os-color-text-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+
+.deleteBtn {
+  background: transparent;
+  border: 1px solid var(--os-color-danger);
+  cursor: pointer;
+  color: var(--os-color-danger);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.editBtn:hover {
+  border-color: var(--os-color-primary);
+  color: var(--os-color-primary);
+  background: color-mix(in srgb, var(--os-color-primary) 8%, transparent);
+}
+
+.deleteBtn:hover {
+  background: color-mix(in srgb, var(--os-color-danger) 10%, transparent);
+}
+
+.fieldsPage {
+  display: block;
+}
+
+.fieldsIntro {
+  margin: 0;
+}
+
+.percelButton {
+  padding: 0.45rem 1.1rem;
+  border-radius: 6px;
+  background: var(--os-color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.percelButton:hover {
+  filter: brightness(1.1);
+}
+
+/* ── Perceel form ─────────────────────────────────────────────────────────── */
+
+.modalTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.percelForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+}
+
+.row .formField {
+  flex: 1;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.875rem;
+  color: var(--os-color-text);
+}
+
+.formField input,
+.formField select {
+  border: 1px solid var(--os-color-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: var(--os-color-surface-elevated);
+  color: var(--os-color-text);
+  font-size: 0.875rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.formField input:focus,
+.formField select:focus {
+  outline: 2px solid var(--os-color-primary);
+  outline-offset: -1px;
+  border-color: var(--os-color-primary);
+}
+
+.submitButton {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: var(--os-color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.15s;
+  width: 100%;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: var(--os-color-danger);
+}
+
+.emptyNote {
+  color: var(--os-color-text-muted);
+  font-size: 0.9rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.viewToggle {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .viewToggle {
+    margin-left: 0;
+  }
+}
+
+.viewBtn {
+  background: var(--os-color-surface);
+  border: 1px solid var(--os-color-border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--os-color-text);
+}
+
+.viewBtnActive {
+  background: var(--os-color-surface-elevated);
+  border-color: var(--os-color-primary);
+}
+
+.content {
+  margin-top: 24px;
+}
+
+.filterContainer {
+  margin-bottom: 16px;
+}
+
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+}
+
+.modalCard {
+  background: var(--os-color-surface);
+  color: var(--os-color-text);
+  border: 1px solid var(--os-color-border);
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 440px;
+  margin: 10vh auto;
+  position: relative;
+  box-shadow: var(--os-shadow-elevated, 0 10px 30px rgba(0, 0, 0, 0.2));
+}
+
+.closeButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 1px solid var(--os-color-border);
+  background: var(--os-color-surface-elevated);
+  color: var(--os-color-text);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.countLabel {
+  margin-top: 8px;
+  color: var(--os-color-text);
+}
+
+.countInput {
+  margin-left: 8px;
+  width: 60px;
+  border: 1px solid var(--os-color-border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  background: var(--os-color-surface-elevated);
+  color: var(--os-color-text);
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--os-color-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--os-color-primary);
+  cursor: pointer;
+}
+
+.inlineCheckboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--os-color-text);
+  cursor: pointer;
+  user-select: none;
+  flex-wrap: nowrap;
+}
+
+.inlineInput {
+  width: 64px;
+  border: 1px solid var(--os-color-border);
+  border-radius: var(--os-radius-sm, 6px);
+  padding: 4px 8px;
+  background: var(--os-color-surface-elevated);
+  color: var(--os-color-text);
+  font-size: 13px;
+  text-align: right;
+  cursor: text;
+}
+
+.bioBorderInfo {
+  font-size: 12px;
+  color: var(--os-color-text-muted);
+  background: var(--os-color-surface-elevated);
+  border: 1px solid var(--os-color-border);
+  border-radius: var(--os-radius-sm, 6px);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bioBorderInfo strong {
+  color: var(--os-color-text);
+}
+
+/* Type select — colored options per type */
+.typeSelect option[value="none"]      { background: #1a1a1a; color: #888; }
+.typeSelect option[value="teelt"]     { background: #14532d; color: #86efac; }
+.typeSelect option[value="industrie"] { background: #1e3a5f; color: #93c5fd; }
+.typeSelect option[value="weide"]     { background: #365314; color: #bef264; }
+.typeSelect option[value="kas"]       { background: #134e4a; color: #5eead4; }
+.typeSelect option[value="boomgaard"] { background: #7c2d12; color: #fdba74; }
+.typeSelect option[value="bed"]       { background: #312e81; color: #c4b5fd; }
