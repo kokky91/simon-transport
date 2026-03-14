@@ -1,0 +1,21 @@
+.filter {
+  padding: 8px 12px;
+  border: 1px solid var(--os-color-border);
+  border-radius: 6px;
+  background: var(--os-color-surface);
+  color: var(--os-color-text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--os-transition), background-color var(--os-transition);
+}
+
+.filter:hover {
+  border-color: var(--os-color-primary);
+  background: var(--os-color-surface-elevated);
+}
+
+.filter:focus {
+  outline: 2px solid var(--os-color-primary);
+  outline-offset: 2px;
+}
