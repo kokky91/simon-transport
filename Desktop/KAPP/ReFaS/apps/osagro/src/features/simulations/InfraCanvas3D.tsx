@@ -355,6 +355,7 @@ function BedMesh({ bed }: { bed: Bed }) {
   const cx = bed.x_m + totalW / 2;
   const cz = bed.y_m + totalL / 2;
   const labelSize = Math.min(bed.width_m, bed.length_m) * 0.18;
+  const bedH = 1.0; // 3D height in meters - same as fields
 
   return (
     <group position={[cx, 0, cz]}>
@@ -364,13 +365,13 @@ function BedMesh({ bed }: { bed: Bed }) {
         <meshLambertMaterial color={0x5d3a1a} transparent opacity={0.45} />
       </mesh>
       {/* Growing bed */}
-      <mesh position={[0, 0.07, 0]}>
-        <boxGeometry args={[bed.width_m - 0.04, 0.1, bed.length_m - 0.04]} />
+      <mesh position={[0, bedH / 2, 0]}>
+        <boxGeometry args={[bed.width_m - 0.04, bedH, bed.length_m - 0.04]} />
         <meshLambertMaterial color={0x2d7a1e} transparent opacity={0.87} />
       </mesh>
       {labelSize > 0.2 && (
         <Text
-          position={[0, 0.22, 0]}
+          position={[0, bedH + 0.13, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
           fontSize={Math.min(labelSize, 0.4)}
           color="#a8f07e"
