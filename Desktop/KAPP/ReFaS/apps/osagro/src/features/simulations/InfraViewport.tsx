@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import type { Building, FarmWorld, FieldPlot } from "./infraApi";
+import type { Bed } from "../fields/api/bedsApi";
 
 type MoveInput = {
   id: string;
@@ -27,6 +28,7 @@ type Props = {
   farm: FarmWorld;
   plots: FieldPlot[];
   buildings: Building[];
+  beds?: Bed[];
   highlightId?: string;
   onMoveField?: (payload: MoveInput) => Promise<void>;
   onMoveBuilding?: (payload: MoveInput) => Promise<void>;
@@ -36,6 +38,7 @@ export default function InfraViewport({
   farm,
   plots,
   buildings,
+  beds = [],
   highlightId,
   onMoveField,
   onMoveBuilding,
@@ -190,6 +193,27 @@ export default function InfraViewport({
     };
     setDragEntity(null);
 
+    const collidesWithAny = (
+      entities: Array<{ id: string; x_m: number; y_m: number; width_m: number; height_m: number }>,
+      label: string,
+    ) => {
+      if (entities.some((e) => e.id !== dropped.id && rectsOverlap(dropped.x_m, dropped.y_m, dropped.width_m, dropped.height_m, e.x_m, e.y_m, e.width_m, e.height_m))) {
+        setDragError(`Overlapt met een ander ${label} — positie niet opgeslagen.`);
+        return true;
+      }
+      return false;
+    };
+
+    if (dropped.kind === "field" && collidesWithAny(plots, "veld")) return;
+    if (dropped.kind === "field" && beds?.some((bed) => {
+      const padM = bed.path_cm / 100;
+      return rectsOverlap(dropped.x_m, dropped.y_m, dropped.width_m, dropped.height_m, bed.x_m, bed.y_m, bed.width_m + 2 * padM, bed.length_m + 2 * padM);
+    })) {
+      setDragError("Overlapt met een bed — positie niet opgeslagen.");
+      return;
+    }
+    if (dropped.kind === "building" && collidesWithAny(buildings, "gebouw")) return;
+
     const saveMove = async () => {
       try {
         if (dropped.kind === "field") {
@@ -261,13 +285,13 @@ export default function InfraViewport({
       <div
         className={`infra-world ${showGrid ? "with-grid" : ""}`}
         style={{
-          width: farm.width_m * baseScale,
-          height: farm.height_m * baseScale,
-          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-          transformOrigin: "top left",
-          backgroundSize: showGrid ? `${snapStepMeters * baseScale * zoom}px ${snapStepMeters * baseScale * zoom}px` : undefined,
-        }}
+          "--iw-w": `${farm.width_m * baseScale}px`,
+          "--iw-h": `${farm.height_m * baseScale}px`,
+          "--iw-transform": `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          "--iw-bg-size": showGrid ? `${snapStepMeters * baseScale * zoom}px ${snapStepMeters * baseScale * zoom}px` : undefined,
+        } as React.CSSProperties}
       >
+        <BedsLayer beds={beds} scale={baseScale} />
         <FieldPlotsLayer
           plots={plots}
           scale={baseScale}
@@ -317,8 +341,15 @@ function snapMeters(value: number, step: number) {
   return Math.round(value / step) * step;
 }
 
-const FieldPlotsLayer = React.memo(
-  ({
+function rectsOverlap(
+  ax: number, ay: number, aw: number, ah: number,
+  bx: number, by: number, bw: number, bh: number,
+) {
+  const eps = 0.001; // 1mm — allows touching, blocks actual overlap
+  return ax + eps < bx + bw && bx + eps < ax + aw && ay + eps < by + bh && by + eps < ay + ah;
+}
+
+const FieldPlotsLayer = React.memo(  ({
     plots,
     scale,
     highlightId,
@@ -345,11 +376,11 @@ const FieldPlotsLayer = React.memo(
               dragMode ? "draggable" : ""
             } ${isDragging ? "dragging" : ""}`}
             style={{
-              left: currentX * scale,
-              top: currentY * scale,
-              width: plot.width_m * scale,
-              height: plot.height_m * scale,
-            }}
+              "--ip-left": `${currentX * scale}px`,
+              "--ip-top": `${currentY * scale}px`,
+              "--ip-w": `${plot.width_m * scale}px`,
+              "--ip-h": `${plot.height_m * scale}px`,
+            } as React.CSSProperties}
             onMouseDown={(event) =>
               onEntityMouseDown(event, {
                 kind: "field",
@@ -368,3 +399,31 @@ const FieldPlotsLayer = React.memo(
     </>
   )
 );
+
+const BedsLayer = React.memo(({ beds, scale }: { beds: Bed[]; scale: number }) => (
+  <>
+    {beds.map((bed) => {
+      const padM = bed.path_cm / 100;
+      const padPx = padM * scale;
+      return (
+        <div
+          key={bed.id}
+          className="infra-bed-pad"
+          style={{
+            "--ibed-left": `${bed.x_m * scale}px`,
+            "--ibed-top": `${bed.y_m * scale}px`,
+            "--ibed-w": `${(bed.width_m + 2 * padM) * scale}px`,
+            "--ibed-h": `${(bed.length_m + 2 * padM) * scale}px`,
+          } as React.CSSProperties}
+        >
+          <div
+            className="infra-bed-bak"
+            style={{ inset: `${padPx}px` }}
+          >
+            {bed.label}
+          </div>
+        </div>
+      );
+    })}
+  </>
+));
