@@ -757,26 +757,26 @@ export default function InfraCanvas3D({
     document.body.style.cursor = "";
 
     // Check overlap at final position; snap back if overlapping
-    // Buildings may sit on fields — only fields check beds + other fields
+    // Nothing may overlap: fields check beds+fields, buildings check buildings+fields
     const bedOverlap =
       dragState.kind === "field" &&
       beds.some((bed) => {
         const padM = bed.path_cm / 100;
         return rectsOverlap(finalX, finalZ, dragState.width_m, dragState.height_m, bed.x_m, bed.y_m, bed.width_m + 2 * padM, bed.length_m + 2 * padM);
       });
-    const entityOverlap =
-      dragState.kind === "field"
-        ? plots.some(
-            (p) =>
-              p.id !== dragState.id &&
-              rectsOverlap(finalX, finalZ, dragState.width_m, dragState.height_m, p.x_m, p.y_m, p.width_m, p.height_m)
-          )
-        : buildings.some(
-            (b) =>
-              b.id !== dragState.id &&
-              rectsOverlap(finalX, finalZ, dragState.width_m, dragState.height_m, b.x_m, b.y_m, b.width_m, b.height_m)
-          );
-    const hasOverlap = bedOverlap || entityOverlap;
+    const fieldOverlap = plots.some(
+      (p) =>
+        p.id !== dragState.id &&
+        rectsOverlap(finalX, finalZ, dragState.width_m, dragState.height_m, p.x_m, p.y_m, p.width_m, p.height_m)
+    );
+    const buildingOverlap =
+      dragState.kind === "building" &&
+      buildings.some(
+        (b) =>
+          b.id !== dragState.id &&
+          rectsOverlap(finalX, finalZ, dragState.width_m, dragState.height_m, b.x_m, b.y_m, b.width_m, b.height_m)
+      );
+    const hasOverlap = bedOverlap || fieldOverlap || buildingOverlap;
 
     if (hasOverlap) {
       setDragState(null); // snaps back to original props position (no API call)
@@ -849,10 +849,12 @@ export default function InfraCanvas3D({
         (p) => p.id !== id && rectsOverlap(x_m, y_m, width_m, height_m, p.x_m, p.y_m, p.width_m, p.height_m)
       );
     }
-    // Buildings may not overlap other buildings — but CAN sit on/in a field
-    return buildings.some(
+    // Buildings may not overlap other buildings or fields
+    const hitsBuilding = buildings.some(
       (b) => b.id !== id && rectsOverlap(x_m, y_m, width_m, height_m, b.x_m, b.y_m, b.width_m, b.height_m)
     );
+    if (hitsBuilding) return true;
+    return plots.some((p) => rectsOverlap(x_m, y_m, width_m, height_m, p.x_m, p.y_m, p.width_m, p.height_m));
   }, [dragState, plots, buildings, beds]);
 
   const visiblePlots = layers.fields ? plots : [];
