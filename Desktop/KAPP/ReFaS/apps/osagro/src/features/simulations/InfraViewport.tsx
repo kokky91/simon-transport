@@ -213,6 +213,7 @@ export default function InfraViewport({
       return;
     }
     if (dropped.kind === "building" && collidesWithAny(buildings, "gebouw")) return;
+    if (dropped.kind === "building" && collidesWithAny(plots, "veld")) return;
 
     const saveMove = async () => {
       try {
