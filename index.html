@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Transport Services - Gambia</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="#home" class="logo">
+                <i class="fas fa-truck-moving"></i>
+                <span>Simon<strong>Transport</strong></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#fleet">Our Fleet</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="https://wa.me/2207376351" class="btn btn-primary nav-cta">
+                <i class="fab fa-whatsapp"></i> Book Now
+            </a>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg" style="background-image: url('images/truck.webp')"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-shield-alt"></i> Trusted Transport Agent in The Gambia
+            </div>
+            <h1>We Transport<br><span class="highlight">Everything</span><br>Across The Gambia</h1>
+            <p class="hero-subtitle">People, products, cargo - we move it all. Safe, affordable, and reliable transport services across The Gambia and beyond. Your one-stop transport agent.</p>
+            <div class="hero-buttons">
+                <a href="https://wa.me/2207376351?text=Hello%20Simon,%20I%20need%20transport%20services" class="btn btn-primary btn-lg">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Us
+                </a>
+                <a href="tel:+2207376351" class="btn btn-outline btn-lg">
+                    <i class="fas fa-phone"></i> Call Now
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number" data-count="500">0</span>+
+                    <span class="stat-label">Happy Clients</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-count="10">0</span>+
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-count="1000">0</span>+
+                    <span class="stat-label">Trips Completed</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                <path d="M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120 Z" fill="#ffffff"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">What We Offer</span>
+                <h2>Our Transport Services</h2>
+                <p>From passenger travel to cargo delivery, we provide complete transport solutions across The Gambia</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Passenger Transport</h3>
+                    <p>Comfortable and safe travel for individuals and groups across all regions of The Gambia. Airport pickups and city tours available.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Airport Transfers</li>
+                        <li><i class="fas fa-check"></i> City-to-City Travel</li>
+                        <li><i class="fas fa-check"></i> Group Transport</li>
+                        <li><i class="fas fa-check"></i> Tourism Tours</li>
+                    </ul>
+                    <a href="https://wa.me/2207376351?text=I%20need%20passenger%20transport" class="btn btn-outline">Book Ride <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card featured">
+                    <div class="card-badge">Most Popular</div>
+                    <div class="service-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>Goods & Cargo Delivery</h3>
+                    <p>Reliable delivery of products, packages, and cargo. From small parcels to large shipments across The Gambia and to Senegal.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Package Delivery</li>
+                        <li><i class="fas fa-check"></i> Bulk Cargo Transport</li>
+                        <li><i class="fas fa-check"></i> Market Goods</li>
+                        <li><i class="fas fa-check"></i> Cross-Border Shipping</li>
+                    </ul>
+                    <a href="https://wa.me/2207376351?text=I%20need%20cargo%20delivery" class="btn btn-primary">Ship Now <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Transport Agency</h3>
+                    <p>As your transport agent, we connect you with the best transport options. Booking, logistics, and coordination handled for you.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Route Planning</li>
+                        <li><i class="fas fa-check"></i> Logistics Management</li>
+                        <li><i class="fas fa-check"></i> Booking Agent</li>
+                        <li><i class="fas fa-check"></i> Custom Solutions</li>
+                    </ul>
+                    <a href="https://wa.me/2207376351?text=I%20need%20transport%20agent%20services" class="btn btn-outline">Inquire <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container about-grid">
+            <div class="about-image">
+                <img src="images/simon-portrait.jpeg" alt="Simon - Transport Agent in The Gambia" class="about-photo">
+                <div class="experience-badge">
+                    <span class="exp-number">10+</span>
+                    <span class="exp-text">Years of<br>Experience</span>
+                </div>
+            </div>
+            <div class="about-content">
+                <span class="section-tag">About Us</span>
+                <h2>Your Trusted Transport Agent in The Gambia</h2>
+                <p>My name is <strong>Simon</strong>, and I am your transport agent in The Gambia. I transport <strong>everything</strong> - people, products, cargo, market goods, building materials, furniture, and more. No job is too big or too small.</p>
+                <p>With my own fleet and trusted network, I cover all routes across The Gambia and cross-border to Senegal. Safe, on time, and at fair prices - that's my promise.</p>
+                <div class="about-features">
+                    <div class="about-feature">
+                        <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <h4>Always On Time</h4>
+                            <p>Punctual pickups and deliveries, every time</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <h4>Safe & Secure</h4>
+                            <p>Your safety and your goods are our priority</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <div class="feature-icon"><i class="fas fa-tags"></i></div>
+                        <div>
+                            <h4>Fair Prices</h4>
+                            <p>Competitive rates with no hidden charges</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                        <div>
+                            <h4>24/7 Available</h4>
+                            <p>Reach us anytime via phone or WhatsApp</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fleet Section -->
+    <section class="fleet" id="fleet">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Our Fleet</span>
+                <h2>Vehicles for Every Job</h2>
+                <p>From minibuses to trucks - we have the right vehicle for your transport needs</p>
+            </div>
+            <div class="fleet-showcase">
+                <div class="fleet-image">
+                    <img src="images/transport-van.jpeg" alt="Simon Transport Van - Toyota" class="fleet-photo">
+                    <div class="fleet-label">Passenger & Light Cargo Van</div>
+                </div>
+                <div class="fleet-image">
+                    <img src="images/truck.webp" alt="Simon Transport Truck" class="fleet-photo">
+                    <div class="fleet-label">Heavy Cargo & Long Distance Truck</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What We Transport Section -->
+    <section class="what-we-transport">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">We Move Everything</span>
+                <h2>What Can We Transport?</h2>
+                <p>If it needs to move, Simon Transport can handle it</p>
+            </div>
+            <div class="transport-grid">
+                <div class="transport-item"><i class="fas fa-users"></i><span>People & Groups</span></div>
+                <div class="transport-item"><i class="fas fa-box-open"></i><span>Packages & Parcels</span></div>
+                <div class="transport-item"><i class="fas fa-store"></i><span>Market Goods</span></div>
+                <div class="transport-item"><i class="fas fa-couch"></i><span>Furniture</span></div>
+                <div class="transport-item"><i class="fas fa-hard-hat"></i><span>Building Materials</span></div>
+                <div class="transport-item"><i class="fas fa-seedling"></i><span>Agricultural Products</span></div>
+                <div class="transport-item"><i class="fas fa-plane-arrival"></i><span>Airport Transfers</span></div>
+                <div class="transport-item"><i class="fas fa-dolly"></i><span>Equipment & Machinery</span></div>
+                <div class="transport-item"><i class="fas fa-fish"></i><span>Fish & Seafood</span></div>
+                <div class="transport-item"><i class="fas fa-tshirt"></i><span>Clothing & Textiles</span></div>
+                <div class="transport-item"><i class="fas fa-laptop"></i><span>Electronics</span></div>
+                <div class="transport-item"><i class="fas fa-ellipsis-h"></i><span>And Much More!</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Routes Section -->
+    <section class="routes">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Where We Go</span>
+                <h2>Popular Routes & Destinations</h2>
+                <p>We cover all major routes across The Gambia and cross-border to Senegal</p>
+            </div>
+            <div class="routes-grid">
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>Banjul</h3>
+                    <p>Capital city transfers, airport pickups, and government area transport</p>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>Serekunda</h3>
+                    <p>The Gambia's largest city - market runs, business transport, daily commutes</p>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>Brikama</h3>
+                    <p>Cargo and passenger services to and from the craft market town</p>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>Basse</h3>
+                    <p>Long-distance transport to the Upper River Region</p>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <h3>Janjanbureh</h3>
+                    <p>Central River Region transport and cargo delivery</p>
+                </div>
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-globe-africa"></i></div>
+                    <h3>Senegal (Cross-Border)</h3>
+                    <p>International transport to Dakar, Kaolack, and other Senegalese cities</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Our Rates</span>
+                <h2>Affordable Transport Pricing</h2>
+                <p>Transparent pricing with no hidden fees. Contact us for a custom quote.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <div class="price-header">
+                        <h3>City Transfer</h3>
+                        <p>Within Banjul / Serekunda</p>
+                    </div>
+                    <div class="price-amount">
+                        <span class="currency">GMD</span>
+                        <span class="amount">500</span>
+                        <span class="period">starting from</span>
+                    </div>
+                    <ul class="price-features">
+                        <li><i class="fas fa-check"></i> Door-to-door service</li>
+                        <li><i class="fas fa-check"></i> Up to 4 passengers</li>
+                        <li><i class="fas fa-check"></i> Luggage included</li>
+                        <li><i class="fas fa-check"></i> AC available</li>
+                    </ul>
+                    <a href="https://wa.me/2207376351?text=I%20need%20a%20city%20transfer" class="btn btn-outline btn-block">Get Quote</a>
+                </div>
+                <div class="price-card popular">
+                    <div class="price-badge">Best Value</div>
+                    <div class="price-header">
+                        <h3>Long Distance</h3>
+                        <p>Across The Gambia</p>
+                    </div>
+                    <div class="price-amount">
+                        <span class="currency">GMD</span>
+                        <span class="amount">1,500</span>
+                        <span class="period">starting from</span>
+                    </div>
+                    <ul class="price-features">
+                        <li><i class="fas fa-check"></i> Any destination in Gambia</li>
+                        <li><i class="fas fa-check"></i> Comfortable vehicles</li>
+                        <li><i class="fas fa-check"></i> Experienced drivers</li>
+                        <li><i class="fas fa-check"></i> Cargo space available</li>
+                    </ul>
+                    <a href="https://wa.me/2207376351?text=I%20need%20long%20distance%20transport" class="btn btn-primary btn-block">Get Quote</a>
+                </div>
+                <div class="price-card">
+                    <div class="price-header">
+                        <h3>Cargo Delivery</h3>
+                        <p>Products & Goods</p>
+                    </div>
+                    <div class="price-amount">
+                        <span class="currency">GMD</span>
+                        <span class="amount">Custom</span>
+                        <span class="period">based on weight/distance</span>
+                    </div>
+                    <ul class="price-features">
+                        <li><i class="fas fa-check"></i> Weigh-based pricing</li>
+                        <li><i class="fas fa-check"></i> Insurance available</li>
+                        <li><i class="fas fa-check"></i> Tracking updates</li>
+                        <li><i class="fas fa-check"></i> Same-day delivery option</li>
+                    </ul>
+                    <a href="https://wa.me/2207376351?text=I%20need%20cargo%20delivery" class="btn btn-outline btn-block">Get Quote</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">What People Say</span>
+                <h2>Customer Reviews</h2>
+                <p>Hear from our satisfied customers across The Gambia</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"Simon transported my goods from Banjul to Basse safely and on time. Very reliable service. I always call him for my deliveries."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AM</div>
+                        <div>
+                            <strong>Amadou M.</strong>
+                            <span>Business Owner, Banjul</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"Best transport agent in Gambia! He picked us up from the airport and took care of everything. Very professional and friendly."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">FK</div>
+                        <div>
+                            <strong>Fatou K.</strong>
+                            <span>Tourist, Serekunda</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p>"I use Simon for all my market goods transport. Fair prices and the products always arrive in perfect condition. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">OJ</div>
+                        <div>
+                            <strong>Ousman J.</strong>
+                            <span>Trader, Brikama</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Move?</h2>
+                <p>Whether it's people or products, Simon Transport gets you there safely and on time. Contact us today for a free quote!</p>
+                <div class="cta-buttons">
+                    <a href="https://wa.me/2207376351?text=Hello%20Simon,%20I%20need%20a%20transport%20quote" class="btn btn-white btn-lg">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Now
+                    </a>
+                    <a href="tel:+2207376351" class="btn btn-outline-white btn-lg">
+                        <i class="fas fa-phone"></i> +220 7376351
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container contact-grid">
+            <div class="contact-info">
+                <span class="section-tag">Get In Touch</span>
+                <h2>Contact Simon Transport</h2>
+                <p>Reach out to us anytime. We're available 24/7 to help with your transport needs.</p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                        <div>
+                            <h4>Phone</h4>
+                            <a href="tel:+2207376351">+220 7376351</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+                        <div>
+                            <h4>WhatsApp</h4>
+                            <a href="https://wa.me/2207376351">+220 7376351</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div>
+                            <h4>Location</h4>
+                            <p>The Gambia, West Africa</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <h4>Working Hours</h4>
+                            <p>24/7 - Always Available</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="https://wa.me/2207376351" class="social-link whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="tel:+2207376351" class="social-link phone"><i class="fas fa-phone"></i></a>
+                </div>
+            </div>
+            <div class="contact-form-wrapper">
+                <form class="contact-form" id="contactForm">
+                    <h3>Send Us a Message</h3>
+                    <div class="form-group">
+                        <input type="text" id="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" placeholder="Your Phone Number" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="service" required>
+                            <option value="">Select Service</option>
+                            <option value="passenger">Passenger Transport</option>
+                            <option value="cargo">Cargo / Goods Delivery</option>
+                            <option value="airport">Airport Transfer</option>
+                            <option value="tour">Tourism Tour</option>
+                            <option value="agent">Transport Agent Service</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="from" placeholder="Pickup Location">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="to" placeholder="Destination">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" placeholder="Additional Details..." rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fab fa-whatsapp"></i> Send via WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#home" class="logo">
+                        <i class="fas fa-truck-moving"></i>
+                        <span>Simon<strong>Transport</strong></span>
+                    </a>
+                    <p>Your trusted transport agent in The Gambia. Moving people and products safely since 2015.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#services">Passenger Transport</a></li>
+                        <li><a href="#services">Cargo Delivery</a></li>
+                        <li><a href="#services">Airport Transfer</a></li>
+                        <li><a href="#services">Transport Agent</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <p><i class="fas fa-phone"></i> <a href="tel:+2207376351">+220 7376351</a></p>
+                    <p><i class="fab fa-whatsapp"></i> <a href="https://wa.me/2207376351">WhatsApp</a></p>
+                    <p><i class="fas fa-map-marker-alt"></i> The Gambia, West Africa</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Simon Transport Services. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/2207376351?text=Hello%20Simon,%20I%20need%20transport%20services" class="whatsapp-float" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
