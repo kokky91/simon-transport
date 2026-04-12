@@ -1279,6 +1279,131 @@ img { max-width: 100%; display: block; }
     transform: translateY(-4px);
 }
 
+/* ===== HERO BACKGROUND IMAGE ===== */
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+}
+
+.hero-overlay {
+    z-index: 1;
+    background: linear-gradient(135deg, rgba(13,59,19,0.85) 0%, rgba(27,94,32,0.75) 50%, rgba(46,125,50,0.7) 100%);
+}
+
+/* ===== ABOUT PHOTO ===== */
+.about-photo {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ===== FLEET SECTION ===== */
+.fleet {
+    padding: 100px 0;
+    background: var(--gray-100);
+}
+
+.fleet-showcase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.fleet-image {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.fleet-photo {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.fleet-image:hover .fleet-photo {
+    transform: scale(1.05);
+}
+
+.fleet-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: var(--white);
+    padding: 40px 24px 20px;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+/* ===== WHAT WE TRANSPORT ===== */
+.what-we-transport {
+    padding: 100px 0;
+    background: var(--white);
+}
+
+.transport-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.transport-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 28px 16px;
+    background: var(--gray-100);
+    border-radius: var(--radius-md);
+    text-align: center;
+    transition: var(--transition);
+    border: 2px solid transparent;
+    cursor: default;
+}
+
+.transport-item:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    background: var(--white);
+}
+
+.transport-item i {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.transport-item span {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+@media (max-width: 768px) {
+    .fleet-showcase { grid-template-columns: 1fr; }
+    .fleet-photo { height: 250px; }
+    .transport-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .transport-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .transport-item { padding: 20px 12px; }
+    .transport-item i { font-size: 1.5rem; }
+}
+
 /* ===== ANIMATIONS ===== */
 .fade-in {
     opacity: 0;
