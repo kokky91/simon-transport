@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Login — WebGen Gambia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;--sf:#0f1117;--sf2:#161820;--sf3:#1e2029;
+  --br:#252838;--ac:#00e5a0;--ac2:#7b5cff;
+  --tx:#eeeef5;--mu:#7878a0;--rd:#ff4d6d;
+}
+html,body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx)}
+body{display:flex;align-items:center;justify-content:center;padding:20px}
+
+.login-container{width:100%;max-width:420px}
+
+.logo-section{text-align:center;margin-bottom:32px}
+.logo-mark{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px}
+.logo-mark svg{width:28px;height:28px;fill:white}
+.logo-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.logo-sub{font-size:13px;color:var(--mu)}
+
+.login-card{background:var(--sf);border:1px solid var(--br);border-radius:16px;padding:28px 24px}
+.login-card h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px}
+.login-card .sub{font-size:12px;color:var(--mu);margin-bottom:20px}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--mu);margin-bottom:5px;font-weight:500}
+.field input{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:9px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 13px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--ac)}
+.field input::placeholder{color:var(--mu)}
+
+.field-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.remember{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mu);cursor:pointer}
+.remember input{width:15px;height:15px;accent-color:var(--ac);cursor:pointer}
+.forgot{font-size:12px;color:var(--ac);text-decoration:none;cursor:pointer}
+.forgot:hover{text-decoration:underline}
+
+.login-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#000;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.login-btn:hover{opacity:.88}
+.login-btn:disabled{opacity:.4;cursor:not-allowed}
+.login-btn .spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.login-btn.loading .spinner{display:block}
+.login-btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.error-msg{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.25);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--rd);margin-bottom:14px;display:none;align-items:center;gap:7px}
+.error-msg.show{display:flex}
+
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;font-size:11px;color:var(--mu)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--br)}
+
+/* OFFLINE MODE */
+.offline-section{display:none}
+.offline-section.show{display:block}
+.offline-card{background:var(--sf2);border:1px solid var(--br);border-radius:10px;padding:14px 16px}
+.offline-title{font-size:12px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.offline-title .dot{width:6px;height:6px;border-radius:50%;background:var(--rd)}
+.offline-desc{font-size:11px;color:var(--mu);line-height:1.6}
+
+/* SETUP MODE */
+.setup-section{display:none}
+.setup-section.show{display:block}
+
+.footer-note{text-align:center;margin-top:20px;font-size:11px;color:var(--mu)}
+.footer-note a{color:var(--ac);text-decoration:none}
+
+/* ROLE BADGES */
+.role-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600}
+.role-badge.admin{background:rgba(0,229,160,.12);color:var(--ac)}
+.role-badge.medewerker{background:rgba(123,92,255,.12);color:var(--ac2)}
+.role-badge.klant{background:rgba(77,171,247,.12);color:#4dabf7}
+
+@media (max-width: 480px) {
+  .login-card{padding:20px 18px}
+  .logo-title{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="logo-section">
+    <div class="logo-mark"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></div>
+    <div class="logo-title">WebGen Gambia</div>
+    <div class="logo-sub">KOK Enterprises — Agency Platform</div>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div class="login-card" id="login-section">
+    <h2>Welcome back</h2>
+    <div class="sub">Login to access your agency tools</div>
+
+    <div class="error-msg" id="error-msg">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <span id="error-text">Invalid email or password</span>
+    </div>
+
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Enter your password" autocomplete="current-password">
+    </div>
+
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:11px">Worker URL <span style="color:var(--mu);font-weight:400">(optional — from Setup Guide)</span></label>
+      <input type="text" id="login-worker-url" placeholder="https://webgen-gambia.NAME.workers.dev" style="font-size:12px" oninput="localStorage.setItem('wg_worker_url',this.value.trim())">
+    </div>
+
+    <div class="field-row">
+      <label class="remember"><input type="checkbox" id="login-remember" checked> Remember me</label>
+    </div>
+
+    <button class="login-btn" id="login-btn" onclick="doLogin()">
+      <span class="btn-text">Sign in</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+
+  <!-- SETUP FORM (first time only) -->
+  <div class="login-card setup-section" id="setup-section">
+    <h2>Create Admin Account</h2>
+    <div class="sub">First time setup — create your admin account to get started</div>
+
+    <div class="error-msg" id="setup-error-msg">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <span id="setup-error-text">Error</span>
+    </div>
+
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" id="setup-name" placeholder="e.g. Kokou" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="setup-email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="setup-pass" placeholder="Choose a strong password" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label>Confirm password</label>
+      <input type="password" id="setup-pass2" placeholder="Repeat your password">
+    </div>
+
+    <button class="login-btn" id="setup-btn" onclick="doSetup()">
+      <span class="btn-text">Create Admin Account</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+
+  <!-- OFFLINE MODE -->
+  <div class="offline-section" id="offline-section">
+    <div class="divider">or</div>
+    <div class="offline-card">
+      <div class="offline-title"><span class="dot"></span> Offline Mode</div>
+      <div class="offline-desc">
+        No worker URL configured? You can still use the tools locally.<br>
+        <a href="#" onclick="offlineAccess()" style="color:var(--ac);text-decoration:none;font-weight:600;margin-top:6px;display:inline-block;cursor:pointer">Continue without login →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    © 2026 KOK Enterprises · <a href="SETUP.html">Setup Guide</a>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───
+const STORAGE_KEY = 'webgen_auth';
+const WORKER_URL_KEY = 'wg_worker_url';
+
+function getRedirectUrl(user) {
+  return (user && user.role === 'klant') ? 'client-portal.html' : 'index.html';
+}
+
+function getWorkerUrl() {
+  return localStorage.getItem(WORKER_URL_KEY) || '';
+}
+
+function getAuth() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch { return null; }
+}
+
+function setAuth(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// ─── CHECK EXISTING SESSION ───
+(async function init() {
+  const auth = getAuth();
+  const workerUrl = getWorkerUrl();
+
+  // Already logged in? Redirect
+  if (auth && auth.token) {
+    if (workerUrl) {
+      try {
+        const resp = await fetch(workerUrl + '/api/auth/me', {
+          headers: { 'X-Session-Token': auth.token }
+        });
+        if (resp.ok) {
+          window.location.href = getRedirectUrl(auth.user);
+          return;
+        }
+        // Session expired, clear and show login
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        // Offline but has cached session — allow through
+        if (auth.user) {
+          window.location.href = getRedirectUrl(auth.user);
+          return;
+        }
+      }
+    } else if (auth.user) {
+      // No worker but cached session — offline mode
+      window.location.href = getRedirectUrl(auth.user);
+      return;
+    }
+  }
+
+  // Pre-fill worker URL if saved
+  const urlInput = document.getElementById('login-worker-url');
+  if (urlInput && workerUrl) urlInput.value = workerUrl;
+
+  // Show setup or login depending on worker status
+  if (workerUrl) {
+    try {
+      const resp = await fetch(workerUrl + '/api/status');
+      const status = await resp.json();
+
+      // Check if users exist
+      try {
+        const authResp = await fetch(workerUrl + '/api/auth/me');
+        // If 401, check if setup is needed
+        if (authResp.status === 401) {
+          // Try to see if any users exist by attempting login with empty creds
+          // The server will tell us
+        }
+      } catch {}
+
+      // Show login form by default, setup link if needed
+      showLogin();
+    } catch {
+      showLogin();
+      showOffline();
+    }
+  } else {
+    showLogin();
+    showOffline();
+  }
+})();
+
+function showLogin() {
+  document.getElementById('login-section').style.display = 'block';
+}
+
+function showSetup() {
+  document.getElementById('login-section').style.display = 'none';
+  document.getElementById('setup-section').classList.add('show');
+}
+
+function showOffline() {
+  document.getElementById('offline-section').classList.add('show');
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.querySelector('span').textContent = msg;
+  el.classList.add('show');
+}
+
+function hideError(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (loading) { btn.classList.add('loading'); btn.disabled = true; }
+  else { btn.classList.remove('loading'); btn.disabled = false; }
+}
+
+// ─── LOGIN ───
+async function doLogin() {
+  hideError('error-msg');
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const remember = document.getElementById('login-remember').checked;
+
+  if (!email || !pass) {
+    showError('error-msg', 'Please enter email and password');
+    return;
+  }
+
+  const workerUrl = getWorkerUrl();
+
+  if (workerUrl) {
+    // Online login via worker
+    setLoading('login-btn', true);
+    try {
+      const resp = await fetch(workerUrl + '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass, rememberMe: remember })
+      });
+      const data = await resp.json();
+
+      if (resp.ok) {
+        // Save session from worker
+        setAuth({ token: data.token, user: data.user, loginAt: new Date().toISOString() });
+        window.location.href = getRedirectUrl(data.user);
+        return;
+      }
+
+      if (resp.status === 401 && data.error && data.error.includes('no users')) {
+        showSetup();
+        return;
+      }
+
+      // Worker login failed — try offline fallback
+      const offlineFallback = await tryOfflineLogin(email, pass);
+      if (!offlineFallback) {
+        showError('error-msg', data.error || 'Login failed');
+      }
+    } catch (e) {
+      // Worker unreachable — try offline fallback
+      const offlineFallback = await tryOfflineLogin(email, pass);
+      if (!offlineFallback) {
+        showError('error-msg', 'Cannot reach server and no offline account found.');
+      }
+    } finally {
+      setLoading('login-btn', false);
+    }
+  } else {
+    // No worker URL — offline only
+    await tryOfflineLogin(email, pass);
+  }
+}
+
+async function tryOfflineLogin(email, pass) {
+  const offlineUsers = JSON.parse(localStorage.getItem('webgen_offline_users') || '[]');
+
+  if (offlineUsers.length === 0) {
+    showSetup();
+    return true; // handled
+  }
+
+  const user = offlineUsers.find(u => u.email === email.toLowerCase());
+  if (!user) {
+    showError('error-msg', 'Invalid email or password');
+    return false;
+  }
+
+  const hash = await simpleHash(pass);
+  if (user.passwordHash !== hash) {
+    showError('error-msg', 'Invalid email or password');
+    return false;
+  }
+
+  const authUser = { id: user.id, name: user.name, email: user.email, role: user.role };
+  setAuth({
+    token: 'offline_' + Date.now(),
+    user: authUser,
+    loginAt: new Date().toISOString(),
+    offline: true
+  });
+  window.location.href = getRedirectUrl(authUser);
+  return true;
+}
+
+// ─── SETUP (first admin) ───
+async function doSetup() {
+  hideError('setup-error-msg');
+  const name = document.getElementById('setup-name').value.trim();
+  const email = document.getElementById('setup-email').value.trim();
+  const pass = document.getElementById('setup-pass').value;
+  const pass2 = document.getElementById('setup-pass2').value;
+
+  if (!name || !email || !pass) {
+    showError('setup-error-msg', 'All fields are required');
+    return;
+  }
+  if (pass !== pass2) {
+    showError('setup-error-msg', 'Passwords do not match');
+    return;
+  }
+  if (pass.length < 4) {
+    showError('setup-error-msg', 'Password must be at least 4 characters');
+    return;
+  }
+
+  const workerUrl = getWorkerUrl();
+
+  if (workerUrl) {
+    setLoading('setup-btn', true);
+    try {
+      const resp = await fetch(workerUrl + '/api/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: pass })
+      });
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        showError('setup-error-msg', data.error || 'Setup failed');
+        return;
+      }
+
+      setAuth({ token: data.token, user: data.user, loginAt: new Date().toISOString() });
+      window.location.href = getRedirectUrl(data.user);
+    } catch (e) {
+      showError('setup-error-msg', 'Cannot reach server.');
+    } finally {
+      setLoading('setup-btn', false);
+    }
+  } else {
+    // Offline setup
+    const hash = await simpleHash(pass);
+    const userId = 'u_' + Date.now();
+    const user = {
+      id: userId,
+      name,
+      email: email.toLowerCase(),
+      passwordHash: hash,
+      role: 'admin',
+      createdAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString()
+    };
+
+    const offlineUsers = JSON.parse(localStorage.getItem('webgen_offline_users') || '[]');
+    offlineUsers.push(user);
+    localStorage.setItem('webgen_offline_users', JSON.stringify(offlineUsers));
+
+    const setupUser = { id: userId, name, email: email.toLowerCase(), role: 'admin' };
+    setAuth({
+      token: 'offline_' + Date.now(),
+      user: setupUser,
+      loginAt: new Date().toISOString(),
+      offline: true
+    });
+    window.location.href = getRedirectUrl(setupUser);
+  }
+}
+
+// Simple hash for offline mode
+async function simpleHash(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str + '_webgen_salt_2026');
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Offline access — skip login
+function offlineAccess() {
+  const offUser = { id: 'offline', name: 'Offline', email: '', role: 'admin' };
+  setAuth({
+    token: 'offline_' + Date.now(),
+    user: offUser,
+    loginAt: new Date().toISOString(),
+    offline: true
+  });
+  window.location.href = getRedirectUrl(offUser);
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('setup-section').classList.contains('show')) {
+      doSetup();
+    } else {
+      doLogin();
+    }
+  }
+});
+</script>
+</body>
+</html>

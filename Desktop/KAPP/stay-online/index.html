@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>WebGen Gambia — KOK Enterprises</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;--sf:#0f1117;--sf2:#161820;--sf3:#1e2029;
+  --br:#252838;--ac:#00e5a0;--ac2:#7b5cff;--wa:#25D366;
+  --tx:#eeeef5;--mu:#7878a0;--rd:#ff4d6d;--yl:#ffd166;
+}
+html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx)}
+body{display:flex;flex-direction:column}
+
+/* HEADER */
+header{padding:28px 40px 0;display:flex;align-items:center;justify-content:space-between}
+.logo-row{display:flex;align-items:center;gap:12px}
+.logo-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:20px;height:20px;fill:white}
+.logo-text h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.logo-text p{font-size:12px;color:var(--mu);margin-top:2px}
+.header-right{display:flex;align-items:center;gap:10px}
+.date-badge{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--mu)}
+.version-badge{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--ac);font-weight:500}
+
+/* HERO */
+.hero{padding:36px 40px 0;text-align:center}
+.hero-title{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.hero-title span{background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:15px;color:var(--mu);max-width:480px;margin:0 auto;line-height:1.6}
+
+/* STATS ROW */
+.stats{display:flex;justify-content:center;gap:10px;margin:28px 40px 0;flex-wrap:wrap}
+.stat{background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:12px 20px;text-align:center;min-width:110px}
+.stat-n{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:2px}
+.stat-l{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+
+/* TOOLS GRID */
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px auto 0;max-width:1100px;width:100%;padding:0 40px;justify-items:center}
+.tools .tool-card{width:100%}
+.tools .tool-card:nth-last-child(2):nth-child(3n+1){grid-column:1/2;justify-self:end;margin-right:7px}
+.tools .tool-card:nth-last-child(1):nth-child(3n+2){grid-column:2/3;justify-self:start;margin-left:7px}
+.tool-card{background:var(--sf);border:1px solid var(--br);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit}
+.tool-card:hover{border-color:var(--card-color, var(--ac));transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.tool-card-top{height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.tool-card-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;z-index:1}
+.tool-card-pattern{position:absolute;inset:0;opacity:.04}
+.tool-card-body{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}
+.tool-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px}
+.tool-desc{font-size:12px;color:var(--mu);line-height:1.6;flex:1;margin-bottom:12px}
+.tool-features{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.tool-feat{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--mu)}
+.tool-feat-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.tool-open-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px;border-radius:9px;font-size:13px;font-weight:600;font-family:'Syne',sans-serif;border:none;cursor:pointer;transition:opacity .15s;color:white;text-decoration:none}
+.tool-open-btn:hover{opacity:.85}
+.tool-tag{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);border-radius:999px;padding:3px 9px;font-size:10px;font-weight:600;color:white;backdrop-filter:blur(4px);z-index:2}
+
+/* QUICK LINKS */
+.quick{display:flex;gap:8px;justify-content:center;margin:20px auto 0;flex-wrap:wrap;max-width:900px;padding:0 40px}
+.q-link{display:flex;align-items:center;gap:7px;padding:8px 14px;background:var(--sf);border:1px solid var(--br);border-radius:9px;font-size:12px;color:var(--mu);cursor:pointer;text-decoration:none;transition:all .15s}
+.q-link:hover{border-color:var(--ac);color:var(--ac)}
+.q-link svg{width:13px;height:13px;flex-shrink:0}
+
+/* PROGRESS SECTION */
+.progress-section{margin:28px 40px 0;max-width:1100px;width:100%;margin-left:auto;margin-right:auto;padding:0 40px}
+.progress-card{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:18px 20px}
+.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.progress-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.phase-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.phase{background:var(--sf2);border-radius:10px;padding:12px 14px;border:1px solid var(--br);position:relative;overflow:hidden}
+.phase.done{border-color:rgba(0,229,160,.3)}
+.phase.active{border-color:rgba(123,92,255,.3)}
+.phase-num{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;margin-bottom:5px}
+.phase-name{font-size:12px;font-weight:600;margin-bottom:3px}
+.phase-detail{font-size:10px;color:var(--mu);line-height:1.5}
+.phase-badge{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600}
+.phase-badge.done{background:rgba(0,229,160,.12);color:var(--ac)}
+.phase-badge.active{background:rgba(123,92,255,.12);color:var(--ac2)}
+.phase-badge.plan{background:var(--sf3);color:var(--mu)}
+.phase-glow{position:absolute;bottom:-20px;right:-20px;width:60px;height:60px;border-radius:50%;opacity:.06}
+
+/* FOOTER */
+footer{margin-top:auto;padding:20px 40px;border-top:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;margin-top:32px}
+.footer-left{font-size:12px;color:var(--mu)}
+.footer-right{display:flex;gap:8px}
+.footer-link{font-size:12px;color:var(--mu);text-decoration:none;cursor:pointer}
+.footer-link:hover{color:var(--ac)}
+
+/* USER BAR */
+.user-bar{display:flex;align-items:center;gap:8px}
+.user-info{display:flex;align-items:center;gap:7px;background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:5px 12px;font-size:12px}
+.user-avatar{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
+.user-name{font-weight:500;color:var(--tx)}
+.role-pill{padding:2px 7px;border-radius:999px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.role-pill.admin{background:rgba(0,229,160,.12);color:var(--ac)}
+.role-pill.medewerker{background:rgba(123,92,255,.12);color:var(--ac2)}
+.role-pill.klant{background:rgba(77,171,247,.12);color:#4dabf7}
+.logout-btn{background:var(--sf2);border:1px solid var(--br);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--mu);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.logout-btn:hover{border-color:var(--rd);color:var(--rd)}
+
+/* USER MANAGEMENT PANEL */
+.admin-panel{margin:28px auto 0;max-width:1100px;width:100%;padding:0 40px;display:none}
+.admin-panel.show{display:block}
+.admin-card{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:18px 20px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.admin-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.add-user-btn{padding:6px 12px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#000;font-family:'DM Sans',sans-serif;transition:opacity .15s}
+.add-user-btn:hover{opacity:.85}
+.users-table{width:100%;border-collapse:collapse}
+.users-table th{text-align:left;font-size:10px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--br)}
+.users-table td{font-size:12px;padding:10px;border-bottom:1px solid var(--br);color:var(--tx)}
+.users-table tr:last-child td{border-bottom:none}
+.users-table tr:hover td{background:var(--sf2)}
+.action-btns{display:flex;gap:4px}
+.action-btn{padding:4px 8px;border-radius:5px;font-size:10px;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .12s;font-family:'DM Sans',sans-serif}
+.action-btn:hover{border-color:var(--ac);color:var(--ac)}
+.action-btn.del:hover{border-color:var(--rd);color:var(--rd)}
+
+/* USER MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:24px;width:100%;max-width:400px;margin:20px}
+.modal h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
+.modal .field{margin-bottom:10px}
+.modal .field label{display:block;font-size:12px;color:var(--mu);margin-bottom:4px;font-weight:500}
+.modal .field input,.modal .field select{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;outline:none;transition:border-color .2s}
+.modal .field input:focus,.modal .field select:focus{border-color:var(--ac)}
+.modal .field select option{background:var(--sf2)}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.modal-btn{flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);font-family:'DM Sans',sans-serif;transition:all .15s}
+.modal-btn:hover{border-color:var(--ac);color:var(--ac)}
+.modal-btn.primary{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#000;border:none}
+.modal-btn.primary:hover{opacity:.85}
+.modal-error{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.25);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--rd);margin-bottom:10px;display:none}
+.modal-error.show{display:block}
+
+/* TIPS TICKER */
+.ticker{background:var(--sf2);border-top:1px solid var(--br);border-bottom:1px solid var(--br);padding:8px 40px;margin-top:20px;overflow:hidden;position:relative}
+.ticker-inner{display:flex;gap:48px;animation:ticker 30s linear infinite;white-space:nowrap}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{font-size:11px;color:var(--mu);display:flex;align-items:center;gap:6px;flex-shrink:0}
+.ticker-item span{color:var(--ac);font-weight:600}
+
+@media (max-width: 900px) {
+  header{padding:14px 20px;flex-direction:column;gap:10px;align-items:flex-start}
+  .header-right{width:100%;flex-wrap:wrap}
+  #worker-url-input{width:100%}
+  .hero{padding:24px 20px 0}
+  .hero-title{font-size:26px}
+  .stats{margin:16px 20px 0;gap:7px}
+  .stat{min-width:80px;padding:10px 14px}
+  .tools{grid-template-columns:1fr;padding:0 20px;margin:20px auto 0}
+  .progress-section{padding:0 20px}
+  .phase-row{grid-template-columns:1fr 1fr}
+  footer{flex-direction:column;gap:8px;padding:16px 20px}
+}
+@media (max-width: 600px) {
+  .tools{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .phase-row{grid-template-columns:1fr}
+  .hero-title{font-size:22px}
+  .quick{padding:0 20px;margin:14px 20px 0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-row">
+    <div class="logo-mark"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></div>
+    <div class="logo-text">
+      <h1>WebGen Gambia</h1>
+      <p>KOK Enterprises — Agency Platform</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="date-badge" id="date-badge"></div>
+    <div class="version-badge">v4.1 · Phase 3</div>
+    <div class="user-bar" id="user-bar" style="display:none">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">K</div>
+        <span class="user-name" id="user-name">User</span>
+        <span class="role-pill" id="user-role-pill">admin</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-title">Your complete<br><span>Gambian web agency</span> toolkit</div>
+  <div class="hero-sub">Build websites, manage clients, generate WhatsApp catalogs — everything in one folder.</div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-n" style="color:var(--ac)" id="s-clients">0</div><div class="stat-l">Clients</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--ac2)" id="s-revenue">D0</div><div class="stat-l">Monthly revenue</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--yl)" id="s-expiring">0</div><div class="stat-l">Expiring soon</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--rd)" id="s-overdue">0</div><div class="stat-l">Overdue</div></div>
+  <div class="stat"><div class="stat-n" id="s-invoices">0</div><div class="stat-l">Invoices sent</div></div>
+</div>
+
+<div class="tools">
+
+  <!-- WEBSITE GENERATOR -->
+  <a href="webgen-gambia-v3.html" class="tool-card" style="--card-color:var(--ac)">
+    <div class="tool-card-top" style="background:linear-gradient(135deg,#0d2b1f,#0d1a2b)">
+      <svg class="tool-card-pattern" viewBox="0 0 200 200" fill="none"><rect x="10" y="10" width="80" height="60" rx="4" stroke="white" stroke-width="1"/><rect x="110" y="10" width="80" height="60" rx="4" stroke="white" stroke-width="1"/><rect x="10" y="90" width="180" height="100" rx="4" stroke="white" stroke-width="1"/><line x1="10" y1="110" x2="190" y2="110" stroke="white" stroke-width="1"/></svg>
+      <div class="tool-card-icon" style="background:rgba(0,229,160,.15)">🌐</div>
+      <div class="tool-tag">AI powered</div>
+    </div>
+    <div class="tool-card-body">
+      <div class="tool-name">Website Generator</div>
+      <div class="tool-desc">Build complete professional websites for Gambian businesses in under 30 seconds using Claude AI.</div>
+      <div class="tool-features">
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac)"></div>10 templates + 16 color palettes</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac)"></div>Photo & logo upload (base64)</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac)"></div>Built-in CMS for clients</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac)"></div>One-click HTML download</div>
+      </div>
+      <div class="tool-open-btn" style="background:linear-gradient(135deg,var(--ac),var(--ac2))">
+        <svg width="14" height="14" fill="white" viewBox="0 0 20 20"><path d="M10 1l2.4 6.6L19 10l-6.6 2.4L10 19l-2.4-6.6L1 10l6.6-2.4z"/></svg>
+        Open Generator
+      </div>
+    </div>
+  </a>
+
+  <!-- CLIENT CRM -->
+  <a href="webgen-crm.html" class="tool-card" style="--card-color:var(--ac2)">
+    <div class="tool-card-top" style="background:linear-gradient(135deg,#1a0d2e,#0d1a2b)">
+      <svg class="tool-card-pattern" viewBox="0 0 200 200" fill="none"><circle cx="70" cy="70" r="30" stroke="white" stroke-width="1"/><circle cx="140" cy="60" r="22" stroke="white" stroke-width="1"/><path d="M10 160 Q70 120 130 160 Q160 180 190 155" stroke="white" stroke-width="1"/></svg>
+      <div class="tool-card-icon" style="background:rgba(123,92,255,.15)">👥</div>
+      <div class="tool-tag">Full CRM</div>
+    </div>
+    <div class="tool-card-body">
+      <div class="tool-name">Client Management</div>
+      <div class="tool-desc">Track clients, subscriptions, invoices, tasks and communication history in one dashboard.</div>
+      <div class="tool-features">
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac2)"></div>Subscription & expiry tracking</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac2)"></div>Per-client tasks & call log</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac2)"></div>Invoice generator (GMD)</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--ac2)"></div>Revenue analytics</div>
+      </div>
+      <div class="tool-open-btn" style="background:linear-gradient(135deg,var(--ac2),#9b5cff)">
+        <svg width="14" height="14" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Open CRM
+      </div>
+    </div>
+  </a>
+
+  <!-- WHATSAPP CATALOG -->
+  <a href="whatsapp-catalog-generator.html" class="tool-card" style="--card-color:var(--wa)">
+    <div class="tool-card-top" style="background:linear-gradient(135deg,#0d2b1a,#051a10)">
+      <svg class="tool-card-pattern" viewBox="0 0 200 200" fill="none"><rect x="40" y="30" width="120" height="140" rx="8" stroke="white" stroke-width="1"/><rect x="55" y="50" width="90" height="55" rx="3" stroke="white" stroke-width="1"/><line x1="55" y1="120" x2="145" y2="120" stroke="white" stroke-width="1"/><line x1="55" y1="133" x2="120" y2="133" stroke="white" stroke-width="1"/></svg>
+      <div class="tool-card-icon" style="background:rgba(37,211,102,.15)">💬</div>
+      <div class="tool-tag">WhatsApp</div>
+    </div>
+    <div class="tool-card-body">
+      <div class="tool-name">WhatsApp Catalog</div>
+      <div class="tool-desc">Generate professional product catalogs with WhatsApp order buttons and ready-to-use message templates.</div>
+      <div class="tool-features">
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--wa)"></div>Product catalog with photos & prices</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--wa)"></div>One-tap WhatsApp order button</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--wa)"></div>Auto-generated message templates</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:var(--wa)"></div>Phone preview + web catalog</div>
+      </div>
+      <div class="tool-open-btn" style="background:linear-gradient(135deg,#25D366,#128C7E)">
+        <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.115 1.527 5.845L0 24l6.335-1.527A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.359-.213-3.72.978.994-3.645-.233-.374A9.818 9.818 0 1112 21.818z"/></svg>
+        Open Catalog Tool
+      </div>
+    </div>
+  </a>
+
+
+  <!-- SOCIAL MEDIA GENERATOR -->
+  <a href="social-media-generator.html" class="tool-card" style="--card-color:var(--ig)">
+    <div class="tool-card-top" style="background:linear-gradient(135deg,#1a0820,#1a1000)">
+      <svg class="tool-card-pattern" viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="60" stroke="white" stroke-width="1"/><circle cx="100" cy="100" r="40" stroke="white" stroke-width="1"/><circle cx="130" cy="70" r="8" stroke="white" stroke-width="1" fill="white" opacity=".3"/></svg>
+      <div class="tool-card-icon" style="background:rgba(225,48,108,.15)">📱</div>
+      <div class="tool-tag">AI powered</div>
+    </div>
+    <div class="tool-card-body">
+      <div class="tool-name">Social Media Generator</div>
+      <div class="tool-desc">AI-powered posts for Facebook, Instagram, TikTok & WhatsApp in English, Wolof, Mandinka and more.</div>
+      <div class="tool-features">
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#E1306C"></div>Facebook, Instagram, TikTok, WhatsApp</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#E1306C"></div>Wolof & Mandinka language support</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#E1306C"></div>12 post templates + content calendar</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#E1306C"></div>Gambia hashtags auto-generated</div>
+      </div>
+      <div class="tool-open-btn" style="background:linear-gradient(135deg,#E1306C,#1877F2)">
+        📱 Open Social Media Generator
+      </div>
+    </div>
+  </a>
+
+  <!-- CLIENT PORTAL PREVIEW -->
+  <div class="tool-card" style="--card-color:#4dabf7;cursor:pointer" onclick="openClientPortalPreview()">
+    <div class="tool-card-top" style="background:linear-gradient(135deg,#0d1a2e,#0d2520)">
+      <svg class="tool-card-pattern" viewBox="0 0 200 200" fill="none"><rect x="30" y="20" width="140" height="160" rx="10" stroke="white" stroke-width="1"/><rect x="45" y="45" width="110" height="30" rx="4" stroke="white" stroke-width="1"/><rect x="45" y="90" width="50" height="50" rx="4" stroke="white" stroke-width="1"/><rect x="105" y="90" width="50" height="50" rx="4" stroke="white" stroke-width="1"/><rect x="45" y="150" width="110" height="15" rx="3" stroke="white" stroke-width="1"/></svg>
+      <div class="tool-card-icon" style="background:rgba(77,171,247,.15)">👁️</div>
+      <div class="tool-tag">Preview</div>
+    </div>
+    <div class="tool-card-body">
+      <div class="tool-name">Client Portal</div>
+      <div class="tool-desc">Preview the client portal as your customers see it. Manage products, blog, gallery and site info.</div>
+      <div class="tool-features">
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4dabf7"></div>Products, blog & gallery CMS</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4dabf7"></div>Publish updated website</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4dabf7"></div>Multi-language (EN/NL/WO/MA)</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4dabf7"></div>Opens in new tab</div>
+      </div>
+      <div class="tool-open-btn" style="background:linear-gradient(135deg,#4dabf7,var(--ac2))">
+        <svg width="14" height="14" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open Client Portal ↗
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE BUSINESS -->
+  <a href="google-business-generator.html" class="tool-card" style="--card-color:#4285F4">
+    <div class="tool-card-top" style="background:linear-gradient(135deg,#0d1a30,#001a0d)">
+      <svg class="tool-card-pattern" viewBox="0 0 200 200" fill="none"><circle cx="100" cy="85" r="45" stroke="white" stroke-width="1"/><path d="M100 55 L100 115 M70 85 L130 85" stroke="white" stroke-width="1"/><circle cx="100" cy="150" r="15" stroke="white" stroke-width="1"/><line x1="100" y1="130" x2="100" y2="165" stroke="white" stroke-width="1"/></svg>
+      <div class="tool-card-icon" style="background:rgba(66,133,244,.15);font-size:22px">G</div>
+    </div>
+    <div class="tool-card-body">
+      <div class="tool-name">Google Business Generator</div>
+      <div class="tool-desc">Optimize your Google Maps listing with AI-generated descriptions, Q&A, review responses and SEO keywords.</div>
+      <div class="tool-features">
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4285F4"></div>750-char optimized description</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4285F4"></div>5 Q&A pairs for Google Maps</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4285F4"></div>Review response templates</div>
+        <div class="tool-feat"><div class="tool-feat-dot" style="background:#4285F4"></div>Local Gambia SEO keywords</div>
+      </div>
+      <div class="tool-open-btn" style="background:linear-gradient(135deg,#4285F4,#34A853)">
+        🗺️ Open Google Business Generator
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<!-- QUICK LINKS -->
+<div class="quick">
+  <a href="webgen-gambia-v3.html" class="q-link">
+    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    New website
+  </a>
+  <a href="webgen-crm.html" class="q-link">
+    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add client
+  </a>
+  <a href="webgen-crm.html" class="q-link">
+    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Create invoice
+  </a>
+  <a href="whatsapp-catalog-generator.html" class="q-link">
+    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    New catalog
+  </a>
+  <div class="q-link" onclick="openClientPortalPreview()" style="cursor:pointer">👁️ Client Portal</div>
+  <a href="social-media-generator.html" class="q-link">📱 Social posts</a>
+  <a href="google-business-generator.html" class="q-link">🗺️ Google listing</a>
+  <div class="q-link" onclick="window.open('https://console.anthropic.com','_blank')">
+    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    API Console
+  </div>
+  <div class="q-link" onclick="window.open('https://ap.www.namecheap.com','_blank')">
+    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    Namecheap
+  </div>
+</div>
+
+<!-- TIPS TICKER -->
+<div class="ticker" style="margin-top:24px">
+  <div class="ticker-inner" id="ticker-inner"></div>
+</div>
+
+<!-- ROADMAP PROGRESS -->
+<div class="progress-section">
+  <div class="progress-card">
+    <div class="progress-header">
+      <span class="progress-title">Development Roadmap</span>
+      <span style="font-size:11px;color:var(--mu)">Phase 1 & 2 complete · Phase 3-4 planned</span>
+    </div>
+    <div class="phase-row">
+      <div class="phase done">
+        <div class="phase-glow" style="background:var(--ac)"></div>
+        <div class="phase-num" style="color:var(--ac)">PHASE 1</div>
+        <div class="phase-name">Website Generator</div>
+        <div class="phase-detail">10 templates, 16 palettes, 10 fonts, CMS, photo upload, API integration</div>
+        <div class="phase-badge done">✓ Complete</div>
+      </div>
+      <div class="phase active">
+        <div class="phase-glow" style="background:var(--ac2)"></div>
+        <div class="phase-num" style="color:var(--ac2)">PHASE 2</div>
+        <div class="phase-name">Agency Tools</div>
+        <div class="phase-detail">Client CRM, invoices, tasks, log, analytics, WhatsApp catalog</div>
+        <div class="phase-badge active">✓ Complete</div>
+      </div>
+      <div class="phase">
+        <div class="phase-num" style="color:var(--yl)">PHASE 3</div>
+        <div class="phase-name">Gambia Features</div>
+        <div class="phase-detail">Afrimoney payments, Wolof/Mandinka, offline mode, more local templates</div>
+        <div class="phase-badge plan">Planned</div>
+      </div>
+      <div class="phase">
+        <div class="phase-num" style="color:var(--mu)">PHASE 4</div>
+        <div class="phase-name">Online Platform</div>
+        <div class="phase-detail">SaaS platform, client self-login, auto deployment, reseller model</div>
+        <div class="phase-badge plan">Future</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USER MANAGEMENT (admin only) -->
+<div class="admin-panel" id="admin-panel">
+  <div class="admin-card">
+    <div class="admin-header">
+      <span class="admin-title">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Team Members
+      </span>
+      <button class="add-user-btn" onclick="openUserModal()">+ Add User</button>
+    </div>
+    <table class="users-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Last Login</th><th>Actions</th></tr></thead>
+      <tbody id="users-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <h3 id="modal-title">Add Team Member</h3>
+    <div class="modal-error" id="modal-error"></div>
+    <input type="hidden" id="modal-user-id">
+    <div class="field"><label>Name</label><input type="text" id="modal-name" placeholder="Full name"></div>
+    <div class="field"><label>Email</label><input type="email" id="modal-email" placeholder="email@example.com"></div>
+    <div class="field"><label>Role</label>
+      <select id="modal-role">
+        <option value="admin">Admin — Full access</option>
+        <option value="medewerker" selected>Medewerker — Tools access</option>
+        <option value="klant">Klant — Own website only</option>
+      </select>
+    </div>
+    <div class="field"><label>Password</label><input type="password" id="modal-pass" placeholder="Set password"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeUserModal()">Cancel</button>
+      <button class="modal-btn primary" id="modal-save-btn" onclick="saveUser()">Save</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">© 2026 KOK Enterprises · WebGen Gambia Agency Platform · All tools work offline — no internet needed (except for website generation)</div>
+  <div class="footer-right">
+    <a class="footer-link" onclick="window.open('https://console.anthropic.com','_blank')">Get API key</a>
+    <a class="footer-link" onclick="window.open('https://namecheap.com','_blank')">Namecheap</a>
+    <a class="footer-link" onclick="window.open('https://wa.me','_blank')">WhatsApp Business</a>
+  </div>
+</footer>
+
+<script>
+// ─── AUTH CONFIG ───
+const AUTH_KEY = 'webgen_auth';
+const WORKER_URL_KEY = 'wg_worker_url';
+let currentUser = null;
+
+function getAuth() {
+  try { return JSON.parse(localStorage.getItem(AUTH_KEY) || 'null'); } catch { return null; }
+}
+function getWorkerUrl() { return localStorage.getItem(WORKER_URL_KEY) || ''; }
+
+// ─── AUTH CHECK ───
+(function checkAuth() {
+  const params = new URLSearchParams(window.location.search);
+  const isOfflineMode = params.get('offline') === 'true';
+
+  if (isOfflineMode) {
+    // Allow offline access without login
+    currentUser = { name: 'Offline', role: 'admin', email: '' };
+    initPage();
+    return;
+  }
+
+  const auth = getAuth();
+  if (!auth || !auth.token || !auth.user) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  currentUser = auth.user;
+  initPage();
+})();
+
+function initPage() {
+  // Date
+  document.getElementById('date-badge').textContent = new Date().toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'long', year:'numeric'});
+
+  // User bar
+  if (currentUser && currentUser.name !== 'Offline') {
+    const bar = document.getElementById('user-bar');
+    bar.style.display = 'flex';
+    document.getElementById('user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
+    document.getElementById('user-name').textContent = currentUser.name;
+    const pill = document.getElementById('user-role-pill');
+    pill.textContent = currentUser.role;
+    pill.className = 'role-pill ' + currentUser.role;
+  }
+
+  // Role-based visibility
+  applyRoleVisibility();
+
+  // Load CRM stats
+  loadStats();
+
+  // Tips ticker
+  loadTicker();
+
+  // Load users if admin
+  if (currentUser.role === 'admin') {
+    document.getElementById('admin-panel').classList.add('show');
+    loadUsers();
+  }
+}
+
+function applyRoleVisibility() {
+  const role = currentUser.role;
+  const toolCards = document.querySelectorAll('.tool-card');
+  const quickLinks = document.querySelectorAll('.q-link');
+  const statsRow = document.querySelector('.stats');
+  const progressSection = document.querySelector('.progress-section');
+
+  if (role === 'klant') {
+    // Klant → redirect to Client Portal
+    window.location.href = 'client-portal.html';
+    return;
+  }
+  // Admin and medewerker see everything (medewerker just can't see admin panel)
+}
+
+function loadStats() {
+  try {
+    const crm = JSON.parse(localStorage.getItem('kok_crm_v2') || '{}');
+    const clients = crm.clients || [];
+    const invoices = crm.invoices || [];
+    const active = clients.filter(c => c.status === 'active');
+    const rev = active.reduce((s, c) => s + (c.price || 0), 0);
+    const now = new Date();
+    const days = d => Math.ceil((new Date(d) - now) / 864e5);
+    const expiring = clients.filter(c => days(c.renewal) <= 30 && days(c.renewal) >= 0).length;
+    const overdue = clients.filter(c => days(c.renewal) < 0 && c.status !== 'inactive').length;
+    document.getElementById('s-clients').textContent = clients.length;
+    document.getElementById('s-revenue').textContent = rev >= 1000 ? 'D' + Math.round(rev / 1000) + 'K' : 'D' + rev;
+    document.getElementById('s-expiring').textContent = expiring;
+    document.getElementById('s-overdue').textContent = overdue;
+    document.getElementById('s-invoices').textContent = invoices.length;
+  } catch (e) {}
+}
+
+function loadTicker() {
+  const tips = [
+    {label:'TIP', text:'Generate a website → upload HTML to Namecheap → done in 5 minutes'},
+    {label:'TIP', text:'Use the CRM to track which clients expire this month'},
+    {label:'TIP', text:'WhatsApp catalog link works without a website — share it on any platform'},
+    {label:'REMINDER', text:'Renew your Anthropic API key credit when balance runs low'},
+    {label:'TIP', text:'Add the CMS PIN in the CRM so you can always reset client access'},
+    {label:'TIP', text:'Create a WhatsApp Business account for each client — it\'s free'},
+    {label:'TIP', text:'D500 Starter → D3,500 Premium · Upsell by showing value each month'},
+    {label:'REMINDER', text:'Check expiring subscriptions every week in the CRM'},
+    {label:'TIP', text:'Log every client call in the CRM — builds a history that helps you'},
+    {label:'TIP', text:'The generated HTML file works offline — clients can open it without internet'},
+  ];
+  const ticker = document.getElementById('ticker-inner');
+  const all = [...tips, ...tips];
+  ticker.innerHTML = all.map(t => `<div class="ticker-item"><span>${t.label}</span>${t.text}</div>`).join('');
+}
+
+// ─── LOGOUT ───
+function openClientPortalPreview() {
+  // Set preview flag, open portal in new tab
+  localStorage.setItem('wg_admin_preview','1');
+  window.open('client-portal.html', '_blank');
+}
+
+function doLogout() {
+  const workerUrl = getWorkerUrl();
+  const auth = getAuth();
+
+  if (workerUrl && auth && auth.token) {
+    fetch(workerUrl + '/api/auth/logout', {
+      method: 'POST',
+      headers: { 'X-Session-Token': auth.token }
+    }).catch(() => {});
+  }
+
+  localStorage.removeItem(AUTH_KEY);
+  window.location.href = 'login.html';
+}
+
+// ─── USER MANAGEMENT ───
+let allUsers = [];
+
+async function loadUsers() {
+  const workerUrl = getWorkerUrl();
+  const auth = getAuth();
+
+  if (workerUrl && auth && auth.token) {
+    try {
+      const resp = await fetch(workerUrl + '/api/users', {
+        headers: { 'X-Session-Token': auth.token }
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        allUsers = data.users || [];
+        renderUsers();
+        return;
+      }
+    } catch {}
+  }
+
+  // Offline: load from localStorage
+  const offlineUsers = JSON.parse(localStorage.getItem('webgen_offline_users') || '[]');
+  allUsers = offlineUsers.map(u => ({
+    id: u.id, name: u.name, email: u.email, role: u.role,
+    createdAt: u.createdAt, lastLogin: u.lastLogin
+  }));
+  renderUsers();
+}
+
+function renderUsers() {
+  const tbody = document.getElementById('users-tbody');
+  if (!tbody) return;
+
+  if (allUsers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--mu);padding:20px">No team members yet</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = allUsers.map(u => `
+    <tr>
+      <td style="font-weight:500">${esc(u.name)}</td>
+      <td style="color:var(--mu)">${esc(u.email)}</td>
+      <td><span class="role-pill ${u.role}">${u.role}</span></td>
+      <td style="color:var(--mu);font-size:11px">${u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : 'Never'}</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn" onclick="editUser('${u.id}')">Edit</button>
+          ${u.id !== currentUser.id ? `<button class="action-btn del" onclick="deleteUser('${u.id}','${esc(u.name)}')">Delete</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+function openUserModal(userId) {
+  document.getElementById('modal-error').classList.remove('show');
+  document.getElementById('modal-user-id').value = userId || '';
+  document.getElementById('modal-title').textContent = userId ? 'Edit Team Member' : 'Add Team Member';
+
+  if (userId) {
+    const u = allUsers.find(x => x.id === userId);
+    if (u) {
+      document.getElementById('modal-name').value = u.name;
+      document.getElementById('modal-email').value = u.email;
+      document.getElementById('modal-role').value = u.role;
+      document.getElementById('modal-pass').value = '';
+      document.getElementById('modal-pass').placeholder = 'Leave empty to keep current';
+    }
+  } else {
+    document.getElementById('modal-name').value = '';
+    document.getElementById('modal-email').value = '';
+    document.getElementById('modal-role').value = 'medewerker';
+    document.getElementById('modal-pass').value = '';
+    document.getElementById('modal-pass').placeholder = 'Set password';
+  }
+
+  document.getElementById('user-modal').classList.add('show');
+}
+
+function editUser(id) { openUserModal(id); }
+
+function closeUserModal() {
+  document.getElementById('user-modal').classList.remove('show');
+}
+
+async function saveUser() {
+  const userId = document.getElementById('modal-user-id').value;
+  const name = document.getElementById('modal-name').value.trim();
+  const email = document.getElementById('modal-email').value.trim();
+  const role = document.getElementById('modal-role').value;
+  const pass = document.getElementById('modal-pass').value;
+  const errEl = document.getElementById('modal-error');
+
+  if (!name || !email) {
+    errEl.textContent = 'Name and email are required';
+    errEl.classList.add('show');
+    return;
+  }
+  if (!userId && !pass) {
+    errEl.textContent = 'Password is required for new users';
+    errEl.classList.add('show');
+    return;
+  }
+
+  const workerUrl = getWorkerUrl();
+  const auth = getAuth();
+
+  if (workerUrl && auth && auth.token) {
+    try {
+      const body = { name, email, role };
+      if (pass) body.password = pass;
+
+      const url = userId ? workerUrl + '/api/users/' + userId : workerUrl + '/api/users';
+      const method = userId ? 'PUT' : 'POST';
+
+      const resp = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'X-Session-Token': auth.token },
+        body: JSON.stringify(body)
+      });
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        errEl.textContent = data.error || 'Failed to save user';
+        errEl.classList.add('show');
+        return;
+      }
+
+      closeUserModal();
+      loadUsers();
+      return;
+    } catch (e) {
+      errEl.textContent = 'Server error: ' + e.message;
+      errEl.classList.add('show');
+      return;
+    }
+  }
+
+  // Offline mode
+  const offlineUsers = JSON.parse(localStorage.getItem('webgen_offline_users') || '[]');
+
+  if (userId) {
+    const u = offlineUsers.find(x => x.id === userId);
+    if (u) {
+      u.name = name;
+      u.email = email.toLowerCase();
+      u.role = role;
+      if (pass) {
+        u.passwordHash = await simpleHash(pass);
+      }
+    }
+  } else {
+    if (offlineUsers.find(u => u.email === email.toLowerCase())) {
+      errEl.textContent = 'Email already exists';
+      errEl.classList.add('show');
+      return;
+    }
+    const hash = await simpleHash(pass);
+    offlineUsers.push({
+      id: 'u_' + Date.now(),
+      name,
+      email: email.toLowerCase(),
+      passwordHash: hash,
+      role,
+      createdAt: new Date().toISOString(),
+      lastLogin: null
+    });
+  }
+
+  localStorage.setItem('webgen_offline_users', JSON.stringify(offlineUsers));
+  closeUserModal();
+  loadUsers();
+}
+
+async function deleteUser(userId, userName) {
+  if (!confirm('Delete user "' + userName + '"? This cannot be undone.')) return;
+
+  const workerUrl = getWorkerUrl();
+  const auth = getAuth();
+
+  if (workerUrl && auth && auth.token) {
+    try {
+      await fetch(workerUrl + '/api/users/' + userId, {
+        method: 'DELETE',
+        headers: { 'X-Session-Token': auth.token }
+      });
+    } catch {}
+  } else {
+    // Offline
+    const offlineUsers = JSON.parse(localStorage.getItem('webgen_offline_users') || '[]');
+    const filtered = offlineUsers.filter(u => u.id !== userId);
+    localStorage.setItem('webgen_offline_users', JSON.stringify(filtered));
+  }
+
+  loadUsers();
+}
+
+async function simpleHash(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str + '_webgen_salt_2026');
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Close modal on overlay click
+document.getElementById('user-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeUserModal();
+});
+</script>
+</body>
+</html>

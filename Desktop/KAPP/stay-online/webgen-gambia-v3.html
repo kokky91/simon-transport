@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>WebGen Gambia Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--sf:#13131a;--sf2:#1c1c27;--sf3:#222230;--br:#2a2a3a;--ac:#00e5a0;--ac2:#7b5cff;--tx:#f0f0ff;--mu:#8888aa;--rd:#ff4d6d}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx)}
+.app{display:flex;height:100vh;overflow:hidden}
+.L{width:480px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--br);display:flex;flex-direction:column}
+.R{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.lh{padding:13px 18px;border-bottom:1px solid var(--br);flex-shrink:0}
+.lr{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.ld{width:23px;height:23px;border-radius:6px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ld svg{width:12px;height:12px;fill:white}
+.lr span{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.5px}
+.tg{font-size:11px;color:var(--mu)}
+.tabs{display:flex;border-bottom:1px solid var(--br);flex-shrink:0}
+.tab{padding:8px 0;font-size:11px;font-weight:500;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;flex:1;text-align:center}
+.tab.active{color:var(--ac);border-bottom-color:var(--ac)}
+.tab:hover:not(.active){color:var(--tx)}
+.tc{flex:1;overflow:hidden;position:relative}
+.tp{position:absolute;inset:0;overflow-y:auto;padding:13px 17px;display:none}
+.tp.active{display:block}
+.tp::-webkit-scrollbar{width:3px}
+.tp::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.sl{font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--ac);text-transform:uppercase;margin:13px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--br)}
+.sl:first-child{margin-top:0}
+.fd{margin-bottom:8px}
+.fd label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mu);margin-bottom:3px;font-weight:500}
+.fd label small{font-size:10px;font-weight:400}
+.fi{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--ac)}
+textarea.fi{resize:vertical;min-height:54px;line-height:1.5}
+select.fi option{background:var(--sf2)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.togr{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br)}
+.togr:last-child{border-bottom:none}
+.ti span{font-size:12px;font-weight:500;display:block}
+.ti small{font-size:11px;color:var(--mu)}
+.tog{width:33px;height:18px;border-radius:9px;background:var(--br);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--ac)}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:white;transition:transform .2s}
+.tog.on::after{transform:translateX(15px)}
+/* SECTIONS GRID */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px}
+.sc{border:1.5px solid var(--br);border-radius:7px;padding:8px;cursor:pointer;transition:all .15s;background:var(--sf2)}
+.sc.on{border-color:var(--ac);background:rgba(0,229,160,.07)}
+.sct{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.sci{font-size:13px}
+.sch{width:12px;height:12px;border-radius:3px;border:1.5px solid var(--br);transition:all .15s}
+.sc.on .sch{background:var(--ac);border-color:var(--ac)}
+.scn{font-size:11px;font-weight:600}
+.scd{font-size:10px;color:var(--mu);line-height:1.3}
+/* TEMPLATE GRID */
+.tpl-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.tpl{border:2px solid var(--br);border-radius:9px;overflow:hidden;cursor:pointer;transition:all .2s;background:var(--sf2)}
+.tpl:hover{border-color:var(--mu);transform:translateY(-1px)}
+.tpl.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac)}
+.tpl-prev{height:80px;display:flex;flex-direction:column;overflow:hidden}
+.tpl-info{padding:7px 9px}
+.tpl-name{font-size:11px;font-weight:600;margin-bottom:1px}
+.tpl-desc{font-size:10px;color:var(--mu)}
+/* PALETTE GRID */
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:7px}
+.pc{border:2px solid var(--br);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .15s}
+.pc:hover{border-color:var(--mu)}
+.pc.on{border-color:var(--ac)}
+.psw{height:30px;display:flex}
+.ps1{flex:2}.ps2{flex:1}
+.pn{font-size:9px;padding:3px 5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc.on .pn{color:var(--ac)}
+/* FONT GRID */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px}
+.fc{border:2px solid var(--br);border-radius:8px;padding:9px;cursor:pointer;transition:all .15s;background:var(--sf2)}
+.fc:hover{border-color:var(--mu)}
+.fc.on{border-color:var(--ac);background:rgba(0,229,160,.06)}
+.fn{font-size:10px;font-weight:600;color:var(--mu);margin-bottom:3px}
+.fc.on .fn{color:var(--ac)}
+.fh{font-size:16px;line-height:1.1;margin-bottom:2px;color:var(--tx)}
+.fb{font-size:10px;color:var(--mu);line-height:1.4}
+/* LAYOUT GRID */
+.lg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:7px}
+.lc{border:2px solid var(--br);border-radius:8px;padding:7px 5px;cursor:pointer;transition:all .15s;background:var(--sf2);text-align:center}
+.lc:hover{border-color:var(--mu)}
+.lc.on{border-color:var(--ac);background:rgba(0,229,160,.06)}
+.lt{width:100%;height:44px;margin-bottom:4px;display:flex;align-items:center;justify-content:center}
+.ln{font-size:10px;font-weight:600;color:var(--mu)}
+.lc.on .ln{color:var(--ac)}
+/* ANIM ROW */
+.ar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px}
+.ab{padding:5px 9px;background:var(--sf2);border:1px solid var(--br);border-radius:6px;color:var(--mu);font-size:11px;cursor:pointer;transition:all .15s}
+.ab.on{border-color:var(--ac);color:var(--ac);background:rgba(0,229,160,.08)}
+/* CUSTOM COLORS */
+.cc{display:none;margin-top:7px}
+.ci{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.cw{display:flex;flex-direction:column;gap:2px}
+.cw label{font-size:10px;color:var(--mu)}
+.cw input[type=color]{width:100%;height:28px;border:1px solid var(--br);border-radius:5px;padding:1px 2px;cursor:pointer;background:var(--sf2)}
+/* LANG */
+.ln-row{display:flex;gap:5px}
+.lb{flex:1;padding:6px 3px;background:var(--sf2);border:1px solid var(--br);border-radius:7px;color:var(--mu);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center}
+.lb.on{background:rgba(0,229,160,.1);border-color:var(--ac);color:var(--ac)}
+/* PHOTOS */
+.phg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:5px}
+.phs{position:relative;aspect-ratio:4/3;border:1.5px dashed var(--br);border-radius:7px;overflow:hidden;cursor:pointer;background:var(--sf2);transition:border-color .2s}
+.phs:hover{border-color:var(--ac)}
+.phs.hi{border-style:solid;border-color:var(--ac)}
+.phs input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.php{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--mu);pointer-events:none;z-index:1}
+.php svg{width:14px;height:14px;opacity:.4}
+.php span{font-size:9px;text-align:center;padding:0 3px;line-height:1.3}
+.phv{position:absolute;inset:0;object-fit:cover;z-index:1;pointer-events:none}
+.phrm{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:var(--rd);border:none;color:white;font-size:9px;cursor:pointer;z-index:3;display:none;align-items:center;justify-content:center}
+.phs.hi .phrm{display:flex}
+.phb{position:absolute;bottom:2px;left:3px;background:rgba(0,0,0,.75);color:#fff;font-size:8px;padding:1px 4px;border-radius:3px;z-index:2;pointer-events:none}
+.ls{width:56px;height:56px;border:1.5px dashed var(--br);border-radius:9px;position:relative;overflow:hidden;cursor:pointer;background:var(--sf2);flex-shrink:0}
+.ls input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.ls img{width:100%;height:100%;object-fit:contain;position:absolute;top:0;left:0}
+.ls .lp{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.ls .lp svg{width:17px;height:17px;opacity:.3}
+.lu{display:flex;gap:11px;align-items:center;margin-bottom:9px}
+/* DYN LISTS */
+.dl{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.di-r{display:flex;gap:5px;align-items:flex-start}
+.di-i{flex:1;display:flex;flex-direction:column;gap:3px}
+.di-ih{flex:1;display:flex;gap:5px}
+.di{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:6px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 8px;outline:none}
+.di:focus{border-color:var(--ac)}
+textarea.di{min-height:38px;resize:vertical}
+.rm{width:24px;height:24px;background:var(--sf3);border:1px solid var(--br);border-radius:5px;color:var(--mu);font-size:12px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0}
+.rm:hover{background:var(--rd);color:white;border-color:var(--rd)}
+.ab2{width:100%;padding:6px;background:var(--sf2);border:1px dashed var(--br);border-radius:7px;color:var(--mu);font-size:11px;cursor:pointer;transition:all .15s;margin-bottom:3px}
+.ab2:hover{border-color:var(--ac);color:var(--ac)}
+.pi{background:var(--sf2);border:1px solid var(--br);border-radius:7px;padding:8px;margin-bottom:6px}
+.pih{display:flex;gap:5px;margin-bottom:5px}
+/* FOOTER */
+.lf{padding:11px 17px;border-top:1px solid var(--br);flex-shrink:0}
+.gb{width:100%;padding:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#000;cursor:pointer;transition:opacity .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:7px}
+.gb:hover{opacity:.9}.gb:active{transform:scale(.98)}.gb:disabled{opacity:.5;cursor:not-allowed}
+/* RIGHT */
+.rh{padding:10px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pl{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.ha{display:flex;gap:5px}
+.actb{padding:5px 11px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid var(--br);background:var(--sf);color:var(--mu)}
+.actb:hover{border-color:var(--ac);color:var(--ac)}
+.actb.p{background:var(--ac);color:#000;border-color:var(--ac)}
+.actb:disabled{opacity:.4;cursor:not-allowed}
+.pb{height:2px;background:var(--br);flex-shrink:0}
+.pf{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));width:0%;transition:width .5s}
+.pa{flex:1;overflow:hidden;position:relative}
+.cs{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--mu)}
+.ei{width:50px;height:50px;border-radius:13px;background:var(--sf);border:1px solid var(--br);display:flex;align-items:center;justify-content:center}
+.ei svg{width:21px;height:21px;opacity:.35}
+.cs h3{font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);font-weight:600}
+.cs p{font-size:12px;text-align:center;max-width:240px;line-height:1.6}
+.sp{width:36px;height:36px;border:2px solid var(--br);border-top-color:var(--ac);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lt2{font-family:'Syne',sans-serif;font-size:13px;color:var(--mu)}
+.sts{display:flex;flex-direction:column;gap:6px}
+.st{font-size:11px;color:var(--mu);display:flex;align-items:center;gap:6px;transition:color .3s}
+.st.done{color:var(--ac)}.st.active{color:var(--tx)}
+.sd{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+.prf{width:100%;height:100%;border:none;background:white}
+.sv-card{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:9px;margin-bottom:7px}
+.sv-card-top{display:flex;gap:8px;align-items:flex-start}
+.sv-img-slot{width:72px;height:72px;flex-shrink:0;border:1.5px dashed var(--br);border-radius:7px;position:relative;overflow:hidden;cursor:pointer;background:var(--sf3);transition:border-color .2s}
+.sv-img-slot:hover{border-color:var(--ac)}
+.sv-img-slot.hi{border-style:solid;border-color:var(--ac)}
+.sv-img-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.sv-img-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--mu);pointer-events:none}
+.sv-img-ph svg{opacity:.4}
+.sv-img-ph span{font-size:9px}
+.sv-fields{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.nt{position:fixed;bottom:14px;right:14px;background:var(--sf);border:1px solid var(--ac);border-radius:7px;padding:8px 13px;font-size:12px;color:var(--ac);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
+.nt.show{opacity:1}
+
+/* ── TABLET & MOBILE RESPONSIVE ── */
+@media (max-width: 900px) {
+  .app{flex-direction:column;height:auto;overflow:auto}
+  .L{width:100%;height:auto;max-height:none;border-right:none;border-bottom:1px solid var(--br)}
+  .R{height:70vh;min-height:400px}
+  .tc{position:relative;overflow:visible}
+  .tp{position:relative;inset:auto;overflow:visible;height:auto}
+  .tabs .tab{font-size:10px;padding:8px 4px}
+}
+@media (max-width: 600px) {
+  .lh{padding:10px 12px}
+  .tp{padding:10px 12px}
+  .lf{padding:10px 12px}
+  .tabs .tab{font-size:9px;padding:7px 3px}
+  .tpl-g{grid-template-columns:1fr 1fr}
+  .pg{grid-template-columns:repeat(3,1fr)}
+  .fg{grid-template-columns:1fr}
+  .phg{grid-template-columns:repeat(3,1fr)}
+  .r2{grid-template-columns:1fr}
+  .rh{padding:8px 12px}
+  .hdr-actions .actb{font-size:10px;padding:5px 8px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="L">
+  <div class="lh">
+    <div class="lr"><a href="index.html" style="color:var(--mu);font-size:10px;text-decoration:none;margin-right:4px;padding:2px 6px;background:var(--sf2);border:1px solid var(--br);border-radius:4px;transition:all .15s;flex-shrink:0;display:inline-flex;align-items:center;gap:3px" onmouseover="this.style.borderColor='var(--ac)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--br)';this.style.color='var(--mu)'"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></a><div class="ld"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></div><span>WebGen Gambia Pro</span></div>
+    <div class="tg">AI website builder for Gambian businesses</div>
+    <div style="margin-top:8px;display:flex;align-items:center;gap:6px">
+      <input id="api-key" type="password" placeholder="Anthropic API key  (sk-ant-...) — or use Worker URL below" style="flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:7px;color:var(--tx);font-family:DM Sans,sans-serif;font-size:11px;padding:6px 9px;outline:none;transition:border-color .2s" oninput="saveKey(this.value)" onfocus="this.style.borderColor=\'var(--ac)\'" onblur="this.style.borderColor=\'var(--br)\'">
+      <span id="key-icon" style="font-size:16px" title="No key set">🔴</span>
+    </div>
+    <div style="font-size:10px;color:var(--mu);margin-top:3px">Worker URL: <input id="worker-url" type="text" placeholder="https://webgen-gambia.NAME.workers.dev" style="background:var(--sf2);border:1px solid var(--br);border-radius:5px;color:var(--tx);font-size:10px;padding:3px 7px;outline:none;width:240px" oninput="saveWorkerUrl(this.value)"> <span id="worker-icon">⚪</span></div>
+    <div style="font-size:10px;color:var(--mu);margin-top:3px;display:flex;align-items:center;gap:4px">Ollama: <input id="ollama-url" type="text" placeholder="http://localhost:11434" style="background:var(--sf2);border:1px solid var(--br);border-radius:5px;color:var(--tx);font-size:10px;padding:3px 7px;outline:none;width:150px" oninput="saveOllamaUrl(this.value)"> <select id="ollama-model" style="background:var(--sf2);border:1px solid var(--br);border-radius:5px;color:var(--tx);font-size:10px;padding:3px 5px;outline:none"><option>Loading...</option></select> <span id="ollama-icon">⚪</span></div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab(0)">🏢 Business</div>
+    <div class="tab" onclick="showTab(1)">📸 Photos</div>
+    <div class="tab" onclick="showTab(2)">📄 Sections</div>
+    <div class="tab" onclick="showTab(3)">✏️ Content</div>
+    <div class="tab" onclick="showTab(4)">🎨 Style</div>
+  </div>
+  <div class="tc">
+
+    <!-- TAB 0 -->
+    <div class="tp active" id="tab-0">
+      <div class="sl">Basic Info</div>
+      <div class="fd"><label>Business name *</label><input class="fi" id="f-naam" placeholder="e.g. Fatou's Fashion House"></div>
+      <div class="fd"><label>Sector *</label><select class="fi" id="f-sector"><option value="">Select sector...</option><option>Restaurant / Food & Beverage</option><option>Hotel / Guesthouse / Lodge</option><option>Clothing Store / Boutique</option><option>Supermarket / Retail</option><option>Transport / Logistics</option><option>Construction / Contractor</option><option>Salon / Beauty / Barber</option><option>School / Training Center</option><option>Hospital / Clinic</option><option>Agriculture / Farming</option><option>Tourism / Tour Operator</option><option>Technology / IT</option><option>Motorbike Shop / Garage</option><option>Law Firm / Legal</option><option>Finance / Microfinance</option><option>NGO / Non-profit</option><option>Other</option></select></div>
+      <div class="fd"><label>Tagline</label><input class="fi" id="f-tagline" placeholder="e.g. Fresh food, Gambian soul"></div>
+      <div class="fd"><label>About us / Mission</label><textarea class="fi" id="f-desc" placeholder="Who are you? Founded when? What makes you unique?"></textarea></div>
+      <div class="fd"><label>USPs <small>comma-separated</small></label><input class="fi" id="f-usp" placeholder="e.g. 100% local, 24/7 available"></div>
+      <div class="sl">Contact & Location</div>
+      <div class="r2"><div class="fd"><label>Phone</label><input class="fi" id="f-tel" placeholder="+220 ..."></div><div class="fd"><label>WhatsApp</label><input class="fi" id="f-wa" placeholder="+220 ..."></div></div>
+      <div class="r2"><div class="fd"><label>Email</label><input class="fi" id="f-email" placeholder="info@..."></div><div class="fd"><label>Domain</label><input class="fi" id="f-domain" placeholder="business.gm"></div></div>
+      <div class="fd"><label>Address</label><input class="fi" id="f-adres" placeholder="e.g. Kairaba Avenue, Serrekunda"></div>
+      <div class="r2"><div class="fd"><label>City</label><input class="fi" id="f-stad" placeholder="e.g. Banjul"></div><div class="fd"><label>Opening hours</label><input class="fi" id="f-uren" placeholder="Mon-Sat 8am-8pm"></div></div>
+      <div class="sl">Social Media</div>
+      <div class="r2"><div class="fd"><label>Facebook</label><input class="fi" id="f-fb" placeholder="facebook.com/..."></div><div class="fd"><label>Instagram</label><input class="fi" id="f-ig" placeholder="@username"></div></div>
+      <div class="r2"><div class="fd"><label>TikTok</label><input class="fi" id="f-tt" placeholder="@username"></div><div class="fd"><label>YouTube</label><input class="fi" id="f-yt" placeholder="youtube.com/..."></div></div>
+      <div class="sl">Features</div>
+      <div class="togr"><div class="ti"><span>WhatsApp chat button</span><small>Floating bottom-right</small></div><div class="tog on" id="tog-wa" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Google Maps embed</span><small>In contact section</small></div><div class="tog on" id="tog-map" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Contact form</span><small>Name, email, phone, message</small></div><div class="tog on" id="tog-form" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Scroll animations</span></div><div class="tog on" id="tog-anim" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Cookie notice</span></div><div class="tog" id="tog-cookie" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Back-to-top button</span></div><div class="tog on" id="tog-top" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Built-in CMS panel</span><small>Client can add/edit products via admin login</small></div><div class="tog on" id="tog-cms" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Dark mode toggle</span><small>Light/dark switch in navbar</small></div><div class="tog" id="tog-dark" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>Afrimoney payment button</span><small>Let customers pay via Afrimoney</small></div><div class="tog" id="tog-afri" onclick="this.classList.toggle('on')"></div></div>
+      <div class="togr"><div class="ti"><span>QMoney payment button</span><small>Let customers pay via QMoney</small></div><div class="tog" id="tog-qmoney" onclick="this.classList.toggle('on')"></div></div>
+      <div id="payment-fields" style="margin-top:8px">
+        <div class="fd"><label style="font-size:12px;color:var(--mu)">Afrimoney number</label><input class="fi" id="f-afri-num" placeholder="+220 ..." style="font-size:12px"></div>
+        <div class="fd"><label style="font-size:12px;color:var(--mu)">QMoney number</label><input class="fi" id="f-qmoney-num" placeholder="+220 ..." style="font-size:12px"></div>
+      </div>
+      <div id="cms-pin-wrap" style="margin-top:6px">
+        <div class="fd"><label>CMS Admin PIN <small>Client uses this to login</small></label><input class="fi" id="f-cms-pin" type="text" placeholder="e.g. 1234  (default: 1234)" maxlength="8"></div>
+        <div class="fd"><label>CMS language</label><select class="fi" id="f-cms-lang"><option value="en">English</option><option value="nl">Dutch</option><option value="fr">French</option></select></div>
+      </div>
+    </div>
+
+    <!-- TAB 1 -->
+    <div class="tp" id="tab-1">
+      <div class="sl">Logo</div>
+      <div class="lu"><div class="ls" id="logo-slot"><input type="file" accept="image/*" onchange="uploadLogo(this)"><div class="lp"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div></div><div style="font-size:12px;color:var(--mu);line-height:1.7"><strong style="color:var(--tx);display:block;font-size:12px">Business logo</strong>PNG (transparent), JPG or SVG<br>Appears in nav & footer</div></div>
+      <div class="sl">Photos <span id="phc" style="font-weight:400;color:var(--mu)">(0/9)</span></div>
+      <div class="phg" id="photo-grid"></div>
+      <p style="font-size:11px;color:var(--mu);text-align:center;margin-bottom:10px">Up to 9 photos — placed automatically in the right sections</p>
+      <div class="sl">Favicon</div>
+      <div class="lu"><div class="ls" id="fav-slot"><input type="file" accept="image/*" onchange="uploadFavicon(this)"><div class="lp"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h10M7 16h5"/></svg></div></div><div style="font-size:12px;color:var(--mu);line-height:1.7"><strong style="color:var(--tx);display:block;font-size:12px">Favicon (tab icon)</strong>Square, ideally 32×32 px</div></div>
+    </div>
+
+    <!-- TAB 2 -->
+    <div class="tp" id="tab-2">
+      <div class="sl">Page Sections</div>
+      <div class="sg" id="secs-grid"></div>
+      <p style="font-size:11px;color:var(--mu);margin-bottom:10px">Hero → About → Services → [extras] → Contact → Footer always present.</p>
+      <div class="sl">Navigation style</div>
+      <div class="fd"><select class="fi" id="f-nav"><option value="sticky">Sticky — stays on top while scrolling</option><option value="transparent">Transparent hero, solid on scroll</option><option value="simple">Simple fixed navigation</option><option value="sidebar">Sidebar navigation (desktop)</option></select></div>
+      <div class="sl">Hero style</div>
+      <div class="fd"><select class="fi" id="f-hero"><option value="fullscreen">Fullscreen photo with text overlay</option><option value="split">Split — text left, image right</option><option value="centered">Centered text with gradient</option><option value="minimal">Minimalist — large typography</option><option value="pattern">Animated CSS pattern background</option><option value="parallax">Parallax scrolling effect</option></select></div>
+      <div class="sl">Footer style</div>
+      <div class="fd"><select class="fi" id="f-footer"><option value="full">Full — columns, socials, newsletter</option><option value="medium">Medium — logo + links + contact</option><option value="minimal">Minimal — copyright + socials</option></select></div>
+    </div>
+
+    <!-- TAB 3 -->
+    <div class="tp" id="tab-3">
+      <div class="sl">Services / Products <span style="font-weight:400;color:var(--mu);font-size:9px;letter-spacing:0;text-transform:none">— with photo, price & category</span></div>
+      <div id="sv-list"></div><button class="ab2" onclick="addSv()">+ Add product / service</button>
+      <div class="sl">Team Members</div>
+      <div class="dl" id="tm-list"></div><button class="ab2" onclick="addTm()">+ Add team member</button>
+      <div class="sl">Pricing / Packages</div>
+      <div id="pr-list"></div><button class="ab2" onclick="addPr()">+ Add pricing package</button>
+      <div class="sl">Reviews / Testimonials</div>
+      <div class="dl" id="rv-list"></div><button class="ab2" onclick="addRv()">+ Add review</button>
+      <div class="sl">FAQ</div>
+      <div class="dl" id="fq-list"></div><button class="ab2" onclick="addFq()">+ Add question & answer</button>
+      <div class="sl">Call to Action</div>
+      <div class="fd"><label>CTA button text</label><input class="fi" id="f-cta" placeholder="e.g. Contact Us, Book Now"></div>
+      <div class="fd"><label>CTA subtext</label><input class="fi" id="f-ctas" placeholder="e.g. Free quote within 24 hours"></div>
+      <div class="sl">SEO</div>
+      <div class="fd"><label>Meta description <small>max 160 chars</small></label><textarea class="fi" id="f-meta" maxlength="160" style="min-height:46px" placeholder="Short description for Google..."></textarea></div>
+      <div class="fd"><label>Keywords <small>comma-separated</small></label><input class="fi" id="f-kw" placeholder="e.g. restaurant Banjul, Gambian food"></div>
+      <div class="sl">Extra instructions</div>
+      <div class="fd"><label>Free text for Claude</label><textarea class="fi" id="f-extra" style="min-height:68px" placeholder="e.g. use kente patterns, make it extremely luxurious, add a video background..."></textarea></div>
+    </div>
+
+    <!-- TAB 4: STYLE -->
+    <div class="tp" id="tab-4">
+      <div class="sl">Template</div>
+      <div class="tpl-g" id="tpl-grid"></div>
+      <div class="sl">Color Palette</div>
+      <div class="pg" id="pal-grid"></div>
+      <div class="cc" id="custom-pal">
+        <div class="ci">
+          <div class="cw"><label>Primary</label><input type="color" id="f-c1" value="#1a6b3c"></div>
+          <div class="cw"><label>Accent</label><input type="color" id="f-c2" value="#d4a017"></div>
+          <div class="cw"><label>Background</label><input type="color" id="f-c3" value="#f8f5f0"></div>
+          <div class="cw"><label>Text</label><input type="color" id="f-c4" value="#1a1a1a"></div>
+        </div>
+      </div>
+      <div class="sl">Font Pairing</div>
+      <div class="fg" id="font-grid"></div>
+      <div class="sl">Layout Style</div>
+      <div class="lg" id="layout-grid"></div>
+      <div class="sl">Scroll Animation</div>
+      <div class="ar" id="anim-row"></div>
+      <div class="sl">Border Radius</div>
+      <div class="fd"><select class="fi" id="f-radius"><option value="sharp">Sharp (0px) — industrial</option><option value="soft" selected>Soft (8px) — professional</option><option value="round">Round (16px) — friendly</option><option value="pill">Pill (999px) — app-like</option></select></div>
+      <div class="sl">Website Language</div>
+      <div class="ln-row">
+        <button class="lb on" data-lang="en">English</button>
+        <button class="lb" data-lang="nl">Dutch</button>
+        <button class="lb" data-lang="fr">Français</button>
+        <button class="lb" data-lang="wo">Wolof</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="lf"><button class="gb" id="gen-btn" onclick="generate()"><svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.4 6.6L19 10l-6.6 2.4L10 19l-2.4-6.6L1 10l6.6-2.4z"/></svg>Generate Website</button></div>
+</div>
+
+<div class="R">
+  <div class="rh"><span class="pl" id="prev-lbl">PREVIEW</span><div class="ha"><button class="actb" id="copy-btn" onclick="copyHTML()" disabled>Copy HTML</button><button class="actb p" id="dl-btn" onclick="downloadHTML()" disabled>⬇ Download</button><button class="actb" id="akkoord-btn" onclick="clientAkkoord()" disabled style="background:var(--ac);color:#000;font-weight:700">✅ Client Akkoord</button></div></div>
+  <div class="pb"><div class="pf" id="progress"></div></div>
+  <div class="pa" id="preview-area">
+    <div class="cs"><div class="ei"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h3>Ready to build</h3><p>Pick a template, fill in the tabs, click Generate</p></div>
+  </div>
+</div>
+</div>
+<div class="nt" id="notif"></div>
+
+<script>
+// ─── AUTH GUARD ───
+(function(){const a=localStorage.getItem('webgen_auth');if(!a){window.location.href='login.html';return;}try{const d=JSON.parse(a);if(!d||!d.token||!d.user){window.location.href='login.html';return;}if(d.user.role==='klant'){window.location.href='index.html';return;}}catch(e){window.location.href='login.html';}})();
+
+const TEMPLATES=[
+  {id:'corporate',n:'Corporate',d:'Clean, trustworthy, structured',col:['#1a3a6b','#00b4d8','#f0f6ff','#0d1b2a'],font:'modern',layout:'grid',
+   prev:`<div style="background:#1a3a6b;height:35px;display:flex;align-items:center;padding:0 8px"><div style="background:#00b4d8;width:28px;height:5px;border-radius:2px"></div></div><div style="background:#f0f6ff;flex:1;padding:5px 7px"><div style="background:#1a3a6b;height:7px;width:65%;border-radius:2px;margin-bottom:3px"></div><div style="background:#00b4d8;height:4px;width:42%;border-radius:2px;margin-bottom:5px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px"><div style="background:#1a3a6b22;height:17px;border-radius:2px"></div><div style="background:#1a3a6b22;height:17px;border-radius:2px"></div><div style="background:#1a3a6b22;height:17px;border-radius:2px"></div></div></div>`},
+  {id:'luxury',n:'Dark Luxury',d:'Premium, gold accents, elegant',col:['#1a1a2e','#c9a84c','#0f0f1a','#e8e8e8'],font:'elegant',layout:'editorial',
+   prev:`<div style="background:#1a1a2e;height:35px;display:flex;align-items:center;justify-content:center"><div style="color:#c9a84c;font-size:9px;letter-spacing:3px;font-weight:600">LUXURY</div></div><div style="background:#0f0f1a;flex:1;padding:5px 7px"><div style="background:#c9a84c;height:1px;margin-bottom:4px"></div><div style="background:#fff3;height:6px;width:55%;border-radius:1px;margin:0 auto 3px"></div><div style="background:#c9a84c55;height:4px;width:35%;border-radius:1px;margin:0 auto 5px"></div><div style="background:#c9a84c;height:19px;border-radius:2px;width:44%;margin:0 auto"></div></div>`},
+  {id:'african',n:'African Bold',d:'Vibrant patterns, warm & cultural',col:['#8b4513','#d4a017','#fdf6f0','#2c1810'],font:'bold',layout:'asymmetric',
+   prev:`<div style="background:linear-gradient(90deg,#8b4513,#d4a017);height:35px;display:flex;align-items:center;padding:0 8px"><div style="color:white;font-size:8px;font-weight:700;letter-spacing:1px">AFRICA</div></div><div style="background:#fdf6f0;flex:1;padding:5px 7px;position:relative;overflow:hidden"><div style="position:absolute;right:-8px;top:-8px;width:40px;height:40px;border-radius:50%;background:#d4a01722"></div><div style="background:#8b4513;height:8px;width:70%;border-radius:2px;margin-bottom:3px"></div><div style="background:#d4a017;height:4px;width:42%;border-radius:2px;margin-bottom:4px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px"><div style="background:#8b451322;height:15px;border-radius:3px"></div><div style="background:#d4a01722;height:15px;border-radius:3px"></div></div></div>`},
+  {id:'fresh',n:'Fresh & Clean',d:'Light, airy, modern minimalist',col:['#2d6a4f','#95d5b2','#f0faf5','#1b3a2d'],font:'minimal',layout:'clean',
+   prev:`<div style="background:#f0faf5;height:35px;display:flex;align-items:center;padding:0 8px;border-bottom:1px solid #95d5b255"><div style="background:#2d6a4f;width:18px;height:18px;border-radius:4px"></div><div style="flex:1"></div><div style="background:#95d5b2;height:7px;width:27px;border-radius:3px"></div></div><div style="background:#f0faf5;flex:1;padding:5px 7px"><div style="background:#2d6a4f;height:9px;width:60%;border-radius:7px;margin-bottom:3px"></div><div style="background:#95d5b2;height:4px;width:38%;border-radius:3px;margin-bottom:5px"></div><div style="background:#2d6a4f;height:18px;width:36%;border-radius:18px"></div></div>`},
+  {id:'sunset',n:'Sunset Africa',d:'Warm sunset gradients, vibrant',col:['#d62828','#fcbf49','#fff9f0','#003049'],font:'bold',layout:'full-bleed',
+   prev:`<div style="background:linear-gradient(135deg,#d62828,#f77f00,#fcbf49);height:42px;display:flex;align-items:center;padding:0 8px"><div style="color:white;font-size:7px;font-weight:700;letter-spacing:1px;text-shadow:0 1px 2px #00000055">SUNSET</div></div><div style="background:#003049;flex:1;padding:5px 7px"><div style="background:#fcbf49;height:6px;width:55%;border-radius:2px;margin-bottom:3px"></div><div style="background:#f77f0066;height:3px;width:37%;border-radius:2px;margin-bottom:5px"></div><div style="background:#fcbf4922;height:16px;border-radius:3px;border:1px solid #fcbf4944"></div></div>`},
+  {id:'ocean',n:'Ocean & Sky',d:'Deep blues, calm and professional',col:['#0077b6','#90e0ef','#caf0f8','#03045e'],font:'modern',layout:'grid',
+   prev:`<div style="background:linear-gradient(135deg,#03045e,#0077b6);height:40px;display:flex;align-items:flex-end;padding:0 8px 4px"><div style="background:white;height:6px;width:60%;border-radius:2px"></div></div><div style="background:#caf0f8;flex:1;padding:5px 7px"><div style="background:#0077b6;height:4px;width:38%;border-radius:2px;margin-bottom:5px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px"><div style="background:#0077b633;height:18px;border-radius:3px"></div><div style="background:#90e0ef66;height:18px;border-radius:3px"></div></div></div>`},
+  {id:'editorial',n:'Editorial',d:'Magazine layout, type-driven',col:['#1a1a1a','#e63946','#fafafa','#333333'],font:'classic',layout:'editorial',
+   prev:`<div style="background:#1a1a1a;height:32px;display:flex;align-items:center;padding:0 8px"><div style="color:#e63946;font-size:11px;font-weight:900;letter-spacing:-1px">GBZ</div><div style="flex:1"></div><div style="display:flex;gap:3px"><div style="background:#fff4;height:2px;width:10px;border-radius:1px"></div><div style="background:#fff4;height:2px;width:10px;border-radius:1px"></div></div></div><div style="background:#fafafa;flex:1;padding:5px 7px"><div style="background:#1a1a1a;height:11px;width:88%;border-radius:1px;margin-bottom:2px"></div><div style="background:#e63946;height:2px;width:100%;margin-bottom:3px"></div><div style="display:grid;grid-template-columns:2fr 1fr;gap:3px"><div style="background:#1a1a1a11;height:20px;border-radius:1px"></div><div style="background:#1a1a1a11;height:20px;border-radius:1px"></div></div></div>`},
+  {id:'tech',n:'Tech Purple',d:'Futuristic, gradients, modern',col:['#6b2d82','#c084fc','#f5f3ff','#1a0030'],font:'modern',layout:'full-bleed',
+   prev:`<div style="background:#1a0030;height:35px;display:flex;align-items:center;padding:0 8px"><div style="background:linear-gradient(90deg,#6b2d82,#c084fc);height:7px;width:22px;border-radius:3px;margin-right:5px"></div><div style="background:#fff2;height:4px;width:37%;border-radius:2px"></div></div><div style="background:#f5f3ff;flex:1;padding:5px 7px"><div style="background:#6b2d82;height:8px;width:65%;border-radius:3px;margin-bottom:3px"></div><div style="background:#c084fc;height:4px;width:38%;border-radius:2px;margin-bottom:5px"></div><div style="background:linear-gradient(135deg,#6b2d8222,#c084fc22);height:18px;border-radius:4px"></div></div>`},
+  {id:'nature',n:'Nature & Earth',d:'Organic, earthy, sustainable',col:['#386641','#6a994e','#f2e8cf','#1a1a00'],font:'classic',layout:'grid',
+   prev:`<div style="background:#386641;height:35px;display:flex;align-items:center;padding:0 8px"><div style="background:#f2e8cf;height:13px;width:13px;border-radius:50%;margin-right:5px"></div><div style="background:#6a994e;height:4px;width:32%;border-radius:2px"></div></div><div style="background:#f2e8cf;flex:1;padding:5px 7px"><div style="background:#386641;height:7px;width:60%;border-radius:2px;margin-bottom:3px"></div><div style="background:#6a994e;height:4px;width:40%;border-radius:2px;margin-bottom:4px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px"><div style="background:#38664122;height:15px;border-radius:2px"></div><div style="background:#6a994e22;height:15px;border-radius:2px"></div><div style="background:#38664122;height:15px;border-radius:2px"></div></div></div>`},
+  {id:'gambia-market',n:'Gambia Market',d:'Vibrant street market feel',col:['#1a6b3c','#d4a017','#fdf8f0','#1a1a00'],font:'african',layout:'grid',
+   prev:`<div style="background:linear-gradient(90deg,#1a6b3c,#d4a017,#1a6b3c);height:35px;display:flex;align-items:center;padding:0 8px;gap:4px"><div style="color:white;font-size:8px;font-weight:700">🌍 MARKET</div></div><div style="background:#fdf8f0;flex:1;padding:5px 7px"><div style="background:#1a6b3c;height:8px;width:65%;border-radius:2px;margin-bottom:3px"></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;margin-bottom:3px"><div style="background:#d4a01722;height:20px;border-radius:2px;border-top:2px solid #d4a017"></div><div style="background:#1a6b3c22;height:20px;border-radius:2px;border-top:2px solid #1a6b3c"></div><div style="background:#d4a01722;height:20px;border-radius:2px;border-top:2px solid #d4a017"></div></div></div>`},
+  {id:'mosque-islamic',n:'Islamic / Mosque',d:'Clean, respectful, spiritual',col:['#1a3a5c','#c9a84c','#f8f5f0','#0d1b2a'],font:'elegant',layout:'clean',
+   prev:`<div style="background:#1a3a5c;height:35px;display:flex;align-items:center;justify-content:center;gap:6px"><div style="color:#c9a84c;font-size:9px;letter-spacing:2px;font-weight:600">☪ MOSQUE</div></div><div style="background:#f8f5f0;flex:1;padding:5px 7px"><div style="background:#c9a84c;height:1px;margin-bottom:5px"></div><div style="background:#1a3a5c;height:8px;width:60%;border-radius:1px;margin:0 auto 3px"></div><div style="background:#c9a84c55;height:4px;width:40%;border-radius:1px;margin:0 auto 5px"></div><div style="background:#1a3a5c22;height:16px;border-radius:3px"></div></div>`},
+  {id:'beach-resort',n:'Beach Resort',d:'Tropical, ocean, holiday vibes',col:['#0077b6','#00b4d8','#f0f9ff','#023e8a'],font:'playful',layout:'full-bleed',
+   prev:`<div style="background:linear-gradient(135deg,#023e8a,#0077b6,#00b4d8);height:40px;display:flex;align-items:flex-end;padding:0 8px 5px"><div style="color:white;font-size:7px;font-weight:700;letter-spacing:1px">🏖 BEACH RESORT</div></div><div style="background:#f0f9ff;flex:1;padding:5px 7px"><div style="background:#0077b6;height:7px;width:60%;border-radius:5px;margin-bottom:3px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px"><div style="background:#00b4d822;height:18px;border-radius:5px"></div><div style="background:#0077b622;height:18px;border-radius:5px"></div></div></div>`},
+  {id:'ngo-charity',n:'NGO / Charity',d:'Trustworthy, impactful, community',col:['#2d6a4f','#52b788','#f0faf5','#1b4332'],font:'modern',layout:'editorial',
+   prev:`<div style="background:#2d6a4f;height:35px;display:flex;align-items:center;padding:0 8px;gap:6px"><div style="background:#52b78833;border-radius:4px;padding:2px 7px;color:#95d5b2;font-size:8px;font-weight:700">NGO</div><div style="flex:1;background:#52b78833;height:5px;border-radius:2px"></div></div><div style="background:#f0faf5;flex:1;padding:5px 7px"><div style="background:#2d6a4f;height:8px;width:70%;border-radius:2px;margin-bottom:3px"></div><div style="background:#52b78855;height:4px;width:45%;border-radius:2px;margin-bottom:5px"></div><div style="background:#2d6a4f11;height:16px;border-radius:3px;border-left:3px solid #52b788"></div></div>`},
+  {id:'clinic-health',n:'Clinic / Health',d:'Clean, trustworthy, medical',col:['#0077b6','#90e0ef','#f0f9ff','#03045e'],font:'minimal',layout:'clean',
+   prev:`<div style="background:#0077b6;height:35px;display:flex;align-items:center;padding:0 8px;gap:6px"><div style="color:white;font-size:12px">✚</div><div style="color:white;font-size:9px;font-weight:600;letter-spacing:1px">CLINIC</div></div><div style="background:#f0f9ff;flex:1;padding:5px 7px"><div style="background:#0077b6;height:7px;width:60%;border-radius:4px;margin-bottom:3px"></div><div style="background:#90e0ef55;height:4px;width:40%;border-radius:3px;margin-bottom:5px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px"><div style="background:#0077b611;height:16px;border-radius:3px;border:1px solid #90e0ef"></div><div style="background:#0077b611;height:16px;border-radius:3px;border:1px solid #90e0ef"></div></div></div>`},
+  {id:'school-edu',n:'School / Education',d:'Inspiring, structured, academic',col:['#7209b7','#f72585','#fff0f9','#240046'],font:'bold',layout:'grid',
+   prev:`<div style="background:linear-gradient(135deg,#7209b7,#f72585);height:35px;display:flex;align-items:center;padding:0 8px"><div style="color:white;font-size:8px;font-weight:700;letter-spacing:1px">🎓 SCHOOL</div></div><div style="background:#fff0f9;flex:1;padding:5px 7px"><div style="background:#7209b7;height:8px;width:65%;border-radius:2px;margin-bottom:3px"></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px"><div style="background:#7209b711;height:16px;border-radius:2px;border-top:2px solid #7209b7"></div><div style="background:#f7258511;height:16px;border-radius:2px;border-top:2px solid #f72585"></div><div style="background:#7209b711;height:16px;border-radius:2px;border-top:2px solid #7209b7"></div></div></div>`},
+  {id:'bold-red',n:'Bold Energy',d:'High-contrast, powerful, dynamic',col:['#c1121f','#f4a261','#fff8f5','#1a0a00'],font:'bold',layout:'full-bleed',
+   prev:`<div style="background:#c1121f;height:42px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:0 8px"><div style="background:white;height:7px;width:65%;border-radius:2px;margin-bottom:2px"></div><div style="background:#f4a261;height:3px;width:40%;border-radius:2px"></div></div><div style="background:#fff8f5;flex:1;padding:5px 7px"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px"><div style="background:#c1121f11;height:16px;border-radius:2px;border-left:2px solid #c1121f"></div><div style="background:#c1121f11;height:16px;border-radius:2px;border-left:2px solid #c1121f"></div><div style="background:#c1121f11;height:16px;border-radius:2px;border-left:2px solid #c1121f"></div></div></div>`},
+];
+
+const PALETTES=[
+  {id:'gambia',n:'Gambia',p:'#1a6b3c',s:'#d4a017',bg:'#f8f5f0',t:'#1a1a1a'},
+  {id:'ocean',n:'Ocean',p:'#0077b6',s:'#90e0ef',bg:'#caf0f8',t:'#03045e'},
+  {id:'earth',n:'Earth',p:'#8b4513',s:'#e07b39',bg:'#fdf6f0',t:'#2c1810'},
+  {id:'luxury',n:'Luxury',p:'#1a1a2e',s:'#c9a84c',bg:'#0f0f1a',t:'#e8e8e8'},
+  {id:'forest',n:'Forest',p:'#2d6a4f',s:'#95d5b2',bg:'#f0faf5',t:'#1b3a2d'},
+  {id:'fire',n:'Fire',p:'#c1121f',s:'#f4a261',bg:'#fff8f5',t:'#1a0a00'},
+  {id:'royal',n:'Royal',p:'#1a3a6b',s:'#00b4d8',bg:'#f0f6ff',t:'#0d1b2a'},
+  {id:'sunset',n:'Sunset',p:'#d62828',s:'#fcbf49',bg:'#fff9f0',t:'#003049'},
+  {id:'purple',n:'Purple',p:'#6b2d82',s:'#c084fc',bg:'#f5f3ff',t:'#1a0030'},
+  {id:'sand',n:'Sand',p:'#8b6914',s:'#e8c97e',bg:'#fdf9f0',t:'#2c2000'},
+  {id:'midnight',n:'Midnight',p:'#1b4f72',s:'#5dade2',bg:'#eaf4fb',t:'#0d1b2a'},
+  {id:'rose',n:'Rose',p:'#c0392b',s:'#f1948a',bg:'#fdf2f0',t:'#1a0000'},
+  {id:'nature',n:'Nature',p:'#386641',s:'#6a994e',bg:'#f2e8cf',t:'#1a1a00'},
+  {id:'slate',n:'Slate',p:'#334155',s:'#94a3b8',bg:'#f8fafc',t:'#0f172a'},
+  {id:'teal',n:'Teal',p:'#0d9488',s:'#5eead4',bg:'#f0fdfa',t:'#042f2e'},
+  {id:'custom',n:'Custom ✎',p:'#1a6b3c',s:'#d4a017',bg:'#f8f5f0',t:'#1a1a1a'},
+];
+
+const FONTS=[
+  {id:'modern',n:'Modern',h:'Syne',b:'DM Sans',ph:'Strong & Clear',pb:'Professional body text for everyday reading.'},
+  {id:'elegant',n:'Elegant',h:'Playfair Display',b:'Lato',ph:'Refined Beauty',pb:'Graceful flow and sophisticated character.'},
+  {id:'bold',n:'Bold Impact',h:'Oswald',b:'Roboto',ph:'POWERFUL IMPACT',pb:'Clear and direct, built for action.'},
+  {id:'classic',n:'Classic',h:'Merriweather',b:'Source Serif 4',ph:'Timeless Craft',pb:'Traditional, trusted, like a fine newspaper.'},
+  {id:'playful',n:'Playful',h:'Fredoka One',b:'Nunito',ph:'Fun & Friendly',pb:'Warm and approachable. Community brands.'},
+  {id:'minimal',n:'Minimal',h:'Inter',b:'Inter',ph:'Clean Precision',pb:'Swiss precision. Every pixel intentional.'},
+  {id:'display',n:'Display',h:'Bebas Neue',b:'Open Sans',ph:'DISPLAY BOLD',pb:'Open, highly readable body at any size.'},
+  {id:'luxury2',n:'Luxury',h:'Cormorant Garamond',b:'Jost',ph:'Exquisite',pb:'Crisp modern body that complements.'},
+  {id:'african',n:'African',h:'Ubuntu',b:'Cabin',ph:'Ubuntu Strength',pb:'Warm and approachable for African brands.'},
+  {id:'tech',n:'Tech',h:'Space Grotesk',b:'IBM Plex Sans',ph:'Tech Forward',pb:'IBM Plex — designed for digital precision.'},
+];
+
+const LAYOUTS=[
+  {id:'grid',n:'Grid',s:`<svg width="40" height="32" viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="38" height="7" rx="1"/><rect x="1" y="12" width="17" height="9" rx="1"/><rect x="22" y="12" width="17" height="9" rx="1"/><rect x="1" y="25" width="10" height="6" rx="1"/><rect x="15" y="25" width="10" height="6" rx="1"/><rect x="29" y="25" width="10" height="6" rx="1"/></svg>`},
+  {id:'editorial',n:'Editorial',s:`<svg width="40" height="32" viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="38" height="11" rx="1"/><rect x="1" y="16" width="25" height="14" rx="1"/><rect x="29" y="16" width="10" height="6" rx="1"/><rect x="29" y="24" width="10" height="6" rx="1"/></svg>`},
+  {id:'full-bleed',n:'Full Bleed',s:`<svg width="40" height="32" viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="38" height="16" rx="1"/><rect x="7" y="6" width="26" height="4" rx="1"/><rect x="10" y="12" width="20" height="2" rx="1"/><rect x="1" y="21" width="38" height="9" rx="1"/></svg>`},
+  {id:'asymmetric',n:'Asymmetric',s:`<svg width="40" height="32" viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="16" height="30" rx="1"/><rect x="21" y="1" width="18" height="9" rx="1"/><rect x="21" y="13" width="18" height="9" rx="1"/><rect x="21" y="25" width="18" height="6" rx="1"/></svg>`},
+  {id:'clean',n:'Clean',s:`<svg width="40" height="32" viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="1" y1="5" x2="39" y2="5"/><rect x="8" y="9" width="24" height="6" rx="1"/><rect x="12" y="17" width="16" height="3" rx="1.5"/><rect x="14" y="22" width="12" height="8" rx="3"/></svg>`},
+  {id:'magazine',n:'Magazine',s:`<svg width="40" height="32" viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="38" height="5" rx="1"/><line x1="1" y1="8" x2="39" y2="8"/><rect x="1" y="11" width="25" height="9" rx="1"/><rect x="29" y="11" width="10" height="4" rx="1"/><rect x="29" y="17" width="10" height="3" rx="1"/><rect x="1" y="23" width="7" height="8" rx="1"/><rect x="11" y="23" width="7" height="8" rx="1"/><rect x="22" y="23" width="7" height="8" rx="1"/><rect x="32" y="23" width="7" height="8" rx="1"/></svg>`},
+];
+
+const ANIMS=[{id:'fade-up',n:'Fade Up'},{id:'fade-in',n:'Fade In'},{id:'slide-in',n:'Slide In'},{id:'zoom',n:'Zoom In'},{id:'stagger',n:'Stagger'},{id:'none',n:'None'}];
+
+const SECS=[
+  {id:'gallery',i:'🖼️',t:'Photo Gallery',d:'Grid with lightbox'},
+  {id:'team',i:'👥',t:'Our Team',d:'Photos & roles'},
+  {id:'pricing',i:'💰',t:'Pricing',d:'Package cards'},
+  {id:'testimonials',i:'⭐',t:'Reviews',d:'Customer quotes'},
+  {id:'faq',i:'❓',t:'FAQ',d:'Q&A accordion'},
+  {id:'stats',i:'📊',t:'Statistics',d:'Numbers & wins'},
+  {id:'cta-banner',i:'📢',t:'CTA Banner',d:'Bold call to action'},
+  {id:'partners',i:'🤝',t:'Partners',d:'Client logos'},
+  {id:'video',i:'🎬',t:'Video',d:'YouTube embed'},
+  {id:'map',i:'📍',t:'Map Section',d:'Large map'},
+  {id:'blog',i:'📰',t:'News / Blog',d:'Recent posts'},
+  {id:'awards',i:'🏆',t:'Awards',d:'Certifications'},
+];
+
+let selTpl='corporate',selPal='gambia',selFont='modern',selLayout='grid',selAnim='fade-up',selLang='en';
+let photos=[],logoData=null,faviconData=null,genHTML='';
+const MAX=9,PLBLS=['Hero','Product 1','Product 2','Atmosphere','Team','Location','Extra 1','Extra 2','Extra 3'];
+let activeSecs=new Set(['gallery','testimonials','faq','cta-banner']);
+
+function buildTpls(){
+  const g=document.getElementById('tpl-grid');g.innerHTML='';
+  TEMPLATES.forEach(t=>{
+    const c=document.createElement('div');c.className='tpl'+(selTpl===t.id?' on':'');
+    c.innerHTML=`<div class="tpl-prev">${t.prev}</div><div class="tpl-info"><div class="tpl-name">${t.n}</div><div class="tpl-desc">${t.d}</div></div>`;
+    c.onclick=()=>{selTpl=t.id;
+      const td=TEMPLATES.find(x=>x.id===t.id);
+      if(td){selFont=td.font;selLayout=td.layout;
+        const mp=PALETTES.find(p=>p.p===td.col[0]);
+        if(mp){selPal=mp.id;}else{selPal='custom';document.getElementById('f-c1').value=td.col[0];document.getElementById('f-c2').value=td.col[1];document.getElementById('f-c3').value=td.col[2];document.getElementById('f-c4').value=td.col[3];}
+      }
+      buildTpls();buildPals();buildFonts();buildLayouts();
+    };
+    g.appendChild(c);
+  });
+}
+
+function buildPals(){
+  const g=document.getElementById('pal-grid');g.innerHTML='';
+  PALETTES.forEach(p=>{
+    const c=document.createElement('div');c.className='pc'+(selPal===p.id?' on':'');
+    c.innerHTML=`<div class="psw"><div class="ps1" style="background:${p.p}"></div><div class="ps2" style="background:${p.s}"></div></div><div class="pn">${p.n}</div>`;
+    c.onclick=()=>{selPal=p.id;document.getElementById('custom-pal').style.display=p.id==='custom'?'block':'none';buildPals();};
+    g.appendChild(c);
+  });
+  document.getElementById('custom-pal').style.display=selPal==='custom'?'block':'none';
+}
+
+function buildFonts(){
+  const g=document.getElementById('font-grid');g.innerHTML='';
+  FONTS.forEach(f=>{
+    const c=document.createElement('div');c.className='fc'+(selFont===f.id?' on':'');
+    c.innerHTML=`<div class="fn">${f.n}</div><div class="fh">${f.ph}</div><div class="fb">${f.pb}</div>`;
+    c.onclick=()=>{selFont=f.id;buildFonts();};
+    g.appendChild(c);
+  });
+}
+
+function buildLayouts(){
+  const g=document.getElementById('layout-grid');g.innerHTML='';
+  LAYOUTS.forEach(l=>{
+    const c=document.createElement('div');c.className='lc'+(selLayout===l.id?' on':'');
+    c.innerHTML=`<div class="lt">${l.s}</div><div class="ln">${l.n}</div>`;
+    c.onclick=()=>{selLayout=l.id;buildLayouts();};
+    g.appendChild(c);
+  });
+}
+
+function buildAnims(){
+  const g=document.getElementById('anim-row');g.innerHTML='';
+  ANIMS.forEach(a=>{
+    const b=document.createElement('button');b.className='ab'+(selAnim===a.id?' on':'');
+    b.textContent=a.n;b.onclick=()=>{selAnim=a.id;buildAnims();};
+    g.appendChild(b);
+  });
+}
+
+function buildSecs(){
+  const g=document.getElementById('secs-grid');g.innerHTML='';
+  SECS.forEach(s=>{
+    const on=activeSecs.has(s.id);
+    const c=document.createElement('div');c.className='sc'+(on?' on':'');
+    c.innerHTML=`<div class="sct"><span class="sci">${s.i}</span><div class="sch"></div></div><div class="scn">${s.t}</div><div class="scd">${s.d}</div>`;
+    c.onclick=()=>{activeSecs.has(s.id)?activeSecs.delete(s.id):activeSecs.add(s.id);buildSecs();};
+    g.appendChild(c);
+  });
+}
+
+function buildPhotos(){
+  const g=document.getElementById('photo-grid');g.innerHTML='';
+  for(let i=0;i<MAX;i++){
+    const s=document.createElement('div');s.className='phs'+(photos[i]?' hi':'');
+    s.innerHTML=`<input type="file" accept="image/*" onchange="upPhoto(this,${i})">
+<div class="php"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>${PLBLS[i]}</span></div>
+${photos[i]?`<img class="phv" src="data:${photos[i].m};base64,${photos[i].b}">`:''}<button class="phrm" onclick="rmP(event,${i})">✕</button>
+<div class="phb">${PLBLS[i]}</div>`;
+    g.appendChild(s);
+  }
+  document.getElementById('phc').textContent=`(${photos.filter(Boolean).length}/${MAX})`;
+}
+
+async function b64(f){return new Promise(r=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.readAsDataURL(f);});}
+async function upPhoto(inp,i){const f=inp.files[0];if(!f)return;const b=await b64(f);photos[i]={b,m:f.type,l:PLBLS[i]};buildPhotos();}
+function rmP(e,i){e.preventDefault();e.stopPropagation();photos[i]=null;buildPhotos();}
+async function uploadLogo(inp){const f=inp.files[0];if(!f)return;const b=await b64(f);logoData={b,m:f.type};const s=document.getElementById('logo-slot');s.innerHTML=`<input type="file" accept="image/*" onchange="uploadLogo(this)"><img src="data:${f.type};base64,${b}">`;s.style.borderStyle='solid';s.style.borderColor='var(--ac)';}
+async function uploadFavicon(inp){const f=inp.files[0];if(!f)return;const b=await b64(f);faviconData={b,m:f.type};const s=document.getElementById('fav-slot');s.innerHTML=`<input type="file" accept="image/*" onchange="uploadFavicon(this)"><img src="data:${f.type};base64,${b}">`;}
+
+document.querySelectorAll('.lb').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.lb').forEach(x=>x.classList.remove('on'));b.classList.add('on');selLang=b.dataset.lang;};});
+function showTab(i){document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));document.querySelectorAll('.tp').forEach((p,j)=>p.classList.toggle('active',i===j));}
+
+function addSv(){
+  const l=document.getElementById('sv-list');
+  const idx=l.children.length;
+  const r=document.createElement('div');
+  r.className='sv-card';
+  r.innerHTML=`
+  <div class="sv-card-top">
+    <div class="sv-img-slot" id="sv-img-${idx}">
+      <input type="file" accept="image/*" onchange="svUploadImg(this,${idx})">
+      <div class="sv-img-ph"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo</span></div>
+    </div>
+    <div class="sv-fields">
+      <input class="di" placeholder="Product / service name" style="font-weight:600">
+      <div style="display:flex;gap:5px">
+        <input class="di" placeholder="Price (e.g. D150 / D500/kg)" style="flex:1">
+        <select class="di" style="width:95px"><option value="">Category</option><option>Food</option><option>Drink</option><option>Product</option><option>Service</option><option>Package</option><option>Transport</option><option>Other</option></select>
+      </div>
+      <input class="di" placeholder="Tags (e.g. Popular, New, Spicy)" style="font-size:11px">
+    </div>
+    <button class="rm" style="align-self:flex-start;margin-top:2px" onclick="this.closest('.sv-card').remove()">✕</button>
+  </div>
+  <textarea class="di" placeholder="Description — ingredients, features, what's included..." style="width:100%;min-height:44px;resize:vertical;margin-top:5px"></textarea>
+  `;
+  l.appendChild(r);
+}
+
+async function svUploadImg(inp, idx){
+  const f=inp.files[0];if(!f)return;
+  const b=await b64(f);
+  const slot=inp.closest('.sv-img-slot');
+  slot.classList.add('hi');
+  slot.dataset.b64=b;
+  slot.dataset.mime=f.type;
+  slot.innerHTML=`<input type="file" accept="image/*" onchange="svUploadImg(this,${idx})"><img src="data:${f.type};base64,${b}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
+}
+function addTm(){const l=document.getElementById('tm-list');const r=document.createElement('div');r.className='di-r';r.innerHTML=`<div class="di-ih"><input class="di" placeholder="Full name"><input class="di" placeholder="Job title"></div><button class="rm" onclick="this.parentElement.remove()">✕</button>`;l.appendChild(r);}
+function addPr(){const l=document.getElementById('pr-list');const it=document.createElement('div');it.className='pi';it.innerHTML=`<div class="pih"><input class="di" placeholder="Package name" style="flex:1"><input class="di" placeholder="Price (e.g. D500/mo)" style="width:130px"><button class="rm" onclick="this.closest('.pi').remove()">✕</button></div><textarea class="di" placeholder="Features, one per line" style="width:100%;min-height:44px;resize:vertical"></textarea>`;l.appendChild(it);}
+function addRv(){const l=document.getElementById('rv-list');const r=document.createElement('div');r.className='di-r';r.innerHTML=`<div class="di-i"><div class="di-ih"><input class="di" placeholder="Customer name"><select class="di" style="width:80px"><option>⭐⭐⭐⭐⭐</option><option>⭐⭐⭐⭐</option><option>⭐⭐⭐</option></select></div><textarea class="di" placeholder="Review text"></textarea></div><button class="rm" onclick="this.parentElement.remove()">✕</button>`;l.appendChild(r);}
+function addFq(){const l=document.getElementById('fq-list');const r=document.createElement('div');r.className='di-r';r.innerHTML=`<div class="di-i"><input class="di" placeholder="Question"><textarea class="di" placeholder="Answer"></textarea></div><button class="rm" onclick="this.parentElement.remove()">✕</button>`;l.appendChild(r);}
+
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function isOn(id){return document.getElementById(id)?.classList.contains('on');}
+function setP(p){document.getElementById('progress').style.width=p+'%';}
+function notif(m){const n=document.getElementById('notif');n.textContent=m;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),2500);}
+function sd(id){const e=document.getElementById(id);if(e)e.className='st done';}
+function sa(id){const e=document.getElementById(id);if(e)e.className='st active';}
+function getSv(){
+  return[...document.querySelectorAll('#sv-list .sv-card')].map(r=>{
+    const inputs=r.querySelectorAll('input[type=text],input:not([type=file]):not([type=color])');
+    const sel=r.querySelector('select');
+    const ta=r.querySelector('textarea');
+    const imgSlot=r.querySelector('.sv-img-slot');
+    return{
+      n:inputs[0]?.value||'',
+      price:inputs[1]?.value||'',
+      category:sel?.value||'',
+      tags:inputs[2]?.value||'',
+      d:ta?.value||'',
+      img:imgSlot?.dataset?.b64||'',
+      imgMime:imgSlot?.dataset?.mime||''
+    };
+  }).filter(x=>x.n);
+}
+function getTm(){return[...document.querySelectorAll('#tm-list .di-r')].map(r=>{const i=r.querySelectorAll('input');return{n:i[0]?.value||'',r:i[1]?.value||''};}).filter(x=>x.n);}
+function getPr(){return[...document.querySelectorAll('#pr-list .pi')].map(r=>{const i=r.querySelectorAll('input');const ta=r.querySelector('textarea');return{n:i[0]?.value||'',p:i[1]?.value||'',f:ta?.value||''};}).filter(x=>x.n);}
+function getRv(){return[...document.querySelectorAll('#rv-list .di-r')].map(r=>{const i=r.querySelector('input');const ta=r.querySelector('textarea');const s=r.querySelector('select');return{n:i?.value||'',t:ta?.value||'',r:s?.value||'⭐⭐⭐⭐⭐'};}).filter(x=>x.n||x.t);}
+function getFq(){return[...document.querySelectorAll('#fq-list .di-r')].map(r=>{const i=r.querySelectorAll('input,textarea');return{q:i[0]?.value||'',a:i[1]?.value||''};}).filter(x=>x.q);}
+
+const FONT_GF={modern:'Syne:wght@700&family=DM+Sans',elegant:'Playfair+Display:wght@700&family=Lato',bold:'Oswald:wght@700&family=Roboto',classic:'Merriweather:wght@700&family=Source+Serif+4',playful:'Fredoka+One&family=Nunito',minimal:'Inter:wght@300;400;600;700',display:'Bebas+Neue&family=Open+Sans',luxury2:'Cormorant+Garamond:wght@700&family=Jost',african:'Ubuntu:wght@700&family=Cabin',tech:'Space+Grotesk:wght@700&family=IBM+Plex+Sans'};
+
+async function generate(){
+  const naam=gv('f-naam'),sector=gv('f-sector');
+  if(!naam||!sector){notif('Fill in business name and sector (Business tab)');return;}
+  const btn=document.getElementById('gen-btn');
+  btn.disabled=true;['copy-btn','dl-btn'].forEach(id=>document.getElementById(id).disabled=true);
+
+  let pal={...PALETTES.find(p=>p.id===selPal)||PALETTES[0]};
+  if(selPal==='custom'){pal={...pal,p:document.getElementById('f-c1').value,s:document.getElementById('f-c2').value,bg:document.getElementById('f-c3').value,t:document.getElementById('f-c4').value};}
+  const font=FONTS.find(f=>f.id===selFont)||FONTS[0];
+  const tpl=TEMPLATES.find(t=>t.id===selTpl)||TEMPLATES[0];
+  const langMap={en:'English',nl:'Dutch',fr:'French',wo:'Wolof',md:'Mandinka (main language of The Gambia)',fu:'Fula (Gambia)'};
+  const lang=langMap[selLang]||'English';
+  const aPhotos=photos.filter(Boolean);
+  const sv=getSv(),tm=getTm(),pr=getPr(),rv=getRv(),fq=getFq();
+  const secList=[...activeSecs].map(id=>SECS.find(s=>s.id===id)).filter(Boolean);
+
+  const pa=document.getElementById('preview-area');
+  pa.innerHTML=`<div class="cs"><div class="sp"></div><div class="lt2">Building "${tpl.n}" template...</div><div class="sts">
+<div class="st active" id="s1"><div class="sd"></div>Loading template: ${tpl.n}</div>
+<div class="st" id="s2"><div class="sd"></div>Writing ${lang} content</div>
+<div class="st" id="s3"><div class="sd"></div>Building ${secList.length+4} sections</div>
+<div class="st" id="s4"><div class="sd"></div>Processing photos & assets</div>
+<div class="st" id="s5"><div class="sd"></div>Finalizing HTML</div></div></div>`;
+  setP(8);
+
+  const timers=[
+    setTimeout(()=>{sd('s1');sa('s2');setP(22);},4000),
+    setTimeout(()=>{sd('s2');sa('s3');setP(44);},9000),
+    setTimeout(()=>{sd('s3');sa('s4');setP(65);},16000),
+    setTimeout(()=>{sd('s4');sa('s5');setP(83);},22000),
+  ];
+
+  const blocks=[];
+  const LAYOUT_DESC={grid:'Clean grid-based card layout',editorial:'Asymmetric editorial magazine columns','full-bleed':'Full-bleed edge-to-edge sections with bold transitions',asymmetric:'Dynamic asymmetric composition with overlapping elements',clean:'Ultra-clean centered layout with generous negative space',magazine:'Multi-column magazine grid with varied section heights'};
+  const ANIM_DESC={'fade-up':'IntersectionObserver fade + translateY(-20px→0) on all sections','fade-in':'IntersectionObserver opacity 0→1','slide-in':'IntersectionObserver slide in from left/right alternating','zoom':'IntersectionObserver scale(0.95→1) + opacity','stagger':'Staggered IntersectionObserver with 100ms delay per child','none':'No animations'};
+
+  const prompt=`/no_think
+You are a world-class web designer. Create a COMPLETE, stunning, production-ready single-file HTML website for a Gambian business.
+
+=== TEMPLATE: "${tpl.n}" ===
+Description: ${tpl.d}
+Design DNA:
+${tpl.id==='corporate'?'- Structured corporate grid. Clean navbar with underline hover. Hero with brand color overlay on photo. Card-based service grid (3 columns). Clear CTA buttons. Professional typography hierarchy.'
+:tpl.id==='luxury'?'- Dark premium. Deep navy/black surfaces. Gold (#c9a84c) accents ONLY — lines, borders, icons. Large serif headings. Generous whitespace. Centered minimalist hero. Subtle gold divider lines between sections.'
+:tpl.id==='african'?'- African cultural design. Use CSS-generated geometric patterns inspired by kente or adinkra as section backgrounds (repeating SVG or CSS gradient patterns). Warm earthy palette. Bold typography. Diagonal section dividers. Celebrate African identity openly.'
+:tpl.id==='fresh'?'- Light and airy. White/mint surfaces. Large rounded buttons. Lots of whitespace. Soft leaf/nature SVG decorations. Pill-shaped tags. Centered hero with animated gradient blob.'
+:tpl.id==='sunset'?'- Sunset gradient (red→orange→gold) hero. Dark navy (#003049) body. Warm golden text accents. Wave-shaped CSS section dividers. Celebration and warmth.'
+:tpl.id==='ocean'?'- Deep blue gradient backgrounds. Ocean wave SVG dividers. Light aqua (#caf0f8) content areas. Professional and calm. Perfect coastal feel.'
+:tpl.id==='editorial'?'- Magazine layout. Thick black rule lines. Bold serif display type. Stark typographic contrast. Grid columns like a broadsheet. Red accent for pull quotes and section markers.'
+:tpl.id==='tech'?'- Dark surfaces (#1a0030). Purple gradient glow effects on cards. Futuristic UI elements. CSS gradient borders. Monospace accents.'
+:tpl.id==='nature'?'- Soft beige backgrounds. Forest green typography. Organic blob shapes as section backgrounds. Leaf and nature SVG icons. Warm and sustainable feel.'
+:tpl.id==='bold-red'?'- High-contrast. Red (#c1121f) section headers and hero. White body. Diagonal stripe accents. Bold Oswald-style type. Kinetic energy.'
+:'Professional and visually striking'}
+
+Color: Primary ${pal.p}, Accent ${pal.s}, Background ${pal.bg}, Text ${pal.t}
+Fonts: Heading = ${font.h}, Body = ${font.b} — import via @import url('https://fonts.googleapis.com/css2?family=${FONT_GF[selFont]||'Syne:wght@700&family=DM+Sans'}&display=swap')
+Layout: ${LAYOUT_DESC[selLayout]||'Professional layout'}
+Animation: ${ANIM_DESC[selAnim]||'Subtle fade'}
+Border radius: ${gv('f-radius')==='sharp'?'0px sharp':(gv('f-radius')==='round'?'16px round':(gv('f-radius')==='pill'?'999px pill':'8px soft'))}
+Language: ${lang}
+
+=== BUSINESS ===
+Name: ${naam}  |  Sector: ${sector}
+Tagline: ${gv('f-tagline')||''}
+About: ${gv('f-desc')||'A leading professional business in The Gambia.'}
+USPs: ${gv('f-usp')||''}
+Phone: ${gv('f-tel')||'+220 xxx xxxx'}  |  WhatsApp: ${gv('f-wa')||gv('f-tel')||''}
+Email: ${gv('f-email')||''}  |  Domain: ${gv('f-domain')||''}
+Address: ${gv('f-adres')||''}, ${gv('f-stad')||'The Gambia'}  |  Hours: ${gv('f-uren')||'Mon-Sat 8:00-18:00'}
+Social: FB:${gv('f-fb')||''} IG:${gv('f-ig')||''} TT:${gv('f-tt')||''} YT:${gv('f-yt')||''}
+
+=== SERVICES / PRODUCTS ===
+${sv.length?sv.map((d,i)=>`
+Product ${i+1}: ${d.n}
+${d.category?'Category: '+d.category:''}
+${d.price?'Price: '+d.price:''}
+${d.tags?'Tags/Labels: '+d.tags:''}
+${d.d?'Description: '+d.d:''}
+${d.img?'[Has product photo — embed as <img src="data:'+d.imgMime+';base64,'+d.img+'"> in the product card]':''}
+`).join('\n'):'Generate 4-6 realistic services/products for this sector with prices in GMD.'}
+
+=== TEAM === ${tm.length?tm.map(t=>`${t.n} (${t.r})`).join(', '):'Not provided.'}
+=== PRICING === ${pr.length?pr.map(p=>`${p.n}: ${p.p} — ${p.f}`).join(' | '):'Not provided.'}
+=== REVIEWS === ${rv.length?rv.map(r=>`"${r.t}" — ${r.n} ${r.r}`).join(' | '):'Generate 3 realistic Gambian testimonials.'}
+=== FAQ === ${fq.length?fq.map(f=>`Q:${f.q} A:${f.a}`).join(' | '):'Generate 4 realistic FAQs.'}
+
+CTA: ${gv('f-cta')||'Contact Us'} — ${gv('f-ctas')||''}
+Meta: ${gv('f-meta')||''} | Keywords: ${gv('f-kw')||''}
+Extra: ${gv('f-extra')||''}
+
+=== FEATURES ===
+WhatsApp float: ${isOn('tog-wa')?'YES — green circle fixed bottom-right':'NO'}
+Maps: ${isOn('tog-map')?'YES — iframe embed':'NO'}
+Contact form: ${isOn('tog-form')?'YES — name/email/phone/message':'NO'}
+Scroll animation: ${selAnim!=='none'?'YES — '+ANIM_DESC[selAnim]:'NO'}
+Cookie: ${isOn('tog-cookie')?'YES':'NO'}
+Back-to-top: ${isOn('tog-top')?'YES':'NO'}
+Dark mode: ${isOn('tog-dark')?'YES — CSS custom property swap with sun/moon toggle':'NO'}
+Afrimoney payment: ${isOn('tog-afri')?'YES — Add a prominent "Pay with Afrimoney" button. Number: '+gv('f-afri-num'):'NO'}
+QMoney payment: ${isOn('tog-qmoney')?'YES — Add a prominent "Pay with QMoney" button. Number: '+gv('f-qmoney-num'):'NO'}
+${(isOn('tog-afri')||isOn('tog-qmoney'))?'PAYMENT SECTION: Add a section or banner explaining mobile money payment options. Show the phone numbers to send payment to. These are popular mobile money services in The Gambia.':''} 
+Built-in CMS: ${isOn('tog-cms')?'YES — see CMS section below':'NO'}
+Mobile hamburger: YES always required
+Nav: ${gv('f-nav')||'sticky'} | Hero: ${gv('f-hero')||'fullscreen'} | Footer: ${gv('f-footer')||'full'}
+
+=== EXTRA SECTIONS ===
+${secList.length?secList.map(s=>`- ${s.t}: ${s.d}`).join('\n'):'None.'}
+
+=== PHOTOS ===
+${aPhotos.length?`${aPhotos.length} base64 images provided alongside. EMBED as <img src="data:[mime];base64,[data]">. No external URLs.
+- Image 1 (${aPhotos[0]?.l}): Hero full-width background with dark overlay
+${aPhotos.slice(1).map((p,i)=>`- Image ${i+2} (${p.l}): Place in appropriate section`).join('\n')}`
+:'No photos — use CSS gradients, SVG decorations, and color shapes only. No external placeholder URLs whatsoever.'}
+${logoData?'Logo: embed in navbar left + footer center as <img class="site-logo" style="height:40px">':'No logo: styled text.'}
+${faviconData?'Favicon: embed as base64 in <link rel="icon" href="data:...">':''}
+
+=== OUTPUT ===
+- Single HTML file, all CSS+JS embedded (only Google Fonts external)
+- Mobile-first, hamburger menu on mobile
+- Semantic HTML5: header nav main section footer
+- The design MUST clearly look like the "${tpl.n}" template
+- Professional agency quality — distinctive, memorable, beautiful
+- Footer: © ${new Date().getFullYear()} ${naam}. All rights reserved.
+- START with <!DOCTYPE html>
+- Return ONLY the raw HTML. No markdown. No code fences. No explanations.
+- IMPORTANT CMS ATTRIBUTES: Add these data attributes to the relevant HTML sections so content can be updated later:
+  * data-cms-products on the products/services container section
+  * data-cms-blog on the blog/news container section (if present)
+  * data-cms-gallery on the photo gallery container section (if present)
+  * data-cms-about on the about section content area
+  * data-cms-contact on the contact info container
+  * data-cms-tagline on the tagline/subtitle element
+
+${isOn('tog-cms')?`
+=== BUILT-IN CMS ADMIN PANEL ===
+Build a complete product/service manager into the website.
+
+ACCESS: Small lock icon (text: [ADMIN]) hidden in footer. Clicking opens PIN login overlay. PIN: "${gv('f-cms-pin')||'1234'}". Wrong PIN shows error shake.
+
+AFTER LOGIN - Admin dashboard overlay with:
+1. Header: "${naam} - Admin Panel" + big Logout button
+2. List of ALL current products - each row shows name, price, Edit button, Delete button (with confirm)
+3. "Add New Product" section with form fields:
+   - Product name (required)
+   - Price in GMD (e.g. D150, D500/kg)
+   - Category (select: Food, Drink, Product, Service, Package, Other)
+   - Badge label (e.g. Popular, New, Spicy, Best Seller)
+   - Description (textarea)
+   - Product photo (file input, read as base64, store with product)
+   - Save Product button (green)
+4. Success toast notification after saving
+
+DATA SYSTEM (critical - must implement exactly):
+- localStorage key: "cms_${naam.replace(/[^a-z0-9]/gi,'_').toLowerCase()}"
+- Page load: const savedProducts = JSON.parse(localStorage.getItem(storageKey) || 'null'); const products = savedProducts || hardcodedDefaultProducts;
+- Render: renderProducts(products) - rebuilds the products section HTML from array
+- After add/edit/delete: update array, save to localStorage, call renderProducts()
+- Product object: {id, name, price, category, badge, description, photo (base64 string or '')}
+
+RENDER FUNCTION:
+- renderProducts(arr) clears the products container and rebuilds all product cards
+- Cards must use the SAME design/style as the rest of the website
+- Each card shows: photo (if available as base64 img), badge pill, name, price, description
+
+ADMIN UI STYLE:
+- Fixed full-screen white overlay (z-index 9999)
+- Clean minimal UI, large touch-friendly buttons
+- Green = save/add, Red = delete, Gray = cancel/logout
+- Works 100% offline, no server needed
+`: ''}`;
+
+  blocks.push({type:'text',text:prompt});
+  if(logoData) blocks.push({type:'image',source:{type:'base64',media_type:logoData.m,data:logoData.b}});
+  if(faviconData) blocks.push({type:'image',source:{type:'base64',media_type:faviconData.m,data:faviconData.b}});
+  aPhotos.forEach(p=>blocks.push({type:'image',source:{type:'base64',media_type:p.m,data:p.b}}));
+
+  try{
+    const workerUrl=(localStorage.getItem('wg_worker_url')||'').trim();
+    const ollamaUrl=(localStorage.getItem('wg_ollama_url')||'').trim();
+    const ollamaModel=(document.getElementById('ollama-model')||{}).value||'';
+    const apiKey=document.getElementById('api-key').value.trim();
+    if(!workerUrl&&!apiKey&&!ollamaUrl){notif('Enter API key, Worker URL, or Ollama URL!');btn.disabled=false;setP(0);pa.innerHTML='<div class="cs"><div class="ei"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div><h3>Setup needed</h3><p>Enter Worker URL, Ollama URL, or API key at the top.</p></div>';return;}
+    let resp, html='';
+    // Flatten blocks to text for Ollama (it doesn't support image blocks)
+    const promptText = blocks.map(b => typeof b === 'string' ? b : (b.text || '')).join('\n');
+    if(ollamaUrl && ollamaModel){
+      // ── OLLAMA (compact prompt for local models) ──
+      const ollamaPrompt=`/no_think
+Create a COMPLETE single-file HTML website. ALL CSS+JS inline. Mobile-first with hamburger menu. Return ONLY raw HTML, no markdown.
+
+Business: ${naam} | ${sector} | ${gv('f-stad')||'The Gambia'}
+Tagline: ${gv('f-tagline')||''}
+About: ${gv('f-desc')||'A professional business in The Gambia.'}
+Phone: ${gv('f-tel')||'+220 xxx xxxx'} | WhatsApp: ${gv('f-wa')||''} | Email: ${gv('f-email')||''}
+Address: ${gv('f-adres')||''}, ${gv('f-stad')||'The Gambia'} | Hours: ${gv('f-uren')||'Mon-Sat 8:00-18:00'}
+Template: ${tpl.n} — ${tpl.d}
+Colors: Primary ${pal.p}, Accent ${pal.s}, Background ${pal.bg}, Text ${pal.t}
+Font: ${font.h} / ${font.b} via Google Fonts
+${sv.length?'Products: '+sv.map(d=>d.n+(d.price?' '+d.price:'')).join(', '):'Generate 4-6 products/services with GMD prices.'}
+${tm.length?'Team: '+tm.map(t=>t.n+' ('+t.r+')').join(', '):''}
+${rv.length?'Reviews: '+rv.map(r=>'"'+r.t+'" — '+r.n).join(' | '):'Generate 3 Gambian testimonials.'}
+${fq.length?'FAQ: '+fq.map(f=>'Q:'+f.q).join(' | '):'Generate 4 FAQs.'}
+Features: ${isOn('tog-wa')?'WhatsApp float button, ':''} ${isOn('tog-form')?'Contact form, ':''}${isOn('tog-top')?'Back-to-top, ':''}${isOn('tog-dark')?'Dark mode toggle, ':''}${isOn('tog-map')?'Google Maps embed, ':''}hamburger menu
+CTA: ${gv('f-cta')||'Contact Us'}
+Language: ${langMap[selLang]||'English'}
+
+Sections: Hero, About, Products/Services, ${secList.map(s=>s.t).join(', ')}${secList.length?', ':''}Contact, Footer
+Add data-cms-products, data-cms-about, data-cms-contact, data-cms-tagline attributes.
+START with <!DOCTYPE html>. Return ONLY HTML.`;
+      resp=await fetch(ollamaUrl+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:ollamaModel,messages:[{role:'user',content:ollamaPrompt}],stream:false,options:{num_ctx:8192}})});
+      const data=await resp.json();
+      if(data.error) throw new Error('Ollama: '+data.error);
+      html=(data.message&&data.message.content)||'';
+    } else if(workerUrl){
+      resp=await fetch(workerUrl+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:blocks}]})});
+      const data=await resp.json();
+      html=(data.content||[]).map(b=>b.text||'').join('');
+    } else {
+      resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8000,messages:[{role:'user',content:blocks}]})});
+      const data=await resp.json();
+      html=(data.content||[]).map(b=>b.text||'').join('');
+    }
+    timers.forEach(clearTimeout);
+    html=html.replace(/<think>[\s\S]*?<\/think>/gi,'').replace(/^```html\s*/i,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim();
+    // Extract HTML if model wrapped it in other text
+    const htmlMatch=html.match(/(<!DOCTYPE html[\s\S]*<\/html>)/i);
+    if(htmlMatch) html=htmlMatch[1];
+    if(!html||html.length<500)throw new Error('No valid HTML — try again or use a larger model');
+    genHTML=html;setP(100);['s1','s2','s3','s4','s5'].forEach(sd);
+    setTimeout(()=>{
+      pa.innerHTML='<iframe class="prf" id="pf"></iframe>';
+      const doc=document.getElementById('pf').contentDocument;
+      doc.open();doc.write(genHTML);doc.close();
+      document.getElementById('prev-lbl').textContent=naam.toUpperCase()+' — '+tpl.n.toUpperCase();
+      ['copy-btn','dl-btn','akkoord-btn'].forEach(id=>document.getElementById(id).disabled=false);
+      setP(0);
+    },500);
+  }catch(e){
+    timers.forEach(clearTimeout);setP(0);
+    pa.innerHTML=`<div class="cs"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+  btn.disabled=false;
+}
+
+function copyHTML(){if(!genHTML)return;navigator.clipboard.writeText(genHTML).then(()=>notif('HTML copied!'));}
+function downloadHTML(){
+  if(!genHTML)return;
+  const naam=document.getElementById('f-naam').value.trim()||'website';
+  const slug=naam.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([genHTML],{type:'text/html'}));a.download=slug+'.html';a.click();
+  notif('Downloaded!');
+}
+
+function clientAkkoord(){
+  if(!genHTML){notif('Generate a website first');return;}
+  const tpl=TEMPLATES.find(t=>t.id===selTpl)||TEMPLATES[0];
+  const langMap={en:'English',nl:'Dutch',fr:'French'};
+  const data={
+    name:document.getElementById('f-naam').value.trim(),
+    phone:document.getElementById('f-tel').value.trim(),
+    whatsapp:document.getElementById('f-wa').value.trim(),
+    email:document.getElementById('f-email').value.trim(),
+    domain:document.getElementById('f-domain').value.trim(),
+    address:document.getElementById('f-adres').value.trim(),
+    city:document.getElementById('f-stad').value.trim(),
+    social:(document.getElementById('f-fb').value.trim()||'')+(document.getElementById('f-ig').value.trim()?' @'+document.getElementById('f-ig').value.trim():''),
+    tagline:document.getElementById('f-tagline').value.trim(),
+    pin:document.getElementById('f-cms-pin').value.trim()||'1234',
+    template:tpl.n,
+    language:langMap[selLang]||'English',
+    generatedHTML:genHTML,
+    timestamp:new Date().toISOString()
+  };
+  localStorage.setItem('wg_onboarding',JSON.stringify(data));
+  notif('Redirecting to CRM...');
+  setTimeout(()=>window.location.href='webgen-crm.html',600);
+}
+
+function saveKey(v){localStorage.setItem('agk',v);document.getElementById('key-icon').textContent=v.startsWith('sk-ant-')?'🟢':'🟡';}
+function saveWorkerUrl(v){localStorage.setItem('wg_worker_url',v);testWorkerUrl(v);}
+async function testWorkerUrl(v){
+  if(!v){document.getElementById('worker-icon').textContent='⚪';return;}
+  try{const r=await fetch(v+'/api/status');const d=await r.json();
+  document.getElementById('worker-icon').textContent=d.ready?'🟢':'🟡';}
+  catch(e){document.getElementById('worker-icon').textContent='🔴';}
+}
+function saveOllamaUrl(v){localStorage.setItem('wg_ollama_url',v);loadOllamaModels(v);}
+async function loadOllamaModels(url){
+  const sel=document.getElementById('ollama-model');
+  const icon=document.getElementById('ollama-icon');
+  if(!url){icon.textContent='⚪';sel.innerHTML='<option>—</option>';return;}
+  try{
+    const r=await fetch(url+'/api/tags');
+    const d=await r.json();
+    const models=(d.models||[]).sort((a,b)=>(b.details?.parameter_size||'').localeCompare(a.details?.parameter_size||''));
+    sel.innerHTML=models.map(m=>`<option value="${m.name}">${m.name} (${m.details?.parameter_size||'?'})</option>`).join('');
+    // Auto-select best model for code generation
+    const preferred=['qwen3-coder','qwen3:','deepseek','gpt-oss'];
+    for(const p of preferred){const opt=models.find(m=>m.name.includes(p));if(opt){sel.value=opt.name;break;}}
+    localStorage.setItem('wg_ollama_model',sel.value);
+    sel.onchange=()=>localStorage.setItem('wg_ollama_model',sel.value);
+    icon.textContent='🟢';
+  }catch(e){icon.textContent='🔴';sel.innerHTML='<option>Error</option>';}
+}
+function loadKey(){
+  const k=localStorage.getItem('agk')||'';if(k){document.getElementById('api-key').value=k;document.getElementById('key-icon').textContent=k.startsWith('sk-ant-')?'🟢':'🟡';}
+  const w=localStorage.getItem('wg_worker_url')||'';if(w){document.getElementById('worker-url').value=w;testWorkerUrl(w);}
+  const o=localStorage.getItem('wg_ollama_url')||'';if(o){document.getElementById('ollama-url').value=o;loadOllamaModels(o);}
+  const om=localStorage.getItem('wg_ollama_model')||'';if(om){setTimeout(()=>{const s=document.getElementById('ollama-model');if(s)s.value=om;},1000);}
+}
+buildTpls();buildPals();buildFonts();buildLayouts();buildAnims();buildSecs();buildPhotos();addSv();loadKey();
+</script>
+</body>
+</html>

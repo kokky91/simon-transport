@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Client Portal — WebGen Gambia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;--sf:#0f1117;--sf2:#161820;--sf3:#1e2029;--sf4:#252733;
+  --br:#252838;--ac:#00e5a0;--ac2:#7b5cff;
+  --tx:#eeeef5;--mu:#7878a0;--rd:#ff4d6d;--yl:#ffd166;--bl:#4dabf7;
+  --r:10px;--r2:14px;
+}
+html,body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx)}
+body{display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+.hdr{padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--br);background:var(--sf);position:sticky;top:0;z-index:50}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-logo svg{width:16px;height:16px;fill:white}
+.hdr-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px}
+.hdr-sub{font-size:11px;color:var(--mu)}
+.hdr-right{display:flex;align-items:center;gap:10px}
+
+/* Language Toggle */
+.lang-toggle{display:flex;border:1px solid var(--br);border-radius:8px;overflow:hidden;background:var(--sf2)}
+.lang-btn{padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--mu);transition:all .15s;font-family:'DM Sans',sans-serif}
+.lang-btn.on{background:rgba(0,229,160,.15);color:var(--ac)}
+.lang-btn:hover:not(.on){color:var(--tx)}
+
+.user-pill{display:flex;align-items:center;gap:6px;background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:5px 10px;font-size:12px}
+.user-av{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
+.logout-btn{background:var(--sf2);border:1px solid var(--br);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--mu);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.logout-btn:hover{border-color:var(--rd);color:var(--rd)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;padding:8px 24px;border-bottom:1px solid var(--br);background:var(--sf);overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;color:var(--mu);transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--tx);background:var(--sf2)}
+.tab.on{background:rgba(0,229,160,.1);color:var(--ac);font-weight:600}
+.tab-icon{font-size:15px}
+
+/* ── MAIN CONTENT ── */
+.content{flex:1;padding:20px 24px;max-width:1100px;width:100%;margin:0 auto;overflow-y:auto}
+.page{display:none}
+.page.on{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--r2);padding:18px 20px;margin-bottom:14px}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.stat-card{background:var(--sf2);border:1px solid var(--br);border-radius:10px;padding:14px;text-align:center}
+.stat-n{font-family:'Syne',sans-serif;font-size:24px;font-weight:800}
+.stat-l{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* ── BUTTONS ── */
+.btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .12s;display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.primary{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#000;border:none;font-weight:700}
+.btn.primary:hover{opacity:.88}
+.btn.danger{color:var(--rd);border-color:transparent}
+.btn.danger:hover{background:rgba(255,77,109,.1);border-color:var(--rd)}
+.btn.sm{padding:5px 9px;font-size:11px}
+.actions-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+
+/* ── FORM ── */
+.fi{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--ac)}
+.fi::placeholder{color:var(--mu)}
+textarea.fi{min-height:80px;resize:vertical}
+select.fi{cursor:pointer}
+.form-lbl{display:block;font-size:11px;color:var(--mu);margin-bottom:4px;font-weight:500}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-full{grid-column:1/-1}
+.form-row{margin-bottom:12px}
+
+/* ── TABLE / LIST ── */
+.item-grid{display:grid;gap:10px}
+.item-card{background:var(--sf2);border:1px solid var(--br);border-radius:10px;padding:14px;display:flex;gap:12px;align-items:flex-start;transition:border-color .15s}
+.item-card:hover{border-color:var(--ac)}
+.item-thumb{width:64px;height:64px;border-radius:8px;background:var(--sf3);display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;flex-shrink:0}
+.item-thumb img{width:100%;height:100%;object-fit:cover}
+.item-body{flex:1;min-width:0}
+.item-title{font-size:14px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{font-size:11px;color:var(--mu);margin-bottom:4px}
+.item-desc{font-size:12px;color:var(--mu);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item-actions{display:flex;gap:4px;flex-shrink:0;align-self:center}
+.badge{display:inline-flex;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600}
+.badge.green{background:rgba(0,229,160,.12);color:var(--ac)}
+.badge.yellow{background:rgba(255,209,102,.12);color:var(--yl)}
+.badge.gray{background:var(--sf3);color:var(--mu)}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;backdrop-filter:blur(4px)}
+.overlay.show{display:flex}
+.modal{background:var(--sf);border:1px solid var(--br);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:20px}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.x-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--br);background:var(--sf2);color:var(--mu);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.x-btn:hover{border-color:var(--rd);color:var(--rd)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* ── GALLERY GRID ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.gallery-item{position:relative;border-radius:10px;overflow:hidden;background:var(--sf2);border:1px solid var(--br);aspect-ratio:1;cursor:pointer;transition:border-color .15s}
+.gallery-item:hover{border-color:var(--ac)}
+.gallery-item img{width:100%;height:100%;object-fit:cover}
+.gallery-item .caption{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:10px;color:white}
+.gallery-item .g-del{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:6px;background:rgba(255,77,109,.85);color:white;border:none;cursor:pointer;font-size:12px;display:none;align-items:center;justify-content:center}
+.gallery-item:hover .g-del{display:flex}
+
+/* ── PHOTO UPLOAD ── */
+.photo-upload{width:100%;height:120px;border:2px dashed var(--br);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mu);font-size:12px;transition:border-color .2s;text-align:center;flex-direction:column;gap:4px}
+.photo-upload:hover{border-color:var(--ac);color:var(--ac)}
+.photo-preview{width:100%;max-height:200px;border-radius:10px;object-fit:contain;margin-top:8px;display:none}
+
+/* ── STORAGE METER ── */
+.storage-bar{height:6px;background:var(--sf3);border-radius:3px;overflow:hidden;margin-top:6px}
+.storage-fill{height:100%;border-radius:3px;transition:width .3s}
+.storage-info{font-size:10px;color:var(--mu);margin-top:4px;display:flex;justify-content:space-between}
+
+/* ── PUBLISH TOGGLE ── */
+.pub-toggle{display:flex;align-items:center;gap:8px}
+.tgl{position:relative;width:36px;height:20px;cursor:pointer;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-sl{position:absolute;inset:0;background:var(--sf3);border-radius:10px;transition:.2s}
+.tgl-sl:before{content:'';position:absolute;width:16px;height:16px;left:2px;top:2px;background:var(--mu);border-radius:50%;transition:.2s}
+.tgl input:checked+.tgl-sl{background:var(--ac)}
+.tgl input:checked+.tgl-sl:before{transform:translateX(16px);background:white}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:500;z-index:200;transition:transform .3s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:40px 20px;color:var(--mu)}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.empty-text{font-size:14px;margin-bottom:6px}
+.empty-sub{font-size:12px;color:var(--mu)}
+
+/* ── TOOL CARDS (index-style) ── */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:18px}
+.tool-card{background:var(--sf);border:1px solid var(--br);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit}
+.tool-card:hover{border-color:var(--card-color,var(--ac));transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.tc-top{height:120px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.tc-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;z-index:1}
+.tc-pattern{position:absolute;inset:0;opacity:.04}
+.tc-tag{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);border-radius:999px;padding:2px 8px;font-size:10px;font-weight:600;color:white;backdrop-filter:blur(4px);z-index:2}
+.tc-body{padding:14px 16px 16px;flex:1;display:flex;flex-direction:column}
+.tc-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px}
+.tc-desc{font-size:12px;color:var(--mu);line-height:1.6;flex:1;margin-bottom:10px}
+.tc-features{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+.tc-feat{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu)}
+.tc-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.tc-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px;border-radius:9px;font-size:13px;font-weight:600;font-family:'Syne',sans-serif;border:none;cursor:pointer;transition:opacity .15s;color:white;text-decoration:none}
+.tc-btn:hover{opacity:.85}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .hdr{padding:12px 16px;flex-wrap:wrap;gap:8px}
+  .content{padding:14px 16px}
+  .tabs{padding:6px 16px}
+  .form-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .gallery-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+  .tool-grid{grid-template-columns:1fr}
+  .content > .page > div[style*="grid-template-columns"]{grid-template-columns:1fr !important}
+}
+@media(max-width:480px){
+  .hdr-title{font-size:14px}
+  .lang-toggle .lang-btn{padding:4px 7px;font-size:10px}
+  .tab{padding:6px 10px;font-size:12px}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-logo"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></div>
+    <div>
+      <div class="hdr-title" data-i18n="portal_title">Client Portal</div>
+      <div class="hdr-sub" id="hdr-biz-name">WebGen Gambia</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="lang-toggle">
+      <button class="lang-btn on" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('nl')">NL</button>
+      <button class="lang-btn" onclick="setLang('wo')">WO</button>
+      <button class="lang-btn" onclick="setLang('ma')">MA</button>
+    </div>
+    <div class="user-pill">
+      <div class="user-av" id="u-av">K</div>
+      <span id="u-name">Klant</span>
+    </div>
+    <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tab-bar">
+  <div class="tab on" data-tab="dashboard" onclick="switchTab('dashboard')"><span class="tab-icon">📊</span> <span data-i18n="tab_dashboard">Dashboard</span></div>
+  <div class="tab" data-tab="products" onclick="switchTab('products')"><span class="tab-icon">🛍️</span> <span data-i18n="tab_products">Products</span></div>
+  <div class="tab" data-tab="blog" onclick="switchTab('blog')"><span class="tab-icon">📝</span> <span data-i18n="tab_blog">Blog</span></div>
+  <div class="tab" data-tab="gallery" onclick="switchTab('gallery')"><span class="tab-icon">📸</span> <span data-i18n="tab_gallery">Gallery</span></div>
+  <div class="tab" data-tab="siteinfo" onclick="switchTab('siteinfo')"><span class="tab-icon">ℹ️</span> <span data-i18n="tab_siteinfo">Site Info</span></div>
+</div>
+
+<!-- ═══════ DASHBOARD ═══════ -->
+<div class="content">
+<div class="page on" id="p-dashboard">
+
+  <!-- TOOL CARDS GRID -->
+  <div class="tool-grid">
+
+    <!-- WEBSITE UPDATE -->
+    <div class="tool-card" style="--card-color:var(--ac)" onclick="switchTab('products')">
+      <div class="tc-top" style="background:linear-gradient(135deg,#0d2b1f,#0d1a2b)">
+        <svg class="tc-pattern" viewBox="0 0 200 200" fill="none"><rect x="10" y="10" width="80" height="60" rx="4" stroke="white" stroke-width="1"/><rect x="110" y="10" width="80" height="60" rx="4" stroke="white" stroke-width="1"/><rect x="10" y="90" width="180" height="100" rx="4" stroke="white" stroke-width="1"/><line x1="10" y1="110" x2="190" y2="110" stroke="white" stroke-width="1"/></svg>
+        <div class="tc-icon" style="background:rgba(0,229,160,.15)">🌐</div>
+      </div>
+      <div class="tc-body">
+        <div class="tc-name" data-i18n="card_website">Website Update</div>
+        <div class="tc-desc" data-i18n="card_website_desc">Update your products, blog, gallery and site information.</div>
+        <div class="tc-features">
+          <div class="tc-feat"><div class="tc-dot" style="background:var(--ac)"></div><span data-i18n="feat_products">Manage products & prices</span></div>
+          <div class="tc-feat"><div class="tc-dot" style="background:var(--ac)"></div><span data-i18n="feat_blog">Write blog posts</span></div>
+          <div class="tc-feat"><div class="tc-dot" style="background:var(--ac)"></div><span data-i18n="feat_gallery">Upload photos</span></div>
+          <div class="tc-feat"><div class="tc-dot" style="background:var(--ac)"></div><span data-i18n="feat_publish">Download updated website</span></div>
+        </div>
+        <div class="tc-btn" style="background:linear-gradient(135deg,var(--ac),var(--ac2))">
+          <svg width="14" height="14" fill="white" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+          <span data-i18n="card_website_btn">Open Content Editor</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHATSAPP CATALOG -->
+    <a href="whatsapp-catalog-generator.html" class="tool-card" style="--card-color:#25D366">
+      <div class="tc-top" style="background:linear-gradient(135deg,#0d2b1a,#051a10)">
+        <svg class="tc-pattern" viewBox="0 0 200 200" fill="none"><rect x="40" y="30" width="120" height="140" rx="8" stroke="white" stroke-width="1"/><rect x="55" y="50" width="90" height="55" rx="3" stroke="white" stroke-width="1"/><line x1="55" y1="120" x2="145" y2="120" stroke="white" stroke-width="1"/><line x1="55" y1="133" x2="120" y2="133" stroke="white" stroke-width="1"/></svg>
+        <div class="tc-icon" style="background:rgba(37,211,102,.15)">💬</div>
+        <div class="tc-tag">WhatsApp</div>
+      </div>
+      <div class="tc-body">
+        <div class="tc-name" data-i18n="card_whatsapp">WhatsApp Catalog</div>
+        <div class="tc-desc" data-i18n="card_whatsapp_desc">Generate a professional product catalog with WhatsApp order buttons.</div>
+        <div class="tc-features">
+          <div class="tc-feat"><div class="tc-dot" style="background:#25D366"></div><span data-i18n="feat_wa_catalog">Product catalog with photos</span></div>
+          <div class="tc-feat"><div class="tc-dot" style="background:#25D366"></div><span data-i18n="feat_wa_order">One-tap WhatsApp order</span></div>
+          <div class="tc-feat"><div class="tc-dot" style="background:#25D366"></div><span data-i18n="feat_wa_msg">Auto message templates</span></div>
+          <div class="tc-feat"><div class="tc-dot" style="background:#25D366"></div><span data-i18n="feat_wa_preview">Phone preview + web catalog</span></div>
+        </div>
+        <div class="tc-btn" style="background:linear-gradient(135deg,#25D366,#128C7E)">
+          <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.115 1.527 5.845L0 24l6.335-1.527A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.359-.213-3.72.978.994-3.645-.233-.374A9.818 9.818 0 1112 21.818z"/></svg>
+          <span data-i18n="card_whatsapp_btn">Open Catalog Tool</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-n" id="st-products">0</div><div class="stat-l" data-i18n="stat_products">Products</div></div>
+    <div class="stat-card"><div class="stat-n" id="st-blogs">0</div><div class="stat-l" data-i18n="stat_blogs">Blog Posts</div></div>
+    <div class="stat-card"><div class="stat-n" id="st-photos">0</div><div class="stat-l" data-i18n="stat_photos">Photos</div></div>
+    <div class="stat-card"><div class="stat-n" id="st-updated">—</div><div class="stat-l" data-i18n="stat_updated">Last Update</div></div>
+  </div>
+
+  <!-- STORAGE + PUBLISH -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-title">💾 <span data-i18n="storage_title">Storage</span></div>
+      <div class="storage-bar"><div class="storage-fill" id="storage-fill" style="width:0%;background:var(--ac)"></div></div>
+      <div class="storage-info"><span id="storage-used">0 KB</span><span>5 MB max</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🚀 <span data-i18n="publish_title">Publish Website</span></div>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:12px" data-i18n="publish_desc">Download your updated website with all your latest content changes.</p>
+      <button class="btn primary" onclick="publishSite()" data-i18n="publish_btn">⬇ Download Updated Website</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PRODUCTS ═══════ -->
+<div class="page" id="p-products">
+  <div class="actions-bar">
+    <button class="btn primary" onclick="openProductModal()" data-i18n="add_product">+ Add Product</button>
+    <span style="font-size:12px;color:var(--mu)" id="prod-count"></span>
+  </div>
+  <div class="item-grid" id="product-list"></div>
+</div>
+
+<!-- ═══════ BLOG ═══════ -->
+<div class="page" id="p-blog">
+  <div class="actions-bar">
+    <button class="btn primary" onclick="openBlogModal()" data-i18n="add_blog">+ Add Blog Post</button>
+    <span style="font-size:12px;color:var(--mu)" id="blog-count"></span>
+  </div>
+  <div class="item-grid" id="blog-list"></div>
+</div>
+
+<!-- ═══════ GALLERY ═══════ -->
+<div class="page" id="p-gallery">
+  <div class="actions-bar">
+    <button class="btn primary" onclick="document.getElementById('gal-file').click()" data-i18n="add_photos">+ Add Photos</button>
+    <input type="file" id="gal-file" accept="image/*" multiple style="display:none" onchange="addGalleryPhotos(this.files)">
+    <span style="font-size:12px;color:var(--mu)" id="gal-count"></span>
+  </div>
+  <div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<!-- ═══════ SITE INFO ═══════ -->
+<div class="page" id="p-siteinfo">
+  <div class="card">
+    <div class="card-title">ℹ️ <span data-i18n="siteinfo_title">Site Information</span></div>
+    <div class="form-grid">
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_tagline">Tagline</label><input class="fi" id="si-tagline" placeholder="Your business tagline"></div>
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_about_title">About Title</label><input class="fi" id="si-about-title" placeholder="About Us"></div>
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_about_text">About Text</label><textarea class="fi" id="si-about-text" placeholder="Tell visitors about your business..."></textarea></div>
+      <div><label class="form-lbl" data-i18n="lbl_phone">Phone</label><input class="fi" id="si-phone" placeholder="+220 ..."></div>
+      <div><label class="form-lbl" data-i18n="lbl_email">Email</label><input class="fi" id="si-email" placeholder="info@example.com"></div>
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_address">Address</label><input class="fi" id="si-address" placeholder="Your business address"></div>
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_hours">Opening Hours</label><input class="fi" id="si-hours" placeholder="Mon-Fri 9:00-17:00, Sat 9:00-13:00"></div>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn primary" onclick="saveSiteInfo()" data-i18n="save_info">Save Site Info</button>
+    </div>
+  </div>
+</div>
+</div><!-- /content -->
+
+<!-- ═══════ PRODUCT MODAL ═══════ -->
+<div class="overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title" id="pm-title" data-i18n="add_product">Add Product</span><button class="x-btn" onclick="closeModal('product-modal')">×</button></div>
+    <div class="form-grid">
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_prod_name">Product Name *</label><input class="fi" id="pm-name" placeholder="e.g. Fresh Mango Juice"></div>
+      <div><label class="form-lbl" data-i18n="lbl_price">Price (GMD)</label><input class="fi" id="pm-price" type="number" placeholder="0"></div>
+      <div><label class="form-lbl" data-i18n="lbl_category">Category</label><input class="fi" id="pm-cat" placeholder="e.g. Drinks, Food"></div>
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_description">Description</label><textarea class="fi" id="pm-desc" placeholder="Describe this product..." style="min-height:60px"></textarea></div>
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_badge">Badge (optional)</label><input class="fi" id="pm-badge" placeholder="e.g. NEW, SALE, POPULAR"></div>
+      <div class="form-full">
+        <label class="form-lbl" data-i18n="lbl_photo">Photo</label>
+        <div class="photo-upload" id="pm-photo-upload" onclick="document.getElementById('pm-photo-file').click()">
+          <span style="font-size:22px">📷</span>
+          <span data-i18n="click_upload">Click to upload photo</span>
+        </div>
+        <input type="file" id="pm-photo-file" accept="image/*" style="display:none" onchange="previewPhoto(this,'pm-photo-preview')">
+        <img class="photo-preview" id="pm-photo-preview">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('product-modal')" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" onclick="saveProduct()" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ BLOG MODAL ═══════ -->
+<div class="overlay" id="blog-modal">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title" id="bm-title" data-i18n="add_blog">Add Blog Post</span><button class="x-btn" onclick="closeModal('blog-modal')">×</button></div>
+    <div class="form-grid">
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_blog_title">Title *</label><input class="fi" id="bm-name" placeholder="Blog post title"></div>
+      <div><label class="form-lbl" data-i18n="lbl_author">Author</label><input class="fi" id="bm-author" placeholder="Author name"></div>
+      <div><label class="form-lbl" data-i18n="lbl_date">Date</label><input class="fi" id="bm-date" type="date"></div>
+      <div class="form-full"><label class="form-lbl" data-i18n="lbl_content">Content *</label><textarea class="fi" id="bm-content" placeholder="Write your blog post..." style="min-height:140px"></textarea></div>
+      <div class="form-full">
+        <div class="pub-toggle">
+          <label class="tgl"><input type="checkbox" id="bm-published" checked><span class="tgl-sl"></span></label>
+          <span style="font-size:12px" data-i18n="published">Published</span>
+        </div>
+      </div>
+      <div class="form-full">
+        <label class="form-lbl" data-i18n="lbl_cover">Cover Image</label>
+        <div class="photo-upload" onclick="document.getElementById('bm-photo-file').click()">
+          <span style="font-size:22px">📷</span>
+          <span data-i18n="click_upload">Click to upload photo</span>
+        </div>
+        <input type="file" id="bm-photo-file" accept="image/*" style="display:none" onchange="previewPhoto(this,'bm-photo-preview')">
+        <img class="photo-preview" id="bm-photo-preview">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('blog-modal')" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" onclick="saveBlog()" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ GALLERY CAPTION MODAL ═══════ -->
+<div class="overlay" id="caption-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-hd"><span class="modal-title" data-i18n="edit_caption">Edit Caption</span><button class="x-btn" onclick="closeModal('caption-modal')">×</button></div>
+    <div class="form-row"><label class="form-lbl" data-i18n="lbl_caption">Caption</label><input class="fi" id="cap-text" placeholder="Photo caption"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('caption-modal')" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" onclick="saveCaption()" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// AUTH GUARD — only 'klant' role allowed
+// ═══════════════════════════════════════════
+let currentUser=null;
+let isAdminPreview=false;
+(function(){
+  const previewFlag=localStorage.getItem('wg_admin_preview');
+  if(previewFlag) localStorage.removeItem('wg_admin_preview');
+  const params=new URLSearchParams(window.location.search);
+  isAdminPreview=!!previewFlag||params.get('preview')==='admin';
+  const raw=localStorage.getItem('webgen_auth');
+  if(!raw){window.location.href='login.html';return;}
+  try{
+    const a=JSON.parse(raw);
+    if(!a||!a.token||!a.user){window.location.href='login.html';return;}
+    // Allow admin/medewerker with preview flag, otherwise only klant
+    if(a.user.role!=='klant'&&!isAdminPreview){window.location.href='index.html';return;}
+    currentUser=a.user;
+  }catch(e){window.location.href='login.html';}
+})();
+
+// ═══════════════════════════════════════════
+// i18n — Language System
+// ═══════════════════════════════════════════
+const LANGS={
+  en:{
+    portal_title:'Client Portal', logout:'Logout',
+    tab_dashboard:'Dashboard', tab_products:'Products', tab_blog:'Blog', tab_gallery:'Gallery', tab_siteinfo:'Site Info',
+    stat_products:'Products', stat_blogs:'Blog Posts', stat_photos:'Photos', stat_updated:'Last Update',
+    storage_title:'Storage', publish_title:'Publish Website',
+    publish_desc:'Download your updated website with all your latest content changes.',
+    publish_btn:'⬇ Download Updated Website',
+    add_product:'+ Add Product', add_blog:'+ Add Blog Post', add_photos:'+ Add Photos',
+    siteinfo_title:'Site Information',
+    lbl_tagline:'Tagline', lbl_about_title:'About Title', lbl_about_text:'About Text',
+    lbl_phone:'Phone', lbl_email:'Email', lbl_address:'Address', lbl_hours:'Opening Hours',
+    save_info:'Save Site Info',
+    lbl_prod_name:'Product Name *', lbl_price:'Price (GMD)', lbl_category:'Category',
+    lbl_description:'Description', lbl_badge:'Badge (optional)', lbl_photo:'Photo',
+    click_upload:'Click to upload photo',
+    lbl_blog_title:'Title *', lbl_author:'Author', lbl_date:'Date', lbl_content:'Content *',
+    lbl_cover:'Cover Image', published:'Published',
+    edit_caption:'Edit Caption', lbl_caption:'Caption',
+    cancel:'Cancel', save:'Save',
+    edit_product:'Edit Product', edit_blog:'Edit Blog Post',
+    empty_products:'No products yet', empty_products_sub:'Add your first product to get started.',
+    empty_blog:'No blog posts yet', empty_blog_sub:'Write your first blog post.',
+    empty_gallery:'No photos yet', empty_gallery_sub:'Upload photos for your gallery.',
+    confirm_delete:'Are you sure you want to delete this?',
+    saved:'Saved ✓', deleted:'Deleted', published_site:'Website downloaded ✓',
+    no_base:'No base website found. Contact your agency.',
+    n_products:' products', n_posts:' posts', n_photos:' photos',
+    card_website:'Website Update', card_website_desc:'Update your products, blog, gallery and site information.',
+    card_website_btn:'Open Content Editor',
+    card_whatsapp:'WhatsApp Catalog', card_whatsapp_desc:'Generate a professional product catalog with WhatsApp order buttons.',
+    card_whatsapp_btn:'Open Catalog Tool',
+    feat_products:'Manage products & prices', feat_blog:'Write blog posts',
+    feat_gallery:'Upload photos', feat_publish:'Download updated website',
+    feat_wa_catalog:'Product catalog with photos', feat_wa_order:'One-tap WhatsApp order',
+    feat_wa_msg:'Auto message templates', feat_wa_preview:'Phone preview + web catalog'
+  },
+  nl:{
+    portal_title:'Klant Portaal', logout:'Uitloggen',
+    tab_dashboard:'Dashboard', tab_products:'Producten', tab_blog:'Blog', tab_gallery:'Galerij', tab_siteinfo:'Site Info',
+    stat_products:'Producten', stat_blogs:'Blogposts', stat_photos:"Foto's", stat_updated:'Laatste Update',
+    storage_title:'Opslag', publish_title:'Website Publiceren',
+    publish_desc:'Download je bijgewerkte website met al je laatste contentwijzigingen.',
+    publish_btn:'⬇ Download Bijgewerkte Website',
+    add_product:'+ Product Toevoegen', add_blog:'+ Blogpost Toevoegen', add_photos:"+ Foto's Toevoegen",
+    siteinfo_title:'Site Informatie',
+    lbl_tagline:'Tagline', lbl_about_title:'Over-Titel', lbl_about_text:'Over-Tekst',
+    lbl_phone:'Telefoon', lbl_email:'E-mail', lbl_address:'Adres', lbl_hours:'Openingstijden',
+    save_info:'Site Info Opslaan',
+    lbl_prod_name:'Productnaam *', lbl_price:'Prijs (GMD)', lbl_category:'Categorie',
+    lbl_description:'Beschrijving', lbl_badge:'Badge (optioneel)', lbl_photo:'Foto',
+    click_upload:'Klik om foto te uploaden',
+    lbl_blog_title:'Titel *', lbl_author:'Auteur', lbl_date:'Datum', lbl_content:'Inhoud *',
+    lbl_cover:'Omslagfoto', published:'Gepubliceerd',
+    edit_caption:'Bijschrift Bewerken', lbl_caption:'Bijschrift',
+    cancel:'Annuleren', save:'Opslaan',
+    edit_product:'Product Bewerken', edit_blog:'Blogpost Bewerken',
+    empty_products:'Nog geen producten', empty_products_sub:'Voeg je eerste product toe om te beginnen.',
+    empty_blog:'Nog geen blogposts', empty_blog_sub:'Schrijf je eerste blogpost.',
+    empty_gallery:'Nog geen fotos', empty_gallery_sub:"Upload foto's voor je galerij.",
+    confirm_delete:'Weet je zeker dat je dit wilt verwijderen?',
+    saved:'Opgeslagen ✓', deleted:'Verwijderd', published_site:'Website gedownload ✓',
+    no_base:'Geen basiswebsite gevonden. Neem contact op met je bureau.',
+    n_products:' producten', n_posts:' berichten', n_photos:" foto's",
+    card_website:'Website Updaten', card_website_desc:'Beheer je producten, blog, galerij en site informatie.',
+    card_website_btn:'Open Content Editor',
+    card_whatsapp:'WhatsApp Catalogus', card_whatsapp_desc:'Maak een professionele productcatalogus met WhatsApp bestelknoppen.',
+    card_whatsapp_btn:'Open Catalogus Tool',
+    feat_products:'Producten & prijzen beheren', feat_blog:'Blogposts schrijven',
+    feat_gallery:"Foto's uploaden", feat_publish:'Bijgewerkte website downloaden',
+    feat_wa_catalog:"Productcatalogus met foto's", feat_wa_order:'WhatsApp bestelling met één tik',
+    feat_wa_msg:'Auto berichtsjablonen', feat_wa_preview:'Telefoonvoorbeeld + webcatalogus'
+  },
+  wo:{
+    portal_title:'Portal bu Kiliaan', logout:'Gennal',
+    tab_dashboard:'Dashboard', tab_products:'Njaayu', tab_blog:'Blog', tab_gallery:'Nataal', tab_siteinfo:'Xibaar',
+    stat_products:'Njaayu', stat_blogs:'Blog yi', stat_photos:'Nataal yi', stat_updated:'Yeesal gu mujj',
+    storage_title:'Denc', publish_title:'Yeesal Site bi',
+    publish_desc:'Download sa site bu yeesal ak say coppite yu bees.',
+    publish_btn:'⬇ Download Site bu Yeesal',
+    add_product:'+ Yokk Njaay', add_blog:'+ Yokk Blog', add_photos:'+ Yokk Nataal',
+    siteinfo_title:'Xibaaru Site bi',
+    lbl_tagline:'Tagline', lbl_about_title:'Ci Nun', lbl_about_text:'Binda ci sa biir',
+    lbl_phone:'Telefon', lbl_email:'Email', lbl_address:'Adres', lbl_hours:'Waxtu Ubbi',
+    save_info:'Denc Xibaar yi',
+    lbl_prod_name:'Turu Njaay *', lbl_price:'Njeg (GMD)', lbl_category:'Xeet',
+    lbl_description:'Nattali', lbl_badge:'Badge', lbl_photo:'Nataal',
+    click_upload:'Bës nataal',
+    lbl_blog_title:'Koj *', lbl_author:'Bindkat', lbl_date:'Bis', lbl_content:'Biir *',
+    lbl_cover:'Nataal bu Kanam', published:'Defar na',
+    edit_caption:'Soppi Mbind', lbl_caption:'Mbind',
+    cancel:'Neenal', save:'Denc',
+    edit_product:'Soppi Njaay', edit_blog:'Soppi Blog',
+    empty_products:'Amul njaay', empty_products_sub:'Yokk sa njaay bu njekk.',
+    empty_blog:'Amul blog', empty_blog_sub:'Bind sa blog bu njekk.',
+    empty_gallery:'Amul nataal', empty_gallery_sub:'Yokk nataal yi.',
+    confirm_delete:'Ndax danga buga fey li?',
+    saved:'Denc na ✓', deleted:'Fey na', published_site:'Site download na ✓',
+    no_base:'Amul site bu askan. Woo sa bureau.',
+    n_products:' njaayu', n_posts:' bind', n_photos:' nataal',
+    card_website:'Yeesal Site', card_website_desc:'Soppi say njaayu, blog, nataal ak xibaaru site.',
+    card_website_btn:'Ubbi Editor',
+    card_whatsapp:'WhatsApp Njaayu', card_whatsapp_desc:'Defal catalogue bu njaayu ak WhatsApp.',
+    card_whatsapp_btn:'Ubbi Njaayu Tool',
+    feat_products:'Saytu njaayu ak njeg', feat_blog:'Bind blog',
+    feat_gallery:'Yokk nataal', feat_publish:'Download site bu yeesal',
+    feat_wa_catalog:'Njaayu ak nataal', feat_wa_order:'WhatsApp commande',
+    feat_wa_msg:'Bataaxal yu auto', feat_wa_preview:'Aperçu telefon'
+  },
+  ma:{
+    portal_title:'Kiliyanke Portal', logout:'Bori',
+    tab_dashboard:'Dashboard', tab_products:'Feŋo', tab_blog:'Blog', tab_gallery:'Foto', tab_siteinfo:'Kumpabo',
+    stat_products:'Feŋolu', stat_blogs:'Blog kuo', stat_photos:'Foto kuo', stat_updated:'Lakari Keta',
+    storage_title:'Marasilaŋo', publish_title:'Site Lakari',
+    publish_desc:'I ka site kura download a feŋo kuwo bɛɛ la.',
+    publish_btn:'⬇ Download Site Kura',
+    add_product:'+ Feŋo Fara', add_blog:'+ Blog Fara', add_photos:'+ Foto Fara',
+    siteinfo_title:'Site Kumpabo',
+    lbl_tagline:'Tagline', lbl_about_title:'N Kumpabo', lbl_about_text:'I ka kumpabo sɛbɛ',
+    lbl_phone:'Telefoŋo', lbl_email:'Email', lbl_address:'Sigilaŋo', lbl_hours:'Dayiriŋ Waati',
+    save_info:'Kumpabo Mara',
+    lbl_prod_name:'Feŋo Toŋo *', lbl_price:'Soŋo (GMD)', lbl_category:'Suwo',
+    lbl_description:'A Kumpabo', lbl_badge:'Badge', lbl_photo:'Foto',
+    click_upload:'Foto ladon',
+    lbl_blog_title:'Kuŋtiliŋo *', lbl_author:'Sɛbɛla', lbl_date:'Luŋo', lbl_content:'Kuo *',
+    lbl_cover:'Kuŋ Foto', published:'Bɔta le',
+    edit_caption:'Sɛbɛliŋo Yɛlɛma', lbl_caption:'Sɛbɛliŋo',
+    cancel:'A to', save:'Mara',
+    edit_product:'Feŋo Yɛlɛma', edit_blog:'Blog Yɛlɛma',
+    empty_products:'Feŋo si bɛ tɛ', empty_products_sub:'I ka feŋo fɔlɔ fara.',
+    empty_blog:'Blog si bɛ tɛ', empty_blog_sub:'I ka blog fɔlɔ sɛbɛ.',
+    empty_gallery:'Foto si bɛ tɛ', empty_gallery_sub:'Foto ladon jaŋ.',
+    confirm_delete:'I baa fɛ ka niŋ bɔ?',
+    saved:'Marata ✓', deleted:'Bɔta', published_site:'Site download keta ✓',
+    no_base:'Site bɛ tɛ jaŋ. I ka bureau waari.',
+    n_products:' feŋolu', n_posts:' sɛbɛwo', n_photos:' foto',
+    card_website:'Site Lakari', card_website_desc:'I ka feŋolu, blog, foto aniŋ site kumpabo yɛlɛma.',
+    card_website_btn:'Editor Lakaŋ',
+    card_whatsapp:'WhatsApp Feŋolu', card_whatsapp_desc:'Feŋo catalogue dafa ak WhatsApp order button.',
+    card_whatsapp_btn:'Catalogue Tool Lakaŋ',
+    feat_products:'Feŋolu aniŋ soŋolu saytu', feat_blog:'Blog sɛbɛ',
+    feat_gallery:'Foto ladon', feat_publish:'Site kura download',
+    feat_wa_catalog:'Feŋo catalogue aniŋ foto', feat_wa_order:'WhatsApp order',
+    feat_wa_msg:'Message template', feat_wa_preview:'Telefon preview'
+  }
+};
+
+let curLang='en';
+
+function setLang(lang){
+  curLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('on',b.textContent.trim().toLowerCase()===lang));
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    if(LANGS[lang]&&LANGS[lang][key]) el.textContent=LANGS[lang][key];
+  });
+  if(CMS) { CMS.lang=lang; saveCMS(); }
+  renderAll();
+}
+
+// ═══════════════════════════════════════════
+// DATA MODEL
+// ═══════════════════════════════════════════
+let clientId=null;
+let CMS=null;
+
+function getCMSKey(){ return 'client_cms_'+clientId; }
+
+function loadCMS(){
+  // Find client by email match in CRM
+  const crm=JSON.parse(localStorage.getItem('kok_crm_v2')||'{}');
+  const clients=crm.clients||[];
+  if(currentUser&&currentUser.email){
+    const match=clients.find(c=>c.email&&c.email.toLowerCase()===currentUser.email.toLowerCase());
+    if(match) clientId=match.id;
+  }
+  // Fallback: use first client or user id
+  if(!clientId&&currentUser) clientId=currentUser.id||'default';
+
+  const key=getCMSKey();
+  const raw=localStorage.getItem(key);
+  if(raw){
+    try{ CMS=JSON.parse(raw); }catch(e){ CMS=null; }
+  }
+  if(!CMS){
+    CMS={
+      clientId:clientId,
+      lang:'en',
+      products:[],
+      blog:[],
+      gallery:[],
+      siteContent:{aboutTitle:'',aboutText:'',contactPhone:'',contactEmail:'',contactAddress:'',openingHours:'',tagline:''},
+      baseHTML:'',
+      updatedAt:new Date().toISOString()
+    };
+    saveCMS();
+  }
+  // Apply saved language
+  if(CMS.lang&&LANGS[CMS.lang]) setLang(CMS.lang);
+}
+
+function saveCMS(){
+  CMS.updatedAt=new Date().toISOString();
+  localStorage.setItem(getCMSKey(),JSON.stringify(CMS));
+}
+
+function nextId(arr){ return arr.length?Math.max(...arr.map(x=>x.id))+1:1; }
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+if(currentUser){
+  document.getElementById('u-av').textContent=currentUser.name?currentUser.name.charAt(0).toUpperCase():'K';
+  document.getElementById('u-name').textContent=currentUser.name||'Klant';
+  // Set business name from CRM
+  const crm=JSON.parse(localStorage.getItem('kok_crm_v2')||'{}');
+  const clients=crm.clients||[];
+  const match=clients.find(c=>c.email&&c.email.toLowerCase()===currentUser.email.toLowerCase());
+  if(match) document.getElementById('hdr-biz-name').textContent=match.name;
+
+  // Admin preview banner
+  if(isAdminPreview){
+    const banner=document.createElement('div');
+    banner.style.cssText='background:linear-gradient(135deg,rgba(77,171,247,.15),rgba(123,92,255,.15));border-bottom:1px solid rgba(77,171,247,.3);padding:6px 24px;display:flex;align-items:center;justify-content:space-between;font-size:12px';
+    banner.innerHTML='<div style="display:flex;align-items:center;gap:6px"><span style="background:rgba(77,171,247,.2);color:#4dabf7;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700">ADMIN PREVIEW</span> <span style="color:var(--mu)">You are viewing the client portal as a customer sees it</span></div><button onclick="window.close()" style="background:var(--sf2);border:1px solid var(--br);border-radius:6px;padding:4px 10px;font-size:11px;color:var(--mu);cursor:pointer;font-family:DM Sans,sans-serif">← Back to Admin</button>';
+    document.body.insertBefore(banner,document.body.firstChild);
+    // Change logout button to "Back to Admin"
+    const logBtn=document.querySelector('.logout-btn');
+    if(logBtn){logBtn.textContent='← Close Preview';logBtn.setAttribute('data-i18n','');}
+  }
+}
+loadCMS();
+renderAll();
+
+// ═══════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════
+let curTab='dashboard';
+function switchTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id==='p-'+tab));
+  renderAll();
+}
+
+// ═══════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════
+function renderAll(){
+  renderDashboard();
+  renderProducts();
+  renderBlog();
+  renderGallery();
+  loadSiteInfo();
+}
+
+// ═══════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════
+function renderDashboard(){
+  document.getElementById('st-products').textContent=CMS.products.length;
+  document.getElementById('st-blogs').textContent=CMS.blog.length;
+  document.getElementById('st-photos').textContent=CMS.gallery.length;
+  const d=CMS.updatedAt?new Date(CMS.updatedAt):null;
+  document.getElementById('st-updated').textContent=d?d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—';
+  updateStorageMeter();
+}
+
+function updateStorageMeter(){
+  const key=getCMSKey();
+  const raw=localStorage.getItem(key)||'';
+  const bytes=new Blob([raw]).size;
+  const maxBytes=5*1024*1024;
+  const pct=Math.min(100,(bytes/maxBytes)*100);
+  const fill=document.getElementById('storage-fill');
+  fill.style.width=pct+'%';
+  fill.style.background=pct<70?'var(--ac)':pct<90?'var(--yl)':'var(--rd)';
+  const kb=Math.round(bytes/1024);
+  document.getElementById('storage-used').textContent=kb>=1024?(kb/1024).toFixed(1)+' MB':kb+' KB';
+}
+
+// ═══════════════════════════════════════════
+// PRODUCTS
+// ═══════════════════════════════════════════
+let editProductId=null;
+
+function renderProducts(){
+  const el=document.getElementById('product-list');
+  const L=LANGS[curLang]||LANGS.en;
+  document.getElementById('prod-count').textContent=CMS.products.length+(L.n_products||' products');
+  if(!CMS.products.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🛍️</div><div class="empty-text">${L.empty_products}</div><div class="empty-sub">${L.empty_products_sub}</div></div>`;
+    return;
+  }
+  el.innerHTML=CMS.products.map(p=>`
+    <div class="item-card">
+      <div class="item-thumb">${p.photo?`<img src="${p.photo}">`:'🛍️'}</div>
+      <div class="item-body">
+        <div class="item-title">${esc(p.name)}${p.badge?` <span class="badge green">${esc(p.badge)}</span>`:''}</div>
+        <div class="item-meta">${p.price?'D'+Number(p.price).toLocaleString():''}${p.category?' · '+esc(p.category):''}</div>
+        <div class="item-desc">${esc(p.description||'')}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn sm" onclick="editProduct(${p.id})">✏️</button>
+        <button class="btn sm danger" onclick="deleteProduct(${p.id})">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProductModal(id){
+  editProductId=id||null;
+  const L=LANGS[curLang]||LANGS.en;
+  document.getElementById('pm-title').textContent=id?L.edit_product:L.add_product;
+  if(id){
+    const p=CMS.products.find(x=>x.id===id);
+    if(p){
+      document.getElementById('pm-name').value=p.name||'';
+      document.getElementById('pm-price').value=p.price||'';
+      document.getElementById('pm-cat').value=p.category||'';
+      document.getElementById('pm-desc').value=p.description||'';
+      document.getElementById('pm-badge').value=p.badge||'';
+      const prev=document.getElementById('pm-photo-preview');
+      if(p.photo){prev.src=p.photo;prev.style.display='block';}else{prev.style.display='none';}
+    }
+  } else {
+    ['pm-name','pm-price','pm-cat','pm-desc','pm-badge'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('pm-photo-preview').style.display='none';
+  }
+  openModal('product-modal');
+}
+
+function editProduct(id){ openProductModal(id); }
+
+function saveProduct(){
+  const name=document.getElementById('pm-name').value.trim();
+  if(!name){toast('Name is required');return;}
+  const prev=document.getElementById('pm-photo-preview');
+  const photo=prev.style.display!=='none'?prev.src:'';
+  const obj={
+    id:editProductId||nextId(CMS.products),
+    name,
+    price:parseFloat(document.getElementById('pm-price').value)||0,
+    category:document.getElementById('pm-cat').value.trim(),
+    description:document.getElementById('pm-desc').value.trim(),
+    badge:document.getElementById('pm-badge').value.trim(),
+    photo
+  };
+  if(editProductId){
+    const idx=CMS.products.findIndex(x=>x.id===editProductId);
+    if(idx>=0) CMS.products[idx]=obj;
+  } else {
+    CMS.products.push(obj);
+  }
+  saveCMS();closeModal('product-modal');renderAll();
+  toast(LANGS[curLang].saved);
+}
+
+function deleteProduct(id){
+  if(!confirm(LANGS[curLang].confirm_delete))return;
+  CMS.products=CMS.products.filter(x=>x.id!==id);
+  saveCMS();renderAll();toast(LANGS[curLang].deleted);
+}
+
+// ═══════════════════════════════════════════
+// BLOG
+// ═══════════════════════════════════════════
+let editBlogId=null;
+
+function renderBlog(){
+  const el=document.getElementById('blog-list');
+  const L=LANGS[curLang]||LANGS.en;
+  document.getElementById('blog-count').textContent=CMS.blog.length+(L.n_posts||' posts');
+  if(!CMS.blog.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📝</div><div class="empty-text">${L.empty_blog}</div><div class="empty-sub">${L.empty_blog_sub}</div></div>`;
+    return;
+  }
+  el.innerHTML=CMS.blog.map(b=>`
+    <div class="item-card">
+      <div class="item-thumb">${b.image?`<img src="${b.image}">`:'📝'}</div>
+      <div class="item-body">
+        <div class="item-title">${esc(b.title)} ${b.published?'<span class="badge green">Live</span>':'<span class="badge gray">Draft</span>'}</div>
+        <div class="item-meta">${esc(b.author||'')}${b.date?' · '+b.date:''}</div>
+        <div class="item-desc">${esc(b.content||'')}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn sm" onclick="editBlog(${b.id})">✏️</button>
+        <button class="btn sm danger" onclick="deleteBlog(${b.id})">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openBlogModal(id){
+  editBlogId=id||null;
+  const L=LANGS[curLang]||LANGS.en;
+  document.getElementById('bm-title').textContent=id?L.edit_blog:L.add_blog;
+  if(id){
+    const b=CMS.blog.find(x=>x.id===id);
+    if(b){
+      document.getElementById('bm-name').value=b.title||'';
+      document.getElementById('bm-author').value=b.author||'';
+      document.getElementById('bm-date').value=b.date||'';
+      document.getElementById('bm-content').value=b.content||'';
+      document.getElementById('bm-published').checked=b.published!==false;
+      const prev=document.getElementById('bm-photo-preview');
+      if(b.image){prev.src=b.image;prev.style.display='block';}else{prev.style.display='none';}
+    }
+  } else {
+    ['bm-name','bm-author','bm-content'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('bm-date').value=new Date().toISOString().split('T')[0];
+    document.getElementById('bm-published').checked=true;
+    document.getElementById('bm-photo-preview').style.display='none';
+  }
+  openModal('blog-modal');
+}
+
+function editBlog(id){ openBlogModal(id); }
+
+function saveBlog(){
+  const title=document.getElementById('bm-name').value.trim();
+  if(!title){toast('Title is required');return;}
+  const prev=document.getElementById('bm-photo-preview');
+  const image=prev.style.display!=='none'?prev.src:'';
+  const obj={
+    id:editBlogId||nextId(CMS.blog),
+    title,
+    author:document.getElementById('bm-author').value.trim(),
+    date:document.getElementById('bm-date').value,
+    content:document.getElementById('bm-content').value.trim(),
+    published:document.getElementById('bm-published').checked,
+    image
+  };
+  if(editBlogId){
+    const idx=CMS.blog.findIndex(x=>x.id===editBlogId);
+    if(idx>=0) CMS.blog[idx]=obj;
+  } else {
+    CMS.blog.push(obj);
+  }
+  saveCMS();closeModal('blog-modal');renderAll();
+  toast(LANGS[curLang].saved);
+}
+
+function deleteBlog(id){
+  if(!confirm(LANGS[curLang].confirm_delete))return;
+  CMS.blog=CMS.blog.filter(x=>x.id!==id);
+  saveCMS();renderAll();toast(LANGS[curLang].deleted);
+}
+
+// ═══════════════════════════════════════════
+// GALLERY
+// ═══════════════════════════════════════════
+let editCaptionId=null;
+
+function renderGallery(){
+  const el=document.getElementById('gallery-grid');
+  const L=LANGS[curLang]||LANGS.en;
+  document.getElementById('gal-count').textContent=CMS.gallery.length+(L.n_photos||' photos');
+  if(!CMS.gallery.length){
+    el.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📸</div><div class="empty-text">${L.empty_gallery}</div><div class="empty-sub">${L.empty_gallery_sub}</div></div>`;
+    return;
+  }
+  el.innerHTML=CMS.gallery.map(g=>`
+    <div class="gallery-item" onclick="openCaption(${g.id})">
+      <img src="${g.photo}" alt="${esc(g.caption||'')}">
+      ${g.caption?`<div class="caption">${esc(g.caption)}</div>`:''}
+      <button class="g-del" onclick="event.stopPropagation();deleteGalleryItem(${g.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function addGalleryPhotos(files){
+  if(!files||!files.length)return;
+  let processed=0;
+  Array.from(files).forEach(file=>{
+    compressImage(file,800,0.7,dataUrl=>{
+      CMS.gallery.push({id:nextId(CMS.gallery),photo:dataUrl,caption:'',order:CMS.gallery.length+1});
+      processed++;
+      if(processed===files.length){
+        saveCMS();renderAll();toast(LANGS[curLang].saved);
+      }
+    });
+  });
+  // Reset file input
+  document.getElementById('gal-file').value='';
+}
+
+function openCaption(id){
+  editCaptionId=id;
+  const g=CMS.gallery.find(x=>x.id===id);
+  document.getElementById('cap-text').value=g?g.caption||'':'';
+  openModal('caption-modal');
+}
+
+function saveCaption(){
+  const g=CMS.gallery.find(x=>x.id===editCaptionId);
+  if(g){
+    g.caption=document.getElementById('cap-text').value.trim();
+    saveCMS();renderAll();
+  }
+  closeModal('caption-modal');
+  toast(LANGS[curLang].saved);
+}
+
+function deleteGalleryItem(id){
+  if(!confirm(LANGS[curLang].confirm_delete))return;
+  CMS.gallery=CMS.gallery.filter(x=>x.id!==id);
+  saveCMS();renderAll();toast(LANGS[curLang].deleted);
+}
+
+// ═══════════════════════════════════════════
+// SITE INFO
+// ═══════════════════════════════════════════
+function loadSiteInfo(){
+  const s=CMS.siteContent||{};
+  document.getElementById('si-tagline').value=s.tagline||'';
+  document.getElementById('si-about-title').value=s.aboutTitle||'';
+  document.getElementById('si-about-text').value=s.aboutText||'';
+  document.getElementById('si-phone').value=s.contactPhone||'';
+  document.getElementById('si-email').value=s.contactEmail||'';
+  document.getElementById('si-address').value=s.contactAddress||'';
+  document.getElementById('si-hours').value=s.openingHours||'';
+}
+
+function saveSiteInfo(){
+  CMS.siteContent={
+    tagline:document.getElementById('si-tagline').value.trim(),
+    aboutTitle:document.getElementById('si-about-title').value.trim(),
+    aboutText:document.getElementById('si-about-text').value.trim(),
+    contactPhone:document.getElementById('si-phone').value.trim(),
+    contactEmail:document.getElementById('si-email').value.trim(),
+    contactAddress:document.getElementById('si-address').value.trim(),
+    openingHours:document.getElementById('si-hours').value.trim()
+  };
+  saveCMS();renderAll();toast(LANGS[curLang].saved);
+}
+
+// ═══════════════════════════════════════════
+// PUBLISH — DOMParser injection + download
+// ═══════════════════════════════════════════
+function publishSite(){
+  const L=LANGS[curLang]||LANGS.en;
+  if(!CMS.baseHTML){toast(L.no_base);return;}
+
+  const parser=new DOMParser();
+  const doc=parser.parseFromString(CMS.baseHTML,'text/html');
+
+  // Inject products
+  const prodSection=doc.querySelector('[data-cms-products]');
+  if(prodSection&&CMS.products.length){
+    prodSection.innerHTML=CMS.products.map(p=>`
+      <div class="product-card" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;text-align:center">
+        ${p.photo?`<img src="${p.photo}" style="width:100%;height:180px;object-fit:cover" alt="${esc(p.name)}">`:''}
+        <div style="padding:16px">
+          ${p.badge?`<span style="display:inline-block;background:rgba(0,229,160,.15);color:#00e5a0;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;margin-bottom:8px">${esc(p.badge)}</span>`:''}
+          <h3 style="font-size:16px;margin:0 0 4px">${esc(p.name)}</h3>
+          ${p.price?`<div style="font-size:18px;font-weight:700;color:#00e5a0;margin-bottom:6px">D${Number(p.price).toLocaleString()}</div>`:''}
+          ${p.description?`<p style="font-size:13px;opacity:.7;margin:0">${esc(p.description)}</p>`:''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Inject blog
+  const blogSection=doc.querySelector('[data-cms-blog]');
+  if(blogSection&&CMS.blog.length){
+    const published=CMS.blog.filter(b=>b.published);
+    blogSection.innerHTML=published.map(b=>`
+      <article style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden">
+        ${b.image?`<img src="${b.image}" style="width:100%;height:200px;object-fit:cover" alt="${esc(b.title)}">`:''}
+        <div style="padding:18px">
+          <h3 style="font-size:17px;margin:0 0 6px">${esc(b.title)}</h3>
+          <div style="font-size:12px;opacity:.5;margin-bottom:10px">${esc(b.author||'')}${b.date?' · '+b.date:''}</div>
+          <p style="font-size:14px;line-height:1.7;opacity:.8;margin:0">${esc(b.content||'').replace(/\n/g,'<br>')}</p>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // Inject gallery
+  const galSection=doc.querySelector('[data-cms-gallery]');
+  if(galSection&&CMS.gallery.length){
+    galSection.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">`+
+      CMS.gallery.map(g=>`
+        <div style="border-radius:10px;overflow:hidden;position:relative">
+          <img src="${g.photo}" style="width:100%;height:200px;object-fit:cover" alt="${esc(g.caption||'')}">
+          ${g.caption?`<div style="position:absolute;bottom:0;left:0;right:0;padding:8px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:12px;color:white">${esc(g.caption)}</div>`:''}
+        </div>
+      `).join('')+'</div>';
+  }
+
+  // Inject about/contact
+  const aboutSection=doc.querySelector('[data-cms-about]');
+  if(aboutSection&&CMS.siteContent){
+    const s=CMS.siteContent;
+    if(s.aboutTitle||s.aboutText){
+      aboutSection.innerHTML=`
+        ${s.aboutTitle?`<h2 style="font-size:28px;margin-bottom:12px">${esc(s.aboutTitle)}</h2>`:''}
+        ${s.aboutText?`<p style="font-size:15px;line-height:1.8;opacity:.85">${esc(s.aboutText).replace(/\n/g,'<br>')}</p>`:''}
+      `;
+    }
+  }
+
+  const contactSection=doc.querySelector('[data-cms-contact]');
+  if(contactSection&&CMS.siteContent){
+    const s=CMS.siteContent;
+    const parts=[];
+    if(s.contactPhone) parts.push(`<div>📞 ${esc(s.contactPhone)}</div>`);
+    if(s.contactEmail) parts.push(`<div>✉️ ${esc(s.contactEmail)}</div>`);
+    if(s.contactAddress) parts.push(`<div>📍 ${esc(s.contactAddress)}</div>`);
+    if(s.openingHours) parts.push(`<div>🕐 ${esc(s.openingHours)}</div>`);
+    if(parts.length) contactSection.innerHTML=parts.join('');
+  }
+
+  // Inject tagline
+  const taglineEl=doc.querySelector('[data-cms-tagline]');
+  if(taglineEl&&CMS.siteContent.tagline) taglineEl.textContent=CMS.siteContent.tagline;
+
+  // Serialize and download
+  const html='<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const bizName=(document.getElementById('hdr-biz-name').textContent||'website').replace(/\s+/g,'-').toLowerCase();
+  a.download=bizName+'-website.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(L.published_site);
+}
+
+// ═══════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════
+function esc(s){if(!s)return '';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function toast(msg,dur=2300){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+function logout(){
+  if(isAdminPreview){
+    window.close(); // Close preview tab
+    return;
+  }
+  localStorage.removeItem('webgen_auth');
+  window.location.href='login.html';
+}
+
+// ── Photo compression ──
+function compressImage(file,maxW,quality,cb){
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      let w=img.width,h=img.height;
+      if(w>maxW){h=Math.round(h*(maxW/w));w=maxW;}
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      cb(canvas.toDataURL('image/jpeg',quality));
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function previewPhoto(input,previewId){
+  if(!input.files||!input.files[0])return;
+  compressImage(input.files[0],800,0.7,dataUrl=>{
+    const prev=document.getElementById(previewId);
+    prev.src=dataUrl;
+    prev.style.display='block';
+  });
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.overlay').forEach(ov=>{
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('show');});
+});
+</script>
+</body>
+</html>
