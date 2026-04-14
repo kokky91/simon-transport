@@ -14,6 +14,13 @@
   --tx:#eeeef5;--mu:#7878a0;--rd:#ff4d6d;--yl:#ffd166;--bl:#4dabf7;
   --r:10px;--r2:14px;
 }
+[data-theme="light"]{
+  --bg:#f0f2f5;--sf:#ffffff;--sf2:#f7f8fa;--sf3:#ebedf0;--sf4:#e2e4e9;
+  --br:#d8dbe2;--ac:#00b37e;--ac2:#6346e0;
+  --tx:#1a1a2e;--mu:#6b7280;--rd:#dc2626;--yl:#d97706;--bl:#2b8dd6;
+}
+.theme-toggle{background:var(--sf2);border:1px solid var(--br);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--mu);font-size:16px;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--ac);color:var(--ac)}
 html,body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx)}
 body{display:flex;flex-direction:column}
 
@@ -201,6 +208,7 @@ select.fi{cursor:pointer}
       <div class="user-av" id="u-av">K</div>
       <span id="u-name">Klant</span>
     </div>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
     <button class="logout-btn" onclick="logout()" data-i18n="logout">Logout</button>
   </div>
 </div>
@@ -1123,6 +1131,22 @@ function previewPhoto(input,previewId){
 document.querySelectorAll('.overlay').forEach(ov=>{
   ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('show');});
 });
+
+// Theme toggle
+function toggleTheme(){
+  const html=document.documentElement;
+  const next=html.getAttribute('data-theme')==='light'?'dark':'light';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('wg_theme',next);
+  document.getElementById('theme-toggle').textContent=next==='light'?'☀️':'🌙';
+}
+(function(){
+  const saved=localStorage.getItem('wg_theme')||'dark';
+  if(saved==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    document.getElementById('theme-toggle').textContent='☀️';
+  }
+})();
 </script>
 </body>
 </html>

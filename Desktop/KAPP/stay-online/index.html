@@ -13,6 +13,13 @@
   --br:#252838;--ac:#00e5a0;--ac2:#7b5cff;--wa:#25D366;
   --tx:#eeeef5;--mu:#7878a0;--rd:#ff4d6d;--yl:#ffd166;
 }
+[data-theme="light"]{
+  --bg:#f0f2f5;--sf:#ffffff;--sf2:#f7f8fa;--sf3:#ebedf0;
+  --br:#d8dbe2;--ac:#00b37e;--ac2:#6346e0;--wa:#25D366;
+  --tx:#1a1a2e;--mu:#6b7280;--rd:#dc2626;--yl:#d97706;
+}
+.theme-toggle{background:var(--sf2);border:1px solid var(--br);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--mu);font-size:16px;flex-shrink:0}
+.theme-toggle:hover{border-color:var(--ac);color:var(--ac)}
 html,body{min-height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx)}
 body{display:flex;flex-direction:column}
 
@@ -180,6 +187,7 @@ footer{margin-top:auto;padding:20px 40px;border-top:1px solid var(--br);display:
   <div class="header-right">
     <div class="date-badge" id="date-badge"></div>
     <div class="version-badge">v4.1 · Phase 3</div>
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
     <div class="user-bar" id="user-bar" style="display:none">
       <div class="user-info">
         <div class="user-avatar" id="user-avatar">K</div>
@@ -816,6 +824,23 @@ async function simpleHash(str) {
 document.getElementById('user-modal').addEventListener('click', function(e) {
   if (e.target === this) closeUserModal();
 });
+
+// Theme toggle
+function toggleTheme(){
+  const html=document.documentElement;
+  const current=html.getAttribute('data-theme');
+  const next=current==='light'?'dark':'light';
+  html.setAttribute('data-theme',next);
+  localStorage.setItem('wg_theme',next);
+  document.getElementById('theme-toggle').textContent=next==='light'?'☀️':'🌙';
+}
+(function(){
+  const saved=localStorage.getItem('wg_theme')||'dark';
+  if(saved==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    document.getElementById('theme-toggle').textContent='☀️';
+  }
+})();
 </script>
 </body>
 </html>
