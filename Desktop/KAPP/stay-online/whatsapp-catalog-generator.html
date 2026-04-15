@@ -83,6 +83,9 @@ select.fi option{background:var(--sf2)}
 .btn svg{width:13px;height:13px;flex-shrink:0}
 .add-btn{width:100%;padding:8px;background:var(--sf2);border:1.5px dashed var(--br);border-radius:8px;color:var(--mu);font-size:12px;cursor:pointer;transition:all .15s;margin-bottom:4px}
 .add-btn:hover{border-color:var(--wa);color:var(--wa)}
+.ai-btn{background:linear-gradient(135deg,#7b5cff,#00e5a0);color:white;border:none;font-weight:600;font-size:11px;padding:6px 10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;transition:opacity .2s;flex:1;justify-content:center}
+.ai-btn:hover{opacity:.85}
+.ai-btn:disabled{opacity:.5;cursor:wait}
 
 .lf{padding:12px 17px;border-top:1px solid var(--br);flex-shrink:0;display:flex;gap:8px}
 .gen-btn{flex:1;padding:12px;background:linear-gradient(135deg,var(--wa),var(--wa2));border:none;border-radius:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:white;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:7px}
@@ -201,6 +204,13 @@ select.fi option{background:var(--sf2)}
     </div>
     <div class="tg">WhatsApp Business catalog for Gambian businesses</div>
   </div>
+  <div class="api-row" style="padding:6px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px;flex-shrink:0">
+    <span style="font-size:10px;color:var(--mu);flex-shrink:0">API Key:</span>
+    <input id="api-key-wa" type="password" placeholder="sk-ant-..." style="flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:6px;color:var(--tx);font-size:10px;padding:4px 8px;outline:none;font-family:'DM Sans',sans-serif" oninput="localStorage.setItem('wg_api_key',this.value.trim())">
+  </div>
+  <div style="padding:4px 18px;font-size:10px;color:var(--mu);border-bottom:1px solid var(--br);display:flex;align-items:center;gap:6px;flex-shrink:0">
+    Worker: <input id="worker-url-wa" type="text" placeholder="https://webgen-gambia.NAME.workers.dev" style="background:var(--sf2);border:1px solid var(--br);border-radius:4px;color:var(--tx);font-size:10px;padding:2px 6px;outline:none;width:220px;font-family:'DM Sans',sans-serif" oninput="localStorage.setItem('wg_worker_url',this.value.trim())"> <span id="w-icon-wa">⚪</span>
+  </div>
 
   <div class="tabs">
     <div class="tab on" onclick="showTab(0)">Business</div>
@@ -246,6 +256,7 @@ select.fi option{background:var(--sf2)}
       <div class="sl">Products & Services <span id="prod-count" style="font-weight:400;color:var(--mu)">(0)</span></div>
       <div id="prod-list"></div>
       <button class="add-btn" onclick="addProduct()">+ Add product / service</button>
+      <button class="ai-btn" onclick="aiDescribeAll()" style="width:100%;margin-top:6px;padding:8px;border-radius:8px;font-size:12px">✨ AI — Generate All Descriptions</button>
       <div class="sl" style="margin-top:12px">Categories</div>
       <div class="fd"><label>Category names <small>comma-separated</small></label><input class="fi" id="b-cats" placeholder="e.g. Food, Drinks, Desserts, Snacks" oninput="liveUpdate()"></div>
     </div>
@@ -468,8 +479,9 @@ function renderProductList(){
       <input class="fi" placeholder="Badge label (e.g. Popular, New, Spicy, Best Seller)" value="${p.badge}" style="margin-bottom:6px" onchange="updateProd(${p.id},'badge',this.value)">
       <textarea class="fi" placeholder="Description — ingredients, details, what's included..." onchange="updateProd(${p.id},'description',this.value)">${p.description}</textarea>
       <div style="display:flex;gap:6px;margin-top:7px">
-        <button class="btn" onclick="duplicateProd(${p.id})" style="flex:1;font-size:11px">Duplicate</button>
-        <button class="btn danger" onclick="deleteProd(${p.id})" style="flex:1;font-size:11px">Delete</button>
+        <button class="ai-btn" id="ai-btn-${p.id}" onclick="aiDescribe(${p.id})">✨ AI Describe</button>
+        <button class="btn" onclick="duplicateProd(${p.id})" style="font-size:11px">Duplicate</button>
+        <button class="btn danger" onclick="deleteProd(${p.id})" style="font-size:11px">Delete</button>
       </div>
     </div>
   </div>`).join('');
@@ -724,6 +736,80 @@ function copyWaLink(){
   const link=`https://wa.me/${num}`;
   navigator.clipboard.writeText(link).then(()=>toast('WhatsApp link copied: '+link));
 }
+
+// ===== AI PRODUCT DESCRIPTION =====
+async function aiDescribe(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  if(!p.name){toast('Enter a product name first');return;}
+  const apiKey=(document.getElementById('api-key-wa')?.value||'').trim();
+  const workerUrl=(localStorage.getItem('wg_worker_url')||'').trim();
+  const ollamaUrl=(localStorage.getItem('wg_ollama_url')||'').trim();
+  const ollamaModel=localStorage.getItem('wg_ollama_model')||'';
+  if(!apiKey&&!workerUrl&&!ollamaUrl){toast('Enter API key or Worker URL first');return;}
+
+  const btn=document.getElementById('ai-btn-'+id);
+  if(btn){btn.disabled=true;btn.textContent='Generating...';}
+
+  const bizName=gv('b-name')||'a Gambian business';
+  const loc=gv('b-loc')||'The Gambia';
+  const cur=currency();
+  const prompt=`You are a product copywriter for WhatsApp Business catalogs in The Gambia / West Africa.
+
+Write a short, compelling product description for a WhatsApp catalog listing.
+
+BUSINESS: ${bizName} (${loc})
+PRODUCT: ${p.name}
+${p.category?'CATEGORY: '+p.category:''}
+${p.price?'PRICE: '+cur+p.price:''}
+${p.badge?'BADGE: '+p.badge:''}
+
+Requirements:
+- 1-2 sentences only (max 120 characters ideal for WhatsApp)
+- Highlight key benefit or appeal
+- Feel authentic for West African market
+- Don't repeat the product name at the start
+- No quotes around the text
+- Return ONLY the description text, nothing else`;
+
+  try{
+    let raw='';
+    if(ollamaUrl&&ollamaModel){
+      const resp=await fetch(ollamaUrl+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:ollamaModel,messages:[{role:'user',content:prompt}],stream:false})});
+      const data=await resp.json();raw=(data.message&&data.message.content)||'';
+    } else if(workerUrl){
+      const resp=await fetch(workerUrl+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
+      const data=await resp.json();raw=(data.content||[]).map(b=>b.text||'').join('');
+    } else {
+      const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
+      const data=await resp.json();raw=(data.content||[]).map(b=>b.text||'').join('');
+    }
+    const desc=raw.trim().replace(/^["']|["']$/g,'');
+    if(desc){
+      p.description=desc;
+      renderProductList();
+      toast('Description generated ✓');
+    } else {
+      toast('Empty response from AI');
+    }
+  }catch(e){
+    toast('AI error: '+e.message);
+  }
+  if(btn){btn.disabled=false;btn.textContent='✨ AI Describe';}
+}
+
+async function aiDescribeAll(){
+  const named=products.filter(p=>p.name&&!p.description);
+  if(!named.length){toast('All products already have descriptions');return;}
+  toast('Generating '+named.length+' descriptions...',3000);
+  for(const p of named){await aiDescribe(p.id);}
+  toast('All descriptions generated ✓');
+}
+
+// ===== LOAD SAVED KEYS =====
+(function(){
+  const k=localStorage.getItem('wg_api_key')||'';if(k){const el=document.getElementById('api-key-wa');if(el)el.value=k;}
+  const w=localStorage.getItem('wg_worker_url')||'';if(w){const el=document.getElementById('worker-url-wa');if(el)el.value=w;}
+})();
 
 // Update catalog view on tab switch
 document.getElementById('view-catalog-btn').addEventListener('click',updateCatalogPreview);
