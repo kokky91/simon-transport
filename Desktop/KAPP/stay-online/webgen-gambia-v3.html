@@ -179,6 +179,15 @@ textarea.di{min-height:38px;resize:vertical}
 .nt{position:fixed;bottom:14px;right:14px;background:var(--sf);border:1px solid var(--ac);border-radius:7px;padding:8px 13px;font-size:12px;color:var(--ac);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
 .nt.show{opacity:1}
 
+/* GUIDE TAB */
+.guide-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--br)}
+.guide-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;margin-top:1px}
+.step-content{}
+.step-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--mu);line-height:1.6}
+.step-img{background:var(--sf2);border:1px solid var(--br);border-radius:7px;padding:8px;margin-top:8px;font-size:11px;color:var(--mu);text-align:center}
+
 /* ── TABLET & MOBILE RESPONSIVE ── */
 @media (max-width: 900px) {
   .app{flex-direction:column;height:auto;overflow:auto}
@@ -222,6 +231,7 @@ textarea.di{min-height:38px;resize:vertical}
     <div class="tab" onclick="showTab(2)">📄 Sections</div>
     <div class="tab" onclick="showTab(3)">✏️ Content</div>
     <div class="tab" onclick="showTab(4)">🎨 Style</div>
+    <div class="tab" onclick="showTab(5)">📖 Guide</div>
   </div>
   <div class="tc">
 
@@ -336,6 +346,76 @@ textarea.di{min-height:38px;resize:vertical}
         <button class="lb" data-lang="nl">Dutch</button>
         <button class="lb" data-lang="fr">Français</button>
         <button class="lb" data-lang="wo">Wolof</button>
+      </div>
+    </div>
+
+    <!-- TAB 5: GUIDE -->
+    <div class="tp" id="tab-5">
+      <div class="sl">How to Generate & Deploy Your Website</div>
+      <div class="guide-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Fill in the Business tab</div>
+          <div class="step-desc">Enter your <strong style="color:var(--tx)">business name, sector, tagline, about text, contact info</strong> and social media links. The more detail you provide, the better the generated website will be.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Upload photos</div>
+          <div class="step-desc">Go to the <strong style="color:var(--tx)">Photos tab</strong> and upload your logo, favicon, and up to 9 business photos. Use high-quality images — hero shot, products, atmosphere, team, and location. Photos are embedded directly in the HTML.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Choose your sections</div>
+          <div class="step-desc">In the <strong style="color:var(--tx)">Sections tab</strong>, toggle which sections to include: Gallery, Reviews, FAQ, Pricing, Team, Blog, and more. Each section is built with real content from your business info.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Add custom content (optional)</div>
+          <div class="step-desc">The <strong style="color:var(--tx)">Content tab</strong> lets you add services, team members, and FAQs manually. This gives the AI specific content to work with instead of generating it from scratch.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Pick a style</div>
+          <div class="step-desc">In the <strong style="color:var(--tx)">Style tab</strong>, choose a template, color palette, font pairing, layout style, and animation. The AI follows your design choices to create a matching website.</div>
+          <div class="step-img">Template → Colors → Fonts → Layout → Animation → Language</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Generate the website</div>
+          <div class="step-desc">Click <strong style="color:var(--tx)">Generate Website</strong>. The AI creates a complete, single-file HTML website with all CSS and JavaScript inline. This takes 30-90 seconds depending on the AI model used. Preview appears on the right.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <div class="step-title">Review & download</div>
+          <div class="step-desc">Check the preview. If the client approves, click <strong style="color:var(--tx)">Client Akkoord</strong> to save it to the CRM, or click <strong style="color:var(--tx)">Download</strong> to get the HTML file. You can also <strong style="color:var(--tx)">Copy HTML</strong> to clipboard.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">8</div>
+        <div class="step-content">
+          <div class="step-title">Deploy to hosting</div>
+          <div class="step-desc">Upload the HTML file to your hosting provider (e.g. <strong style="color:var(--tx)">Namecheap, Cloudflare Pages, or Netlify</strong>). The website is a single file — no server needed. Just upload and point your domain to it.</div>
+          <div class="step-img">Download HTML → Upload to hosting → Connect domain → Live! 🚀</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">9</div>
+        <div class="step-content">
+          <div class="step-title">AI model tips</div>
+          <div class="step-desc"><strong style="color:var(--tx)">Claude API</strong>: best quality, needs API key. <strong style="color:var(--tx)">Worker</strong>: uses your Cloudflare Worker proxy, no key needed on client. <strong style="color:var(--tx)">Ollama</strong>: free, runs locally, needs a capable model (8B+ recommended).</div>
+        </div>
       </div>
     </div>
 
@@ -536,11 +616,28 @@ ${photos[i]?`<img class="phv" src="data:${photos[i].m};base64,${photos[i].b}">`:
   document.getElementById('phc').textContent=`(${photos.filter(Boolean).length}/${MAX})`;
 }
 
-async function b64(f){return new Promise(r=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.readAsDataURL(f);});}
-async function upPhoto(inp,i){const f=inp.files[0];if(!f)return;const b=await b64(f);photos[i]={b,m:f.type,l:PLBLS[i]};buildPhotos();}
+async function compressImg(f,maxW=1200,quality=0.7){
+  return new Promise(r=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>maxW){h=Math.round(h*(maxW/w));w=maxW;}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      const ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);
+      const dataUrl=c.toDataURL('image/jpeg',quality);
+      r(dataUrl.split(',')[1]);
+    };
+    img.src=URL.createObjectURL(f);
+  });
+}
+async function b64(f){
+  if(f.type&&f.type.startsWith('image/')&&f.size>100000){return compressImg(f);}
+  return new Promise(r=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.readAsDataURL(f);});
+}
+async function upPhoto(inp,i){const f=inp.files[0];if(!f)return;const b=await b64(f);const m=(f.size>100000&&f.type.startsWith('image/'))?'image/jpeg':f.type;photos[i]={b,m,l:PLBLS[i]};buildPhotos();}
 function rmP(e,i){e.preventDefault();e.stopPropagation();photos[i]=null;buildPhotos();}
-async function uploadLogo(inp){const f=inp.files[0];if(!f)return;const b=await b64(f);logoData={b,m:f.type};const s=document.getElementById('logo-slot');s.innerHTML=`<input type="file" accept="image/*" onchange="uploadLogo(this)"><img src="data:${f.type};base64,${b}">`;s.style.borderStyle='solid';s.style.borderColor='var(--ac)';}
-async function uploadFavicon(inp){const f=inp.files[0];if(!f)return;const b=await b64(f);faviconData={b,m:f.type};const s=document.getElementById('fav-slot');s.innerHTML=`<input type="file" accept="image/*" onchange="uploadFavicon(this)"><img src="data:${f.type};base64,${b}">`;}
+async function uploadLogo(inp){const f=inp.files[0];if(!f)return;const b=await b64(f);const m=(f.size>100000&&f.type.startsWith('image/'))?'image/jpeg':f.type;logoData={b,m};const s=document.getElementById('logo-slot');s.innerHTML=`<input type="file" accept="image/*" onchange="uploadLogo(this)"><img src="data:${m};base64,${b}">`;s.style.borderStyle='solid';s.style.borderColor='var(--ac)';}
+async function uploadFavicon(inp){const f=inp.files[0];if(!f)return;const b=await b64(f);const m=(f.size>100000&&f.type.startsWith('image/'))?'image/jpeg':f.type;faviconData={b,m};const s=document.getElementById('fav-slot');s.innerHTML=`<input type="file" accept="image/*" onchange="uploadFavicon(this)"><img src="data:${m};base64,${b}">`;}
 
 document.querySelectorAll('.lb').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.lb').forEach(x=>x.classList.remove('on'));b.classList.add('on');selLang=b.dataset.lang;};});
 function showTab(i){document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));document.querySelectorAll('.tp').forEach((p,j)=>p.classList.toggle('active',i===j));}
@@ -574,11 +671,12 @@ function addSv(){
 async function svUploadImg(inp, idx){
   const f=inp.files[0];if(!f)return;
   const b=await b64(f);
+  const m=(f.size>100000&&f.type.startsWith('image/'))?'image/jpeg':f.type;
   const slot=inp.closest('.sv-img-slot');
   slot.classList.add('hi');
   slot.dataset.b64=b;
-  slot.dataset.mime=f.type;
-  slot.innerHTML=`<input type="file" accept="image/*" onchange="svUploadImg(this,${idx})"><img src="data:${f.type};base64,${b}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
+  slot.dataset.mime=m;
+  slot.innerHTML=`<input type="file" accept="image/*" onchange="svUploadImg(this,${idx})"><img src="data:${m};base64,${b}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">`;
 }
 function addTm(){const l=document.getElementById('tm-list');const r=document.createElement('div');r.className='di-r';r.innerHTML=`<div class="di-ih"><input class="di" placeholder="Full name"><input class="di" placeholder="Job title"></div><button class="rm" onclick="this.parentElement.remove()">✕</button>`;l.appendChild(r);}
 function addPr(){const l=document.getElementById('pr-list');const it=document.createElement('div');it.className='pi';it.innerHTML=`<div class="pih"><input class="di" placeholder="Package name" style="flex:1"><input class="di" placeholder="Price (e.g. D500/mo)" style="width:130px"><button class="rm" onclick="this.closest('.pi').remove()">✕</button></div><textarea class="di" placeholder="Features, one per line" style="width:100%;min-height:44px;resize:vertical"></textarea>`;l.appendChild(it);}
@@ -739,7 +837,24 @@ ${faviconData?'Favicon: embed as base64 in <link rel="icon" href="data:...">':''
 - Professional agency quality — distinctive, memorable, beautiful
 - Footer: © ${new Date().getFullYear()} ${naam}. All rights reserved.
 - START with <!DOCTYPE html>
+- <html lang="${selLang||'en'}">
 - Return ONLY the raw HTML. No markdown. No code fences. No explanations.
+
+=== SEO (MANDATORY) ===
+Include ALL of these in the <head>:
+- <meta name="description" content="${gv('f-meta')||naam+' — '+sector+' in '+(gv('f-stad')||'The Gambia')}">
+- <meta name="keywords" content="${gv('f-kw')||sector+', '+(gv('f-stad')||'Gambia')+', '+naam}">
+- <meta property="og:title" content="${naam}">
+- <meta property="og:description" content="${gv('f-meta')||gv('f-tagline')||sector+' in '+(gv('f-stad')||'The Gambia')}">
+- <meta property="og:type" content="website">
+${gv('f-domain')?'- <meta property="og:url" content="https://'+gv('f-domain')+'">':''}
+${gv('f-domain')?'- <link rel="canonical" href="https://'+gv('f-domain')+'">':''}
+- Use the first photo or logo as og:image (base64 data URL is fine)
+- The hero section MUST have exactly one <h1> with the business name
+- ALL <img> tags MUST have descriptive alt="..." attributes
+- Add loading="lazy" to all images below the fold
+- Add this JSON-LD structured data in a <script type="application/ld+json">:
+  {"@context":"https://schema.org","@type":"LocalBusiness","name":"${naam}","description":"${gv('f-meta')||gv('f-desc')||''}","address":{"@type":"PostalAddress","streetAddress":"${gv('f-adres')||''}","addressLocality":"${gv('f-stad')||''}","addressCountry":"GM"}${gv('f-tel')?',"telephone":"'+gv('f-tel')+'"':''}${gv('f-email')?',"email":"'+gv('f-email')+'"':''}${gv('f-domain')?',"url":"https://'+gv('f-domain')+'"':''}}
 - IMPORTANT CMS ATTRIBUTES: Add these data attributes to the relevant HTML sections so content can be updated later:
   * data-cms-products on the products/services container section
   * data-cms-blog on the blog/news container section (if present)
@@ -823,7 +938,8 @@ Language: ${langMap[selLang]||'English'}
 
 Sections: Hero, About, Products/Services, ${secList.map(s=>s.t).join(', ')}${secList.length?', ':''}Contact, Footer
 Add data-cms-products, data-cms-about, data-cms-contact, data-cms-tagline attributes.
-START with <!DOCTYPE html>. Return ONLY HTML.`;
+SEO: Add <meta name="description">, <meta property="og:title">, one <h1> with business name, alt text on all images, loading="lazy" on non-hero images.
+<html lang="${selLang||'en'}">. START with <!DOCTYPE html>. Return ONLY HTML.`;
       resp=await fetch(ollamaUrl+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:ollamaModel,messages:[{role:'user',content:ollamaPrompt}],stream:false,options:{num_ctx:8192}})});
       const data=await resp.json();
       if(data.error) throw new Error('Ollama: '+data.error);
@@ -889,6 +1005,26 @@ function clientAkkoord(){
     timestamp:new Date().toISOString()
   };
   localStorage.setItem('wg_onboarding',JSON.stringify(data));
+
+  // Save baseHTML to client CMS for publish flow in client-portal
+  try{
+    const crm=JSON.parse(localStorage.getItem('kok_crm_v2')||'{}');
+    const clients=crm.clients||[];
+    const match=clients.find(c=>c.email&&data.email&&c.email.toLowerCase()===data.email.toLowerCase());
+    const cmsKey='client_cms_'+(match?match.id:'pending');
+    const existing=JSON.parse(localStorage.getItem(cmsKey)||'null')||{};
+    existing.baseHTML=genHTML;
+    existing.siteContent=existing.siteContent||{};
+    existing.siteContent.tagline=data.tagline||existing.siteContent.tagline||'';
+    existing.siteContent.contactPhone=data.phone||existing.siteContent.contactPhone||'';
+    existing.siteContent.contactEmail=data.email||existing.siteContent.contactEmail||'';
+    existing.siteContent.contactAddress=data.address||existing.siteContent.contactAddress||'';
+    existing.products=existing.products||[];
+    existing.blog=existing.blog||[];
+    existing.gallery=existing.gallery||[];
+    localStorage.setItem(cmsKey,JSON.stringify(existing));
+  }catch(e){console.warn('CMS save:',e);}
+
   notif('Redirecting to CRM...');
   setTimeout(()=>window.location.href='webgen-crm.html',600);
 }

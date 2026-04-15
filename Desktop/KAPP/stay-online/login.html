@@ -86,6 +86,9 @@ body{display:flex;align-items:center;justify-content:center;padding:20px}
   .login-card{padding:20px 18px}
   .logo-title{font-size:20px}
 }
+.lang-switch{display:flex;gap:4px;justify-content:center;margin-bottom:12px}
+.lang-switch button{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .12s;font-family:'DM Sans',sans-serif}
+.lang-switch button.on{border-color:var(--ac2);color:var(--ac2);background:rgba(123,92,255,.1)}
 </style>
 </head>
 <body>
@@ -97,6 +100,11 @@ body{display:flex;align-items:center;justify-content:center;padding:20px}
     <div class="logo-mark"><svg viewBox="0 0 20 20"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></div>
     <div class="logo-title">WebGen Gambia</div>
     <div class="logo-sub">KOK Enterprises — Agency Platform</div>
+  </div>
+  <div class="lang-switch" id="lang-switch">
+    <button class="on" onclick="setLang('en')">EN</button>
+    <button onclick="setLang('wo')">Wolof</button>
+    <button onclick="setLang('ma')">Mandinka</button>
   </div>
 
   <!-- LOGIN FORM -->
@@ -173,7 +181,7 @@ body{display:flex;align-items:center;justify-content:center;padding:20px}
       <div class="offline-title"><span class="dot"></span> Offline Mode</div>
       <div class="offline-desc">
         No worker URL configured? You can still use the tools locally.<br>
-        <a href="#" onclick="offlineAccess()" style="color:var(--ac);text-decoration:none;font-weight:600;margin-top:6px;display:inline-block;cursor:pointer">Continue without login →</a>
+        <a href="#" onclick="offlineAccess()" style="color:var(--mu);text-decoration:none;font-weight:500;margin-top:6px;display:inline-block;cursor:pointer;font-size:12px">Use saved session (offline) →</a>
       </div>
     </div>
   </div>
@@ -184,6 +192,105 @@ body{display:flex;align-items:center;justify-content:center;padding:20px}
 </div>
 
 <script>
+// ─── I18N ───
+const I18N={
+  en:{
+    welcome:'Welcome back',sub:'Login to access your agency tools',
+    email:'Email address',password:'Password',workerUrl:'Worker URL',
+    workerOpt:'(optional — from Setup Guide)',remember:'Remember me',
+    signin:'Sign in',createAdmin:'Create Admin Account',
+    setupSub:'First time setup — create your admin account to get started',
+    yourName:'Your name',confirmPass:'Confirm password',
+    choosePass:'Choose a strong password',repeatPass:'Repeat your password',
+    createBtn:'Create Admin Account',offlineMode:'Offline Mode',
+    offlineDesc:'No worker URL configured? You can still use the tools locally.',
+    offlineLink:'Use saved session (offline) →',
+    setupGuide:'Setup Guide',
+    errEmpty:'Please enter email and password',
+    errInvalid:'Invalid email or password',
+    errServer:'Cannot reach server and no offline account found.',
+    errPassShort:'Password must be at least 8 characters',
+    errPassMatch:'Passwords do not match',
+    errAllReq:'All fields are required',
+    errSetup:'Setup failed',errNoServer:'Cannot reach server.',
+    offlineUsing:'Using your last saved session (offline mode)',
+    offlineNo:'No saved session found. Please connect to internet and login first.'
+  },
+  wo:{
+    welcome:'Dalal ak jàmm',sub:'Dugg ci sa yëf yi',
+    email:'Adresse email',password:'Baatu jëf',workerUrl:'Worker URL',
+    workerOpt:'(dara du war — jàng Guide bi)',remember:'Fattaliku ma',
+    signin:'Dugg',createAdmin:'Sos sa kompt Admin',
+    setupSub:'Njëkk bi — sos sa kompt admin ngir door',
+    yourName:'Sa tur',confirmPass:'Dëggal baatu jëf bi',
+    choosePass:'Tànn benn baatu jëf bu am kàttan',repeatPass:'Bindaat sa baatu jëf',
+    createBtn:'Sos kompt Admin',offlineMode:'Yoon bu amul internet',
+    offlineDesc:'Amoo worker URL? Mën nga jëfandikoo jumtukaay yi ci sa ordinateur.',
+    offlineLink:'Jëfandikoo sa dernière session →',
+    setupGuide:'Guide bi',
+    errEmpty:'Bindal sa email ak baatu jëf',
+    errInvalid:'Email walla baatu jëf judul',
+    errServer:'Mënul gis serveur bi te amul compte offline.',
+    errPassShort:'Baatu jëf dafa war am lu ëpp 8 karàkter',
+    errPassMatch:'Baatu jëf yi yemuñu',
+    errAllReq:'Bépp champ war nañu ko fill-é',
+    errSetup:'Setup bi baaxul',errNoServer:'Mënul gis serveur bi.',
+    offlineUsing:'Yaa ngi jëfandikoo sa dernière session (offline)',
+    offlineNo:'Amul session bu ñu sauvegarde. Joxeel internet te dugg.'
+  },
+  ma:{
+    welcome:'I ni kéné',sub:'Domo i ka tools kono',
+    email:'Email address',password:'Dantóo kúmá',workerUrl:'Worker URL',
+    workerOpt:'(a mang feeroo — Guide lá)',remember:'N ka hákili to',
+    signin:'Domo',createAdmin:'Admin account dá',
+    setupSub:'Fólo — i ka admin account dá',
+    yourName:'I tóo',confirmPass:'Dantóo kúmá sɛ́bɛ́n túgun',
+    choosePass:'Dantóo kúmá kúnbalíya súgándi',repeatPass:'I ka dantóo kúmá sɛ́bɛ́n túgun',
+    createBtn:'Admin account dá',offlineMode:'Internet tée',
+    offlineDesc:'Worker URL tée? I sé ka tools kɛ́ i ka computer kono.',
+    offlineLink:'Session kɔ́rɔ́ bɛ́ → ',
+    setupGuide:'Guide',
+    errEmpty:'I ka email ní dantóo kúmá sɛ́bɛ́n',
+    errInvalid:'Email wàla dantóo kúmá bɛ́nyɔ́gɔ́n tée',
+    errServer:'Server sɔ́rɔ́ tée, offline account fánán tée.',
+    errPassShort:'Dantóo kúmá kán ká kɛ́ karàkter 8 joó',
+    errPassMatch:'Dantóo kúmá fila bɛ́nyɔ́gɔ́n tée',
+    errAllReq:'Champ bɛ́ɛ kán ká fára',
+    errSetup:'Setup bányá',errNoServer:'Server sɔ́rɔ́ tée.',
+    offlineUsing:'I bɛ́ session kɔ́rɔ́ kɛ́lá (offline)',
+    offlineNo:'Session save-lén tée. Internet sɔ́rɔ́ ká domo.'
+  }
+};
+let curLang='en';
+function setLang(l){
+  curLang=l;
+  document.querySelectorAll('.lang-switch button').forEach(b=>b.classList.toggle('on',b.textContent.toLowerCase().includes(l==='en'?'en':l==='wo'?'wolof':'mandinka')));
+  const t=I18N[l]||I18N.en;
+  const q=s=>{try{return document.querySelector(s)}catch{return null}};
+  const h2Login=q('#login-section h2');if(h2Login)h2Login.textContent=t.welcome;
+  const subLogin=q('#login-section .sub');if(subLogin)subLogin.textContent=t.sub;
+  const labels=document.querySelectorAll('#login-section .field label');
+  if(labels[0])labels[0].textContent=t.email;
+  if(labels[1])labels[1].textContent=t.password;
+  if(labels[2])labels[2].innerHTML=t.workerUrl+' <span style="color:var(--mu);font-weight:400">'+t.workerOpt+'</span>';
+  const remLabel=q('#login-section .remember');
+  if(remLabel)remLabel.lastChild.textContent=' '+t.remember;
+  const btnText=q('#login-btn .btn-text');if(btnText)btnText.textContent=t.signin;
+  const h2Setup=q('#setup-section h2');if(h2Setup)h2Setup.textContent=t.createAdmin;
+  const subSetup=q('#setup-section .sub');if(subSetup)subSetup.textContent=t.setupSub;
+  const sLabels=document.querySelectorAll('#setup-section .field label');
+  if(sLabels[0])sLabels[0].textContent=t.yourName;
+  if(sLabels[1])sLabels[1].textContent=t.email;
+  if(sLabels[2])sLabels[2].textContent=t.password;
+  if(sLabels[3])sLabels[3].textContent=t.confirmPass;
+  const setupBtn=q('#setup-btn .btn-text');if(setupBtn)setupBtn.textContent=t.createBtn;
+  const offTitle=q('.offline-title');
+  if(offTitle)offTitle.innerHTML='<span class="dot"></span> '+t.offlineMode;
+  const offDesc=q('.offline-desc');
+  if(offDesc)offDesc.innerHTML=t.offlineDesc+'<br><a href="#" onclick="offlineAccess()" style="color:var(--mu);text-decoration:none;font-weight:500;margin-top:6px;display:inline-block;cursor:pointer;font-size:12px">'+t.offlineLink+'</a>';
+  localStorage.setItem('wg_login_lang',l);
+}
+
 // ─── CONFIG ───
 const STORAGE_KEY = 'webgen_auth';
 const WORKER_URL_KEY = 'wg_worker_url';
@@ -206,6 +313,10 @@ function setAuth(data) {
 
 // ─── CHECK EXISTING SESSION ───
 (async function init() {
+  // Load saved language
+  const savedLang=localStorage.getItem('wg_login_lang');
+  if(savedLang&&I18N[savedLang])setLang(savedLang);
+
   const auth = getAuth();
   const workerUrl = getWorkerUrl();
 
@@ -305,7 +416,7 @@ async function doLogin() {
   const remember = document.getElementById('login-remember').checked;
 
   if (!email || !pass) {
-    showError('error-msg', 'Please enter email and password');
+    showError('error-msg', (I18N[curLang]||I18N.en).errEmpty);
     return;
   }
 
@@ -337,13 +448,13 @@ async function doLogin() {
       // Worker login failed — try offline fallback
       const offlineFallback = await tryOfflineLogin(email, pass);
       if (!offlineFallback) {
-        showError('error-msg', data.error || 'Login failed');
+        showError('error-msg', data.error || (I18N[curLang]||I18N.en).errInvalid);
       }
     } catch (e) {
       // Worker unreachable — try offline fallback
       const offlineFallback = await tryOfflineLogin(email, pass);
       if (!offlineFallback) {
-        showError('error-msg', 'Cannot reach server and no offline account found.');
+        showError('error-msg', (I18N[curLang]||I18N.en).errServer);
       }
     } finally {
       setLoading('login-btn', false);
@@ -364,13 +475,13 @@ async function tryOfflineLogin(email, pass) {
 
   const user = offlineUsers.find(u => u.email === email.toLowerCase());
   if (!user) {
-    showError('error-msg', 'Invalid email or password');
+    showError('error-msg', (I18N[curLang]||I18N.en).errInvalid);
     return false;
   }
 
-  const hash = await simpleHash(pass);
+  const hash = await simpleHash(pass, user.salt || '_webgen_salt_2026');
   if (user.passwordHash !== hash) {
-    showError('error-msg', 'Invalid email or password');
+    showError('error-msg', (I18N[curLang]||I18N.en).errInvalid);
     return false;
   }
 
@@ -393,16 +504,17 @@ async function doSetup() {
   const pass = document.getElementById('setup-pass').value;
   const pass2 = document.getElementById('setup-pass2').value;
 
+  const t=I18N[curLang]||I18N.en;
   if (!name || !email || !pass) {
-    showError('setup-error-msg', 'All fields are required');
+    showError('setup-error-msg', t.errAllReq);
     return;
   }
   if (pass !== pass2) {
-    showError('setup-error-msg', 'Passwords do not match');
+    showError('setup-error-msg', t.errPassMatch);
     return;
   }
-  if (pass.length < 4) {
-    showError('setup-error-msg', 'Password must be at least 4 characters');
+  if (pass.length < 8) {
+    showError('setup-error-msg', t.errPassShort);
     return;
   }
 
@@ -432,13 +544,15 @@ async function doSetup() {
     }
   } else {
     // Offline setup
-    const hash = await simpleHash(pass);
+    const salt = generateSalt();
+    const hash = await simpleHash(pass, salt);
     const userId = 'u_' + Date.now();
     const user = {
       id: userId,
       name,
       email: email.toLowerCase(),
       passwordHash: hash,
+      salt: salt,
       role: 'admin',
       createdAt: new Date().toISOString(),
       lastLogin: new Date().toISOString()
@@ -459,24 +573,33 @@ async function doSetup() {
   }
 }
 
-// Simple hash for offline mode
-async function simpleHash(str) {
+// Simple hash for offline mode — per-user random salt
+function generateSalt(){
+  const arr=new Uint8Array(16);crypto.getRandomValues(arr);
+  return Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function simpleHash(str, salt) {
+  if(!salt) salt='_webgen_salt_2026';
   const encoder = new TextEncoder();
-  const data = encoder.encode(str + '_webgen_salt_2026');
+  const data = encoder.encode(str + salt);
   const hash = await crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Offline access — skip login
+// Offline access — only use cached session, never create fake admin
 function offlineAccess() {
-  const offUser = { id: 'offline', name: 'Offline', email: '', role: 'admin' };
-  setAuth({
-    token: 'offline_' + Date.now(),
-    user: offUser,
-    loginAt: new Date().toISOString(),
-    offline: true
-  });
-  window.location.href = getRedirectUrl(offUser);
+  const cached = localStorage.getItem('webgen_auth');
+  if (cached) {
+    try {
+      const auth = JSON.parse(cached);
+      if (auth && auth.token && auth.user) {
+        showError('error-msg', (I18N[curLang]||I18N.en).offlineUsing);
+        setTimeout(() => { window.location.href = getRedirectUrl(auth.user); }, 1200);
+        return;
+      }
+    } catch(e) {}
+  }
+  showError('error-msg', (I18N[curLang]||I18N.en).offlineNo);
 }
 
 // Enter key support

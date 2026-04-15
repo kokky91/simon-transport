@@ -1037,7 +1037,7 @@ function publishSite(){
   if(prodSection&&CMS.products.length){
     prodSection.innerHTML=CMS.products.map(p=>`
       <div class="product-card" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;text-align:center">
-        ${p.photo?`<img src="${p.photo}" style="width:100%;height:180px;object-fit:cover" alt="${esc(p.name)}">`:''}
+        ${p.photo&&safeImgSrc(p.photo)?`<img src="${safeImgSrc(p.photo)}" style="width:100%;height:180px;object-fit:cover" alt="${esc(p.name)}">`:''}
         <div style="padding:16px">
           ${p.badge?`<span style="display:inline-block;background:rgba(0,229,160,.15);color:#00e5a0;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;margin-bottom:8px">${esc(p.badge)}</span>`:''}
           <h3 style="font-size:16px;margin:0 0 4px">${esc(p.name)}</h3>
@@ -1054,7 +1054,7 @@ function publishSite(){
     const published=CMS.blog.filter(b=>b.published);
     blogSection.innerHTML=published.map(b=>`
       <article style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden">
-        ${b.image?`<img src="${b.image}" style="width:100%;height:200px;object-fit:cover" alt="${esc(b.title)}">`:''}
+        ${b.image&&safeImgSrc(b.image)?`<img src="${safeImgSrc(b.image)}" style="width:100%;height:200px;object-fit:cover" alt="${esc(b.title)}">`:''}
         <div style="padding:18px">
           <h3 style="font-size:17px;margin:0 0 6px">${esc(b.title)}</h3>
           <div style="font-size:12px;opacity:.5;margin-bottom:10px">${esc(b.author||'')}${b.date?' · '+b.date:''}</div>
@@ -1070,7 +1070,7 @@ function publishSite(){
     galSection.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">`+
       CMS.gallery.map(g=>`
         <div style="border-radius:10px;overflow:hidden;position:relative">
-          <img src="${g.photo}" style="width:100%;height:200px;object-fit:cover" alt="${esc(g.caption||'')}">
+          <img src="${safeImgSrc(g.photo)}" style="width:100%;height:200px;object-fit:cover" alt="${esc(g.caption||'')}">
           ${g.caption?`<div style="position:absolute;bottom:0;left:0;right:0;padding:8px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:12px;color:white">${esc(g.caption)}</div>`:''}
         </div>
       `).join('')+'</div>';
@@ -1108,7 +1108,7 @@ function publishSite(){
   const blob=new Blob([html],{type:'text/html'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  const bizName=(document.getElementById('hdr-biz-name').textContent||'website').replace(/\s+/g,'-').toLowerCase();
+  const bizName=(document.getElementById('hdr-biz-name').textContent||'website').replace(/[^a-z0-9\s-]/gi,'').replace(/\s+/g,'-').toLowerCase();
   a.download=bizName+'-website.html';
   a.click();
   URL.revokeObjectURL(a.href);
@@ -1119,6 +1119,7 @@ function publishSite(){
 // UTILITIES
 // ═══════════════════════════════════════════
 function esc(s){if(!s)return '';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function safeImgSrc(s){if(!s)return '';if(s.startsWith('data:image/'))return s;if(s.startsWith('https://'))return s;if(s.startsWith('http://'))return s;return '';}
 
 function toast(msg,dur=2300){
   const el=document.getElementById('toast');

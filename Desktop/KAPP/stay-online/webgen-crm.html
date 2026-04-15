@@ -109,6 +109,15 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 .dp{display:none}
 .dp.on{display:block}
 
+/* GUIDE TAB */
+.guide-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--br)}
+.guide-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;margin-top:1px}
+.step-content{}
+.step-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--mu);line-height:1.6}
+.step-img{background:var(--sf2);border:1px solid var(--br);border-radius:var(--r2);padding:8px;margin-top:8px;font-size:11px;color:var(--mu);text-align:center}
+
 /* CARDS */
 .card{background:var(--sf);border:1px solid var(--br);border-radius:var(--r2);padding:14px 16px;margin-bottom:12px}
 .card-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mu);margin-bottom:10px}
@@ -335,6 +344,16 @@ select.fi option{background:var(--sf2)}
       <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
       Packages
     </div>
+    <div class="nav-sec">Data</div>
+    <div class="nav-i" onclick="exportCRM()">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export Backup (JSON)
+    </div>
+    <div class="nav-i" onclick="document.getElementById('import-file').click()">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import Backup (JSON)
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importCRM(this)">
   </div>
   <div class="sb-stats">
     <div class="sb-stat"><div class="sb-stat-n" id="sb-clients" style="color:var(--ac)">0</div><div class="sb-stat-l">Clients</div></div>
@@ -391,6 +410,7 @@ select.fi option{background:var(--sf2)}
         <div class="dc-tab" onclick="showDTab(3)">Tasks</div>
         <div class="dc-tab" onclick="showDTab(4)">Log</div>
         <div class="dc-tab" onclick="showDTab(5)">Notes</div>
+        <div class="dc-tab" onclick="showDTab(6)">Guide</div>
       </div>
       <div class="dc-body">
         <!-- OVERVIEW -->
@@ -512,6 +532,69 @@ select.fi option{background:var(--sf2)}
             <p style="font-size:11px;color:var(--mu);margin-bottom:8px">Only visible to you. Use for passwords, special agreements, important client info.</p>
             <textarea class="fi" id="notes-area" style="min-height:200px;font-size:13px" placeholder="Add notes about this client..." oninput="autoSaveNotes()"></textarea>
             <div style="font-size:10px;color:var(--mu);margin-top:5px" id="notes-saved-lbl"></div>
+          </div>
+        </div>
+
+        <!-- GUIDE TAB -->
+        <div class="dp" id="dp-6">
+          <div class="card">
+            <div class="card-title">How to Use the CRM</div>
+            <div class="guide-step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <div class="step-title">Add a new client</div>
+                <div class="step-desc">Click the <strong style="color:var(--tx)">+ New Client</strong> button in the sidebar. Fill in the business name, contact person, email, phone, and select a subscription package. The package determines which tools the client has access to.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <div class="step-title">Manage subscriptions & payments</div>
+                <div class="step-desc">Go to the <strong style="color:var(--tx)">Finance tab</strong> to track payments. Add payment records with date, amount, and method. The system calculates the subscription expiry date and shows a countdown ring in the Overview.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <div class="step-title">Generate websites for clients</div>
+                <div class="step-desc">Go to the <strong style="color:var(--tx)">Websites tab</strong> to see all generated websites for this client. Use the <strong style="color:var(--tx)">Website Generator</strong> tool to create new sites — when you click "Client Akkoord", the website is saved here automatically.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <div class="step-title">Track tasks & follow-ups</div>
+                <div class="step-desc">Use the <strong style="color:var(--tx)">Tasks tab</strong> to create to-do items per client. Set due dates, priorities, and mark tasks as completed. Overdue tasks appear in red on the Analytics dashboard.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">5</div>
+              <div class="step-content">
+                <div class="step-title">Log client interactions</div>
+                <div class="step-desc">The <strong style="color:var(--tx)">Log tab</strong> keeps a timeline of all interactions — calls, emails, meetings, WhatsApp messages. Click <strong style="color:var(--tx)">+ Log</strong> to add a new entry with date, type, and notes.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">6</div>
+              <div class="step-content">
+                <div class="step-title">Use internal notes</div>
+                <div class="step-desc">The <strong style="color:var(--tx)">Notes tab</strong> is for private notes only you can see. Use it for passwords, special agreements, pricing discussions, or anything you need to remember about this client.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">7</div>
+              <div class="step-content">
+                <div class="step-title">Tool access & tokens</div>
+                <div class="step-desc">Each client has <strong style="color:var(--tx)">tool toggles</strong> (Website, Social Media, WhatsApp, Google Business, CRM) and a <strong style="color:var(--tx)">token allocation</strong>. Tokens are consumed when AI tools are used. Monitor usage in the Overview tab.</div>
+              </div>
+            </div>
+            <div class="guide-step">
+              <div class="step-num">8</div>
+              <div class="step-content">
+                <div class="step-title">Analytics & overview</div>
+                <div class="step-desc">Use the <strong style="color:var(--tx)">Analytics</strong> page (top menu) to see total revenue, active clients, expiring subscriptions, and overdue tasks across all clients. The bar chart shows monthly revenue trends.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1435,6 +1518,37 @@ function doOnboard(ob){
     const formGrid=document.querySelector('#client-modal .form-grid');
     formGrid.insertBefore(feeNote,formGrid.firstChild);
     toast('Client data pre-filled from Website Generator ✓');
+}
+
+// ─── EXPORT / IMPORT ───
+function exportCRM(){
+  const data=JSON.parse(localStorage.getItem(KEY)||'{}');
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='webgen-crm-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CRM backup downloaded ✓');
+}
+function importCRM(inp){
+  const f=inp.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.clients||!Array.isArray(data.clients)){toast('Invalid backup file — missing clients array');return;}
+      if(!confirm('This will replace ALL current CRM data with the backup. Continue?'))return;
+      localStorage.setItem(KEY,JSON.stringify(data));
+      D=data;
+      renderList();
+      updateBadges();
+      toast('CRM data restored from backup ✓');
+    }catch(err){toast('Error reading backup file: '+err.message);}
+  };
+  reader.readAsText(f);
+  inp.value='';
 }
 </script>
 </body>

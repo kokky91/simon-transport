@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Google Business Generator — WebGen Gambia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07080d;--sf:#0f1117;--sf2:#161820;--sf3:#1e2029;--br:#252838;--ac:#00e5a0;--ac2:#7b5cff;--tx:#eeeef5;--mu:#7878a0;--rd:#ff4d6d;--yl:#ffd166;--go:#4285F4;--r:10px;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
+.app{display:flex;height:100vh}
+.left{width:420px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--br);display:flex;flex-direction:column}
+.right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.lh{padding:14px 18px;border-bottom:1px solid var(--br);flex-shrink:0}
+.logo-r{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.logo-d{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#4285F4,#34A853,#FBBC04,#EA4335);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:900;color:white}
+.logo-r span{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px}
+.tg{font-size:11px;color:var(--mu)}
+.api-row{padding:8px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px}
+.api-input{flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:7px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:11px;padding:5px 9px;outline:none}
+.api-input:focus{border-color:var(--ac)}
+.scroll{flex:1;overflow-y:auto;padding:14px 17px}
+.scroll::-webkit-scrollbar{width:3px}
+.scroll::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.sl{font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--ac);text-transform:uppercase;margin:13px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--br)}
+.sl:first-child{margin-top:0}
+.fd{margin-bottom:9px}
+.fd label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mu);margin-bottom:3px;font-weight:500}
+.fi{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--ac)}
+textarea.fi{resize:vertical;min-height:60px;line-height:1.5}
+select.fi option{background:var(--sf2)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lf{padding:12px 17px;border-top:1px solid var(--br);flex-shrink:0}
+.gen-btn{width:100%;padding:12px;background:linear-gradient(135deg,#4285F4,#34A853);border:none;border-radius:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:white;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.gen-btn:hover{opacity:.88}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed}
+.btn{padding:6px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .12s;display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.go{background:var(--go);color:white;border:none;font-weight:600}
+.btn.go:hover{opacity:.85}
+
+/* RIGHT */
+.rh{padding:12px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--sf)}
+.rh-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.content-area{flex:1;overflow-y:auto;padding:16px 20px}
+.content-area::-webkit-scrollbar{width:4px}
+.content-area::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+/* GOOGLE MOCK */
+.google-card{background:white;border-radius:12px;overflow:hidden;max-width:500px;margin:0 auto;font-family:'DM Sans',sans-serif;color:#1a1a1a;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.gc-header{padding:16px 16px 12px;display:flex;align-items:flex-start;gap:12px}
+.gc-logo{width:56px;height:56px;border-radius:10px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#4285F4;flex-shrink:0;font-family:'DM Sans',sans-serif}
+.gc-info{flex:1}
+.gc-name{font-size:17px;font-weight:700;margin-bottom:2px;color:#1a1a1a}
+.gc-cat{font-size:12px;color:#666;margin-bottom:5px}
+.gc-stars{display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.gc-star{color:#FBBC04;font-size:14px}
+.gc-rating{font-size:12px;color:#666}
+.gc-status{font-size:12px}
+.gc-status.open{color:#188038}
+.gc-status.closed{color:#D93025}
+.gc-actions{display:flex;gap:8px;padding:0 16px 12px;flex-wrap:wrap}
+.gc-action{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 12px;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:11px;color:#4285F4;flex:1;min-width:70px;transition:background .1s}
+.gc-action:hover{background:#f8f9fa}
+.gc-action-icon{font-size:18px}
+.gc-section{padding:12px 16px;border-top:1px solid #f0f0f0}
+.gc-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:8px}
+.gc-desc{font-size:13px;line-height:1.6;color:#333}
+.gc-hours-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:#333}
+.gc-hours-row .day{color:#666;width:80px}
+.gc-hours-row.today{font-weight:700;color:#1a1a1a}
+.gc-qa{background:#f8f9fa;border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.gc-q{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:4px}
+.gc-a{font-size:12px;color:#555;line-height:1.5}
+.gc-review{border-bottom:1px solid #f0f0f0;padding:10px 0}
+.gc-review:last-child{border-bottom:none}
+.gc-review-top{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.gc-reviewer{font-size:13px;font-weight:600}
+.gc-review-text{font-size:12px;color:#555;line-height:1.5}
+.gc-review-reply{background:#f8f9fa;border-radius:6px;padding:8px 10px;margin-top:6px;font-size:11px;color:#555;line-height:1.5;border-left:3px solid #4285F4}
+.gc-review-reply strong{color:#333;display:block;margin-bottom:3px}
+
+/* OUTPUT SECTIONS */
+.out-section{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:16px;margin-bottom:14px}
+.out-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.out-title-txt{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mu)}
+.out-text{background:var(--sf2);border-radius:8px;padding:12px;font-size:13px;line-height:1.7;color:var(--tx);white-space:pre-wrap;word-break:break-word}
+.char-count{font-size:10px;color:var(--mu);margin-top:5px;text-align:right}
+.char-count.warn{color:var(--yl)}
+.char-count.over{color:var(--rd)}
+.tags-grid{display:flex;gap:6px;flex-wrap:wrap}
+.tag-item{background:var(--sf2);border:1px solid var(--br);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--tx);cursor:pointer;transition:all .12s}
+.tag-item:hover{border-color:var(--ac);color:var(--ac)}
+.tag-item.selected{background:rgba(66,133,244,.12);border-color:var(--go);color:var(--go)}
+.spinner{width:36px;height:36px;border:2px solid var(--br);border-top-color:var(--go);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--mu)}
+.empty-state h3{font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);font-weight:600}
+.empty-state p{font-size:12px;text-align:center;max-width:240px;line-height:1.6}
+.toast{position:fixed;bottom:14px;right:14px;background:var(--sf);border:1px solid var(--ac);border-radius:7px;padding:8px 13px;font-size:12px;color:var(--ac);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:6px}
+.check-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--sf2);border-radius:7px;font-size:12px}
+.check-icon{flex-shrink:0;font-size:14px;margin-top:1px}
+.check-text{flex:1;line-height:1.5}
+.check-text strong{display:block;font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.check-text span{color:var(--mu)}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--br);flex-shrink:0;background:var(--sf)}
+.tab{padding:9px 14px;font-size:12px;font-weight:500;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s}
+.tab.on{color:var(--ac);border-bottom-color:var(--ac)}
+.tab:hover:not(.on){color:var(--tx)}
+
+/* GUIDE TAB */
+.guide-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--br)}
+.guide-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--go),#34A853);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;margin-top:1px}
+.step-content{}
+.step-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--mu);line-height:1.6}
+.step-img{background:var(--sf2);border:1px solid var(--br);border-radius:7px;padding:8px;margin-top:8px;font-size:11px;color:var(--mu);text-align:center}
+
+@media (max-width: 900px) {
+  .app{flex-direction:column;height:auto;overflow-y:auto}
+  .left{width:100%;height:auto}
+  .right{min-height:500px}
+  .form-grid{grid-template-columns:1fr}
+  .form-full{grid-column:1}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="left">
+  <div class="lh">
+    <div class="logo-r">
+      <a href="index.html" style="color:var(--mu);font-size:10px;text-decoration:none;padding:2px 6px;background:var(--sf2);border:1px solid var(--br);border-radius:4px;transition:all .15s;flex-shrink:0;display:inline-flex;align-items:center;gap:3px" onmouseover="this.style.borderColor='var(--ac)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--br)';this.style.color='var(--mu)'"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></a>
+      <div class="logo-d">G</div>
+      <span>Google Business Generator</span>
+    </div>
+    <div class="tg">Optimize your Google Maps profile for Gambian businesses</div>
+  </div>
+  <div class="api-row">
+    <input class="api-input" type="password" id="api-key" placeholder="Anthropic API key (sk-ant-...)" oninput="saveKey(this.value)">
+    <span id="key-icon" style="font-size:14px">🔴</span>
+  </div>
+  <div class="api-row" style="padding:4px 18px">
+    <span style="font-size:10px;color:var(--mu);flex-shrink:0">Worker:</span>
+    <input class="api-input" type="text" id="worker-url-gb" placeholder="https://webgen-gambia.NAME.workers.dev" style="font-size:10px" oninput="localStorage.setItem('wg_worker_url',this.value.trim())">
+    <span id="worker-icon-gb" style="font-size:12px">⚪</span>
+  </div>
+  <div style="padding:4px 18px;font-size:10px;color:var(--mu);border-bottom:1px solid var(--br)">Ollama: <input id="ollama-url-gb" type="text" placeholder="http://localhost:11434" style="background:var(--sf2);border:1px solid var(--br);border-radius:4px;color:var(--tx);font-size:10px;padding:2px 6px;outline:none;width:130px" oninput="saveOllamaUrl(this.value)"> <select id="ollama-model-gb" style="background:var(--sf2);border:1px solid var(--br);border-radius:4px;color:var(--tx);font-size:10px;padding:2px 4px;outline:none"><option>—</option></select> <span id="ollama-icon-gb">⚪</span></div>
+  <div class="tabs">
+    <div class="tab on" onclick="showTab(0)">Business</div>
+    <div class="tab" onclick="showTab(1)">Guide</div>
+  </div>
+  <div class="scroll" id="scroll-0">
+    <div class="sl">Business Info</div>
+    <div class="fd"><label>Business name *</label><input class="fi" id="b-name" placeholder="e.g. Fatou's Kitchen"></div>
+    <div class="fd"><label>Business category *</label>
+      <select class="fi" id="b-cat">
+        <option>Restaurant</option><option>Fast Food Restaurant</option><option>Catering Service</option>
+        <option>Hotel</option><option>Guesthouse</option><option>Lodge</option>
+        <option>Clothing Store</option><option>Boutique</option><option>Supermarket</option>
+        <option>Grocery Store</option><option>Beauty Salon</option><option>Barber Shop</option>
+        <option>Hair Salon</option><option>Pharmacy</option><option>Clinic</option><option>Hospital</option>
+        <option>School</option><option>Training Center</option><option>Travel Agency</option>
+        <option>Tour Operator</option><option>Construction Company</option><option>Hardware Store</option>
+        <option>Auto Repair Shop</option><option>Motorcycle Shop</option><option>Gas Station</option>
+        <option>Telecommunications Store</option><option>Electronics Store</option>
+        <option>Bank</option><option>Microfinance Institution</option><option>Money Transfer Service</option>
+        <option>NGO / Non-profit Organization</option><option>Religious Organization</option>
+        <option>Government Office</option><option>Law Firm</option><option>Real Estate Agency</option>
+        <option>Advertising Agency</option><option>Printing Service</option><option>Other</option>
+      </select>
+    </div>
+    <div class="fd"><label>Address</label><input class="fi" id="b-addr" placeholder="e.g. Kairaba Avenue, Serrekunda, The Gambia"></div>
+    <div class="fd"><label>Phone</label><input class="fi" id="b-phone" placeholder="+220 ..."></div>
+    <div class="fd"><label>Website</label><input class="fi" id="b-web" placeholder="e.g. fatous.gm"></div>
+
+    <div class="sl">About Your Business</div>
+    <div class="fd"><label>What do you do? <small>the more detail, the better</small></label><textarea class="fi" id="b-desc" style="min-height:80px" placeholder="e.g. We serve authentic Gambian cuisine including Benachin, Domoda and Yassa. Open since 2018. Family-friendly restaurant with 40 seats. Catering available for events."></textarea></div>
+    <div class="fd"><label>What makes you special / USPs</label><input class="fi" id="b-usp" placeholder="e.g. 100% halal, free parking, home delivery, open Sundays"></div>
+    <div class="fd"><label>Target customers</label><input class="fi" id="b-target" placeholder="e.g. families, tourists, office workers, students"></div>
+
+    <div class="sl">Opening Hours</div>
+    <div id="hours-list">
+      <div class="r2" style="margin-bottom:5px">
+        <div><input class="fi" id="h-mon" placeholder="Mon 08:00-20:00" style="font-size:12px"></div>
+        <div><input class="fi" id="h-tue" placeholder="Tue 08:00-20:00" style="font-size:12px"></div>
+      </div>
+      <div class="r2" style="margin-bottom:5px">
+        <div><input class="fi" id="h-wed" placeholder="Wed 08:00-20:00" style="font-size:12px"></div>
+        <div><input class="fi" id="h-thu" placeholder="Thu 08:00-20:00" style="font-size:12px"></div>
+      </div>
+      <div class="r2" style="margin-bottom:5px">
+        <div><input class="fi" id="h-fri" placeholder="Fri 08:00-20:00" style="font-size:12px"></div>
+        <div><input class="fi" id="h-sat" placeholder="Sat 08:00-21:00" style="font-size:12px"></div>
+      </div>
+      <div><input class="fi" id="h-sun" placeholder="Sun Closed" style="font-size:12px;width:49%"></div>
+    </div>
+
+    <div class="sl">Services & Attributes</div>
+    <div class="fd"><label>Services offered (comma-separated)</label><input class="fi" id="b-services" placeholder="e.g. Dine-in, Takeaway, Delivery, Catering, Events"></div>
+    <div class="fd"><label>Attributes</label>
+      <div class="tags-grid" id="attr-tags">
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Wheelchair accessible</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Free Wi-Fi</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Free parking</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Halal</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Air conditioned</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Outdoor seating</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Family-friendly</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Accepts mobile money</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Home delivery</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">By appointment</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Women-owned</div>
+        <div class="tag-item" onclick="this.classList.toggle('selected')">Open on holidays</div>
+      </div>
+    </div>
+
+    <div class="sl">Review Responses</div>
+    <div class="fd"><label>Generate response templates for</label>
+      <select class="fi" id="review-types" multiple style="min-height:80px;font-size:12px">
+        <option selected>5 star positive review</option>
+        <option selected>3 star mixed review</option>
+        <option selected>1 star negative review</option>
+        <option>Review mentioning slow service</option>
+        <option>Review mentioning food quality</option>
+        <option>Review from a tourist</option>
+      </select>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- GUIDE TAB -->
+  <div class="scroll" id="scroll-1" style="display:none">
+    <div class="sl">How to Set Up Google Business Profile</div>
+    <div class="guide-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Create or claim your Google Business Profile</div>
+        <div class="step-desc">Go to <strong style="color:var(--tx)">business.google.com</strong> and sign in with a Google account. Search for your business — if it already appears on Google Maps, claim it. If not, click <strong style="color:var(--tx)">"Add your business"</strong> and follow the steps.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Verify your business</div>
+        <div class="step-desc">Google needs to verify you own the business. For most Gambian businesses, verification is by <strong style="color:var(--tx)">phone call or SMS</strong>. Sometimes a postcard is sent. Verification can take 1-7 days.</div>
+        <div class="step-img">Phone/SMS → Enter code → Verified ✓</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Fill in your business info using this tool</div>
+        <div class="step-desc">Enter your business details in the <strong style="color:var(--tx)">Business tab</strong> — name, category, address, phone, description, USPs, opening hours, and attributes. Then click <strong style="color:var(--tx)">Generate</strong> to get optimized content.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Copy the SEO description to your profile</div>
+        <div class="step-desc">The generated <strong style="color:var(--tx)">business description</strong> is optimized for Google Search with local keywords. Copy it and paste it into your Google Business Profile under <strong style="color:var(--tx)">Info → Business description</strong>.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Add Q&A pairs</div>
+        <div class="step-desc">Go to your Google listing and add the generated <strong style="color:var(--tx)">Q&A pairs</strong> as questions + answers. This helps customers find info quickly and improves your ranking. You can ask and answer your own questions!</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-title">Prepare review responses</div>
+        <div class="step-desc">Save the generated <strong style="color:var(--tx)">review response templates</strong>. When customers leave reviews, respond quickly using these templates — edit them to be personal. Responding to reviews boosts your visibility on Google.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-title">Publish Google Posts regularly</div>
+        <div class="step-desc">Use the generated <strong style="color:var(--tx)">Google Posts</strong> to share updates, offers, and events. Go to your Google Business dashboard → <strong style="color:var(--tx)">Posts → Create post</strong>. Post at least once a week to stay active and visible.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-title">Add photos & keep your profile updated</div>
+        <div class="step-desc">Upload at least <strong style="color:var(--tx)">5 high-quality photos</strong> — your storefront, interior, products, and team. Businesses with photos get 42% more direction requests. Update your hours for holidays and special events.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lf">
+    <button class="gen-btn" id="gen-btn" onclick="generate()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      Generate Google Profile
+    </button>
+  </div>
+</div>
+
+<div class="right">
+  <div class="rh">
+    <span class="rh-title">GOOGLE BUSINESS PREVIEW & CONTENT</span>
+    <div style="display:flex;gap:6px">
+      <button class="btn go" onclick="window.open('https://business.google.com','_blank')">Open Google Business</button>
+      <button class="btn" onclick="copyAll()">Copy All</button>
+    </div>
+  </div>
+  <div class="content-area" id="content-area">
+    <div class="empty-state">
+      <div style="font-size:48px">🗺️</div>
+      <h3>Ready to optimize</h3>
+      <p>Fill in your business details and click "Generate Google Profile" to get optimized content for your Google Maps listing</p>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── AUTH GUARD ───
+(function(){const a=localStorage.getItem('webgen_auth');if(!a){window.location.href='login.html';return;}try{const d=JSON.parse(a);if(!d||!d.token||!d.user){window.location.href='login.html';return;}if(d.user.role==='klant'){window.location.href='index.html';return;}}catch(e){window.location.href='login.html';}})();
+
+function saveKey(v){localStorage.setItem('wg_gbapi',v);document.getElementById('key-icon').textContent=v.startsWith('sk-ant-')?'🟢':'🟡';}
+function loadKey(){
+  const k=localStorage.getItem('wg_gbapi')||'';if(k){document.getElementById('api-key').value=k;document.getElementById('key-icon').textContent=k.startsWith('sk-ant-')?'🟢':'🟡';}
+  const o=localStorage.getItem('wg_ollama_url')||'';if(o){document.getElementById('ollama-url-gb').value=o;loadOllamaModels(o);}
+  const w=localStorage.getItem('wg_worker_url')||'';if(w){document.getElementById('worker-url-gb').value=w;document.getElementById('worker-icon-gb').textContent='🟢';}
+}
+function saveOllamaUrl(v){localStorage.setItem('wg_ollama_url',v);loadOllamaModels(v);}
+async function loadOllamaModels(url){
+  const sel=document.getElementById('ollama-model-gb');const icon=document.getElementById('ollama-icon-gb');
+  if(!url){icon.textContent='⚪';sel.innerHTML='<option>—</option>';return;}
+  try{const r=await fetch(url+'/api/tags');const d=await r.json();
+  sel.innerHTML=(d.models||[]).map(m=>`<option value="${m.name}">${m.name}</option>`).join('');
+  const saved=localStorage.getItem('wg_ollama_model');if(saved)sel.value=saved;
+  sel.onchange=()=>localStorage.setItem('wg_ollama_model',sel.value);
+  icon.textContent='🟢';}catch(e){icon.textContent='🔴';sel.innerHTML='<option>Error</option>';}
+}
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAY_IDS=['h-mon','h-tue','h-wed','h-thu','h-fri','h-sat','h-sun'];
+
+function getAttrs(){return [...document.querySelectorAll('#attr-tags .tag-item.selected')].map(el=>el.textContent).join(', ');}
+function getReviewTypes(){return [...document.querySelectorAll('#review-types option:checked')].map(o=>o.value);}
+
+let allContent={};
+
+async function generate(){
+  const apiKey=document.getElementById('api-key').value.trim();
+  const ollamaUrl=(localStorage.getItem('wg_ollama_url')||'').trim();
+  const ollamaModel=localStorage.getItem('wg_ollama_model')||'';
+  const workerUrlCheck=(localStorage.getItem('wg_worker_url')||'').trim();
+  if(!apiKey&&!ollamaUrl&&!workerUrlCheck){toast('Enter API key or configure Ollama');return;}
+  const name=gv('b-name');if(!name){toast('Enter business name first');return;}
+
+  const btn=document.getElementById('gen-btn');btn.disabled=true;
+  document.getElementById('content-area').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px"><div class="spinner"></div><div style="font-family:'Syne',sans-serif;font-size:14px;color:var(--mu)">Generating your Google Business content...</div></div>`;
+
+  const hours=DAY_IDS.map((id,i)=>DAYS[i]+': '+(gv(id)||'Closed')).join('\n');
+  const attrs=getAttrs();
+  const reviewTypes=getReviewTypes();
+
+  const prompt=`You are an expert in Google Business Profile optimization for businesses in The Gambia, West Africa. Generate complete, optimized content for this business's Google Maps listing.
+
+BUSINESS:
+Name: ${name}
+Category: ${gv('b-cat')}
+Address: ${gv('b-addr')||'The Gambia'}
+Phone: ${gv('b-phone')||''}
+Website: ${gv('b-web')||''}
+Description: ${gv('b-desc')||'A local Gambian business'}
+USPs: ${gv('b-usp')||''}
+Target customers: ${gv('b-target')||'local community'}
+Services: ${gv('b-services')||''}
+Attributes: ${attrs||''}
+Opening hours:
+${hours}
+
+Generate the following and return ONLY valid JSON (no markdown):
+{
+  "business_description": "Exactly 750 characters max. Keyword-rich, local SEO optimized description. Mention The Gambia, local neighborhood, and key services. Start with most important info.",
+  "short_description": "One powerful sentence, 150 chars max, for social profiles.",
+  "google_categories": ["primary category", "secondary category 1", "secondary category 2"],
+  "keywords": ["keyword1", "keyword2", ...10 local SEO keywords for Gambia searches],
+  "qa_pairs": [
+    {"question": "Q1?", "answer": "A1 (short, helpful, 1-2 sentences)"},
+    {"question": "Q2?", "answer": "A2"},
+    {"question": "Q3?", "answer": "A3"},
+    {"question": "Q4?", "answer": "A4"},
+    {"question": "Q5?", "answer": "A5"}
+  ],
+  "review_responses": {
+    ${reviewTypes.map(t=>`"${t}": "Response template for: ${t}. Start with thank you. Address the specific feedback. Professional but warm Gambian tone. Max 200 chars."`).join(',\n    ')}
+  },
+  "google_posts": [
+    {"type": "What's New", "text": "Short engaging post about the business, under 300 chars"},
+    {"type": "Offer", "text": "Promotional post with offer details, under 300 chars"},
+    {"type": "Event", "text": "Event or special occasion post, under 300 chars"}
+  ],
+  "setup_checklist": [
+    {"done": false, "item": "Add business name", "detail": "Use exact legal or trading name"},
+    {"done": false, "item": "Verify business", "detail": "Request verification via phone call or postcard"},
+    {"done": false, "item": "Add 10+ photos", "detail": "Exterior, interior, products, team, menu"},
+    {"done": false, "item": "Add all services", "detail": "List every service with descriptions"},
+    {"done": false, "item": "Enable messaging", "detail": "Let customers message you directly from Maps"},
+    {"done": false, "item": "Respond to all reviews", "detail": "Reply within 24 hours for best ranking"}
+  ]
+}`;
+
+  try{
+    const workerUrl=(localStorage.getItem('wg_worker_url')||'').trim();
+    let resp, raw='';
+    if(ollamaUrl && ollamaModel){
+      resp=await fetch(ollamaUrl+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:ollamaModel,messages:[{role:'user',content:prompt}],stream:false})});
+      const data=await resp.json();
+      raw=(data.message&&data.message.content)||'';
+    } else if(workerUrl){
+      resp=await fetch(workerUrl+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
+      const data=await resp.json();
+      raw=(data.content||[]).map(b=>b.text||'').join('');
+    } else {
+      resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
+      const data=await resp.json();
+      raw=(data.content||[]).map(b=>b.text||'').join('');
+    }
+    let result={};
+    try{result=JSON.parse(raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim());}
+    catch(e){result={error:'Parse error: '+raw.substring(0,200)};}
+    allContent=result;
+    renderResult(result,name,gv('b-cat'),gv('b-addr'),hours);
+  }catch(e){
+    document.getElementById('content-area').innerHTML=`<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+  btn.disabled=false;
+}
+
+function renderResult(r,name,cat,addr,hours){
+  if(r.error){document.getElementById('content-area').innerHTML=`<div class="empty-state"><h3>Error</h3><p>${r.error}</p></div>`;return;}
+  const initials=name.substring(0,2).toUpperCase();
+  const descLen=(r.business_description||'').length;
+  const descColor=descLen>750?'var(--rd)':descLen>700?'var(--yl)':'var(--ac)';
+
+  let html=`
+  <!-- GOOGLE MOCK -->
+  <div class="out-section">
+    <div class="out-title"><span class="out-title-txt">Google Maps Preview</span></div>
+    <div class="google-card">
+      <div class="gc-header">
+        <div class="gc-logo">${initials}</div>
+        <div class="gc-info">
+          <div class="gc-name">${name}</div>
+          <div class="gc-cat">${cat}</div>
+          <div class="gc-stars">${'<span class="gc-star">★</span>'.repeat(5)}<span class="gc-rating">5.0 · New listing</span></div>
+          <div class="gc-status open">⏰ Open · Closes at 8 PM</div>
+        </div>
+      </div>
+      <div class="gc-actions">
+        <div class="gc-action"><div class="gc-action-icon">📍</div>Directions</div>
+        <div class="gc-action"><div class="gc-action-icon">📞</div>Call</div>
+        <div class="gc-action"><div class="gc-action-icon">🌐</div>Website</div>
+        <div class="gc-action"><div class="gc-action-icon">💬</div>Message</div>
+      </div>
+      <div class="gc-section">
+        <div class="gc-section-title">About</div>
+        <div class="gc-desc">${(r.business_description||'').substring(0,200)}...</div>
+      </div>
+      <div class="gc-section">
+        <div class="gc-section-title">Hours</div>
+        ${DAYS.map((d,i)=>`<div class="gc-hours-row"><span class="day">${d}</span><span>${gv(DAY_IDS[i])||'Closed'}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="out-section">
+    <div class="out-title">
+      <span class="out-title-txt">Business Description</span>
+      <button class="btn" onclick="copyText(${JSON.stringify(r.business_description||'')})">Copy</button>
+    </div>
+    <div class="out-text">${r.business_description||'—'}</div>
+    <div class="char-count" style="color:${descColor}">${descLen}/750 characters</div>
+  </div>
+
+  <!-- SHORT DESC -->
+  <div class="out-section">
+    <div class="out-title">
+      <span class="out-title-txt">Short Description (social profiles)</span>
+      <button class="btn" onclick="copyText(${JSON.stringify(r.short_description||'')})">Copy</button>
+    </div>
+    <div class="out-text">${r.short_description||'—'}</div>
+  </div>
+
+  <!-- KEYWORDS -->
+  <div class="out-section">
+    <div class="out-title">
+      <span class="out-title-txt">SEO Keywords</span>
+      <button class="btn" onclick="copyText(${JSON.stringify((r.keywords||[]).join(', '))})">Copy</button>
+    </div>
+    <div class="tags-grid">${(r.keywords||[]).map(k=>`<div class="tag-item">${k}</div>`).join('')}</div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="out-section">
+    <div class="out-title"><span class="out-title-txt">Suggested Google Categories</span></div>
+    <div class="tags-grid">${(r.google_categories||[]).map((c,i)=>`<div class="tag-item selected">${i===0?'★ Primary: ':''}${c}</div>`).join('')}</div>
+  </div>
+
+  <!-- Q&A -->
+  <div class="out-section">
+    <div class="out-title">
+      <span class="out-title-txt">Questions & Answers (add to Google)</span>
+      <button class="btn" onclick="copyText(${JSON.stringify((r.qa_pairs||[]).map(q=>'Q: '+q.question+'\nA: '+q.answer).join('\n\n'))})">Copy All</button>
+    </div>
+    ${(r.qa_pairs||[]).map((qa,i)=>`
+    <div class="gc-qa">
+      <div class="gc-q">Q: ${qa.question}</div>
+      <div class="gc-a">A: ${qa.answer}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- REVIEW RESPONSES -->
+  <div class="out-section">
+    <div class="out-title"><span class="out-title-txt">Review Response Templates</span></div>
+    ${Object.entries(r.review_responses||{}).map(([type,resp])=>`
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:var(--mu);margin-bottom:5px;font-weight:600">${type}</div>
+      <div class="gc-review-reply"><strong>${name} replied:</strong>${resp}</div>
+      <button class="btn" style="margin-top:5px;font-size:10px" onclick="copyText(${JSON.stringify(resp)})">Copy response</button>
+    </div>`).join('')}
+  </div>
+
+  <!-- GOOGLE POSTS -->
+  <div class="out-section">
+    <div class="out-title">
+      <span class="out-title-txt">Google Posts (post monthly)</span>
+    </div>
+    ${(r.google_posts||[]).map(p=>`
+    <div style="background:var(--sf2);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+      <div><div style="font-size:10px;color:var(--mu);margin-bottom:4px;font-weight:600">${p.type}</div><div class="out-text" style="padding:0;background:none;border:none;font-size:12px">${p.text}</div></div>
+      <button class="btn" style="flex-shrink:0;font-size:10px" onclick="copyText(${JSON.stringify(p.text)})">Copy</button>
+    </div>`).join('')}
+  </div>
+
+  <!-- SETUP CHECKLIST -->
+  <div class="out-section">
+    <div class="out-title"><span class="out-title-txt">Setup Checklist</span></div>
+    <div class="checklist">
+      ${(r.setup_checklist||[]).map((item,i)=>`
+      <div class="check-item" id="chk-${i}" onclick="toggleCheck(${i})" style="cursor:pointer">
+        <div class="check-icon" id="chk-icon-${i}">⬜</div>
+        <div class="check-text"><strong>${item.item}</strong><span>${item.detail}</span></div>
+      </div>`).join('')}
+    </div>
+    <div style="margin-top:10px">
+      <a class="btn go" href="https://business.google.com" target="_blank" style="text-decoration:none;display:inline-flex">Open Google Business Profile →</a>
+    </div>
+  </div>`;
+
+  document.getElementById('content-area').innerHTML=html;
+}
+
+function toggleCheck(i){
+  const el=document.getElementById('chk-icon-'+i);
+  if(el) el.textContent=el.textContent==='⬜'?'✅':'⬜';
+}
+
+function showTab(i){
+  [0,1].forEach(j=>{
+    document.querySelectorAll('.tab')[j].classList.toggle('on',i===j);
+    document.getElementById('scroll-'+j).style.display=i===j?'':'none';
+  });
+  document.querySelector('.lf').style.display=i===0?'':'none';
+}
+
+function copyText(t){navigator.clipboard.writeText(t).then(()=>toast('Copied!'));}
+function copyAll(){
+  const texts=[allContent.business_description,'---Keywords: '+(allContent.keywords||[]).join(', '),
+    '---Q&A:\n'+(allContent.qa_pairs||[]).map(q=>'Q: '+q.question+'\nA: '+q.answer).join('\n\n')].join('\n\n');
+  navigator.clipboard.writeText(texts).then(()=>toast('All content copied!'));
+}
+
+loadKey();
+</script>
+</body>
+</html>

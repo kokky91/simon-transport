@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Social Media Generator — WebGen Gambia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07080d;--sf:#0f1117;--sf2:#161820;--sf3:#1e2029;--br:#252838;--ac:#00e5a0;--ac2:#7b5cff;--tx:#eeeef5;--mu:#7878a0;--rd:#ff4d6d;--yl:#ffd166;--r:10px;
+--fb:#1877F2;--ig:#E1306C;--tt:#010101;--wa:#25D366;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
+.app{display:flex;height:100vh}
+.left{width:420px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--br);display:flex;flex-direction:column}
+.right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+.lh{padding:14px 18px;border-bottom:1px solid var(--br);flex-shrink:0}
+.logo-r{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.logo-d{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--ig),var(--fb));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-d svg{width:14px;height:14px;fill:white}
+.logo-r span{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px}
+.tg{font-size:11px;color:var(--mu)}
+
+.api-row{padding:8px 18px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px}
+.api-input{flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:7px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:11px;padding:5px 9px;outline:none}
+.api-input:focus{border-color:var(--ac)}
+
+.tabs{display:flex;border-bottom:1px solid var(--br);flex-shrink:0}
+.tab{flex:1;padding:8px 0;font-size:11px;font-weight:500;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;text-align:center;transition:all .12s}
+.tab.on{color:var(--ac);border-bottom-color:var(--ac)}
+
+.scroll{flex:1;overflow-y:auto;padding:14px 17px}
+.scroll::-webkit-scrollbar{width:3px}
+.scroll::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+.sl{font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--ac);text-transform:uppercase;margin:13px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--br)}
+.sl:first-child{margin-top:0}
+.fd{margin-bottom:9px}
+.fd label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mu);margin-bottom:3px;font-weight:500}
+.fi{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--ac)}
+textarea.fi{resize:vertical;min-height:54px;line-height:1.5}
+select.fi option{background:var(--sf2)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* PLATFORM TOGGLES */
+.plat-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:4px}
+.plat-btn{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .12s;display:flex;align-items:center;gap:5px}
+.plat-btn.on.fb{border-color:var(--fb);color:var(--fb);background:rgba(24,119,242,.1)}
+.plat-btn.on.ig{border-color:var(--ig);color:var(--ig);background:rgba(225,48,108,.1)}
+.plat-btn.on.tt{border-color:#69C9D0;color:#69C9D0;background:rgba(105,201,208,.1)}
+.plat-btn.on.wa{border-color:var(--wa);color:var(--wa);background:rgba(37,211,102,.1)}
+
+/* TONE GRID */
+.tone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:4px}
+.tone-btn{padding:7px 6px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);text-align:center;transition:all .12s}
+.tone-btn.on{border-color:var(--ac);color:var(--ac);background:rgba(0,229,160,.08)}
+
+/* LANG PILLS */
+.lang-row{display:flex;gap:5px;flex-wrap:wrap}
+.lang-btn{padding:5px 10px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .12s}
+.lang-btn.on{border-color:var(--ac2);color:var(--ac2);background:rgba(123,92,255,.1)}
+
+.gen-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--ig),var(--fb));border:none;border-radius:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:white;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.gen-btn:hover{opacity:.88}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed}
+.lf{padding:12px 17px;border-top:1px solid var(--br);flex-shrink:0}
+
+/* RIGHT PANEL */
+.rh{padding:12px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--sf)}
+.rh-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.rh-actions{display:flex;gap:6px}
+.btn{padding:6px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .12s;display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn svg{width:12px;height:12px}
+
+.posts-area{flex:1;overflow-y:auto;padding:16px 20px}
+.posts-area::-webkit-scrollbar{width:4px}
+.posts-area::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+/* POST CARDS */
+.post-group{margin-bottom:20px}
+.post-group-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700}
+.platform-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0}
+
+.post-card{background:var(--sf);border:1px solid var(--br);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.post-card-head{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--br)}
+.post-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0}
+.post-author{font-size:13px;font-weight:500}
+.post-handle{font-size:11px;color:var(--mu)}
+.post-body{padding:12px}
+.post-text{font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--tx)}
+.post-hashtags{margin-top:8px;font-size:12px;color:#4dabf7;line-height:1.6}
+.post-img-slot{background:var(--sf2);height:140px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--br)}
+.post-footer{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--br)}
+.post-stats{display:flex;gap:14px;font-size:11px;color:var(--mu)}
+.post-actions{display:flex;gap:5px}
+
+/* IG STORY MOCK */
+.story-card{background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);border-radius:12px;padding:20px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;margin-bottom:10px}
+.story-text{font-size:15px;font-weight:700;color:white;line-height:1.4;text-shadow:0 1px 4px rgba(0,0,0,.4);z-index:1}
+.story-cta{margin-top:10px;background:white;color:#ee2a7b;border-radius:999px;padding:5px 14px;font-size:11px;font-weight:700;z-index:1}
+
+/* LOADING */
+.loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--mu)}
+.spinner{width:36px;height:36px;border:2px solid var(--br);border-top-color:var(--ac);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-txt{font-family:'Syne',sans-serif;font-size:13px}
+.load-steps{display:flex;flex-direction:column;gap:6px}
+.lst{font-size:11px;display:flex;align-items:center;gap:6px;transition:color .3s}
+.lst.on{color:var(--tx)}.lst.done{color:var(--ac)}
+.lsd{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--mu)}
+.empty-state h3{font-family:'Syne',sans-serif;font-size:15px;color:var(--tx);font-weight:600}
+.empty-state p{font-size:12px;text-align:center;max-width:250px;line-height:1.6}
+
+.toast{position:fixed;bottom:14px;right:14px;background:var(--sf);border:1px solid var(--ac);border-radius:7px;padding:8px 13px;font-size:12px;color:var(--ac);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+
+/* GUIDE TAB */
+.guide-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--br)}
+.guide-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--ig),var(--fb));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;margin-top:1px}
+.step-content{}
+.step-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--mu);line-height:1.6}
+.step-img{background:var(--sf2);border:1px solid var(--br);border-radius:7px;padding:8px;margin-top:8px;font-size:11px;color:var(--mu);text-align:center}
+
+/* CALENDAR TAB */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+.cal-day{text-align:center;font-size:10px;color:var(--mu);padding:4px 0}
+.cal-cell{aspect-ratio:1;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;background:var(--sf2);border:1px solid var(--br);transition:all .12s;flex-direction:column;gap:2px}
+.cal-cell:hover{border-color:var(--ac)}
+.cal-cell.has-post{border-color:rgba(123,92,255,.4);background:rgba(123,92,255,.08)}
+.cal-cell .cnum{font-weight:500}
+.cal-cell .cdots{display:flex;gap:2px}
+.cal-cell .cdot{width:4px;height:4px;border-radius:50%}
+.cal-month{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.sched-item{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:10px 12px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+.sched-date{width:40px;height:40px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;font-size:10px}
+.sched-date .day{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;line-height:1}
+.sched-date .month{font-size:10px}
+.sched-info{flex:1;min-width:0}
+.sched-plat{font-size:11px;color:var(--mu)}
+.sched-preview{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+@media (max-width: 900px) {
+  .app{flex-direction:column;height:auto;overflow-y:auto}
+  .left{width:100%;height:auto}
+  .right{height:60vh;min-height:350px}
+  .scroll{height:auto;overflow:visible;position:relative;inset:auto}
+}
+@media (max-width: 600px) {
+  .plat-row{gap:5px}
+  .plat-btn{font-size:11px;padding:5px 8px}
+  .tone-grid{grid-template-columns:1fr 1fr}
+  .lang-row{flex-wrap:wrap}
+  .r2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LEFT -->
+<div class="left">
+  <div class="lh">
+    <div class="logo-r">
+      <a href="index.html" style="color:var(--mu);font-size:10px;text-decoration:none;padding:2px 6px;background:var(--sf2);border:1px solid var(--br);border-radius:4px;transition:all .15s;flex-shrink:0;display:inline-flex;align-items:center;gap:3px" onmouseover="this.style.borderColor='var(--ac)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--br)';this.style.color='var(--mu)'"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></a>
+      <div class="logo-d"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>
+      <span>Social Media Generator</span>
+    </div>
+    <div class="tg">AI posts for Facebook, Instagram, TikTok & WhatsApp</div>
+  </div>
+
+  <div class="api-row">
+    <input class="api-input" type="password" id="api-key" placeholder="API key (sk-ant-...) or use Worker URL" oninput="saveKey(this.value)">
+    <span id="key-icon" style="font-size:14px">🔴</span>
+  </div>
+  <div style="padding:4px 18px;font-size:10px;color:var(--mu);border-bottom:1px solid var(--br)">Worker: <input id="worker-url-sm" type="text" placeholder="https://webgen-gambia.NAME.workers.dev" style="background:var(--sf2);border:1px solid var(--br);border-radius:4px;color:var(--tx);font-size:10px;padding:2px 6px;outline:none;width:230px" oninput="localStorage.setItem('wg_worker_url',this.value)"> <span id="w-icon">⚪</span></div>
+  <div style="padding:4px 18px;font-size:10px;color:var(--mu);border-bottom:1px solid var(--br)">Ollama: <input id="ollama-url-sm" type="text" placeholder="http://localhost:11434" style="background:var(--sf2);border:1px solid var(--br);border-radius:4px;color:var(--tx);font-size:10px;padding:2px 6px;outline:none;width:130px" oninput="saveOllamaUrl(this.value)"> <select id="ollama-model-sm" style="background:var(--sf2);border:1px solid var(--br);border-radius:4px;color:var(--tx);font-size:10px;padding:2px 4px;outline:none"><option>—</option></select> <span id="ollama-icon-sm">⚪</span></div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="showTab(0)">Post</div>
+    <div class="tab" onclick="showTab(1)">Schedule</div>
+    <div class="tab" onclick="showTab(2)">Templates</div>
+    <div class="tab" onclick="showTab(3)">Guide</div>
+  </div>
+
+  <div class="scroll" id="scroll-0">
+    <div class="sl">Business</div>
+    <div class="fd"><label>Business name</label><input class="fi" id="b-name" placeholder="e.g. Fatou's Kitchen"></div>
+    <div class="fd"><label>WhatsApp / Phone</label><input class="fi" id="b-wa" placeholder="+220 ..."></div>
+    <div class="fd"><label>Location</label><input class="fi" id="b-loc" placeholder="e.g. Kairaba Avenue"></div>
+
+    <div class="sl">Post Content</div>
+    <div class="fd"><label>Post type</label>
+      <select class="fi" id="post-type">
+        <option value="product">New product / item</option>
+        <option value="promotion">Promotion / discount</option>
+        <option value="announcement">Announcement / news</option>
+        <option value="opening">Opening hours / availability</option>
+        <option value="testimonial">Customer testimonial / review</option>
+        <option value="behind">Behind the scenes</option>
+        <option value="tip">Tip / educational post</option>
+        <option value="event">Event / special day</option>
+        <option value="holiday">Holiday / seasonal</option>
+      </select>
+    </div>
+    <div class="fd"><label>What to post about *</label><textarea class="fi" id="post-about" placeholder="e.g. New menu item: Domoda with fresh vegetables, D75 per plate. Available every day from 11am." style="min-height:80px"></textarea></div>
+    <div class="fd"><label>Special offer / CTA (optional)</label><input class="fi" id="post-cta" placeholder="e.g. Order now! Free delivery above D300."></div>
+    <div class="fd"><label>Emoji style</label>
+      <select class="fi" id="emoji-style">
+        <option value="many">Many emojis 🎉🔥✨</option>
+        <option value="some">Some emojis 👍</option>
+        <option value="none">No emojis (professional)</option>
+      </select>
+    </div>
+
+    <div class="sl">Platforms</div>
+    <div class="plat-row">
+      <div class="plat-btn on fb" data-p="facebook" onclick="togglePlat(this)">f Facebook</div>
+      <div class="plat-btn on ig" data-p="instagram" onclick="togglePlat(this)">📸 Instagram</div>
+      <div class="plat-btn tt" data-p="tiktok" onclick="togglePlat(this)">♪ TikTok</div>
+      <div class="plat-btn wa" data-p="whatsapp" onclick="togglePlat(this)">💬 WhatsApp</div>
+    </div>
+
+    <div class="sl">Tone</div>
+    <div class="tone-grid">
+      <div class="tone-btn on" data-t="friendly" onclick="selTone(this)">Friendly 😊</div>
+      <div class="tone-btn" data-t="professional" onclick="selTone(this)">Professional</div>
+      <div class="tone-btn" data-t="exciting" onclick="selTone(this)">Exciting 🔥</div>
+      <div class="tone-btn" data-t="funny" onclick="selTone(this)">Funny 😄</div>
+      <div class="tone-btn" data-t="urgent" onclick="selTone(this)">Urgent ⚡</div>
+      <div class="tone-btn" data-t="warm" onclick="selTone(this)">Warm & African</div>
+    </div>
+
+    <div class="sl">Language</div>
+    <div class="lang-row">
+      <div class="lang-btn on" data-l="en" onclick="selLang(this)">English</div>
+      <div class="lang-btn" data-l="nl" onclick="selLang(this)">Dutch</div>
+      <div class="lang-btn" data-l="wo" onclick="selLang(this)">Wolof</div>
+      <div class="lang-btn" data-l="md" onclick="selLang(this)">Mandinka</div>
+      <div class="lang-btn" data-l="fr" onclick="selLang(this)">Français</div>
+    </div>
+
+    <div class="sl">Hashtags</div>
+    <div class="fd"><label>Include hashtags</label>
+      <select class="fi" id="hashtag-style">
+        <option value="gambia">Gambia-focused (#Gambia #Banjul #GambianFood...)</option>
+        <option value="africa">African (#Africa #WestAfrica #MadeInAfrica...)</option>
+        <option value="global">Global (broad reach)</option>
+        <option value="none">No hashtags</option>
+      </select>
+    </div>
+    <div class="fd"><label>Custom hashtags (optional)</label><input class="fi" id="custom-tags" placeholder="e.g. #FatouKitchen #BanjulEats"></div>
+
+    <div class="sl">Post Schedule (optional)</div>
+    <div class="r2">
+      <div class="fd"><label>Post date</label><input class="fi" id="sched-date" type="date"></div>
+      <div class="fd"><label>Time</label><input class="fi" id="sched-time" type="time" value="09:00"></div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- SCHEDULE TAB -->
+  <div class="scroll" id="scroll-1" style="display:none">
+    <div class="sl">Content Calendar</div>
+    <div class="cal-month">
+      <button class="btn" onclick="prevMonth()">‹</button>
+      <span id="cal-month-lbl"></span>
+      <button class="btn" onclick="nextMonth()">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="sl">Scheduled Posts</div>
+    <div id="sched-list"></div>
+  </div>
+
+  <!-- TEMPLATES TAB -->
+  <div class="scroll" id="scroll-2" style="display:none">
+    <div class="sl">Post Templates — click to use</div>
+    <div id="template-list"></div>
+  </div>
+
+  <!-- GUIDE TAB -->
+  <div class="scroll" id="scroll-3" style="display:none">
+    <div class="sl">How to Use Social Media for Your Gambian Business</div>
+    <div class="guide-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Create your business accounts</div>
+        <div class="step-desc">Set up a <strong style="color:var(--tx)">Facebook Business Page</strong> and <strong style="color:var(--tx)">Instagram Business Account</strong>. Use your business name, logo, and contact info. Link your Instagram to your Facebook page for cross-posting.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Fill in your business details</div>
+        <div class="step-desc">In the <strong style="color:var(--tx)">Post tab</strong>, enter your business name, WhatsApp number, and location. These details are included in every generated post so customers can reach you.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Choose your post type & write what to post about</div>
+        <div class="step-desc">Select a post type (product, promotion, announcement, etc.) and describe what you want to post about. The more detail you give, the better the AI-generated post will be.</div>
+        <div class="step-img">Example: "New menu item: Domoda with fresh vegetables, D75 per plate"</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Select platforms & language</div>
+        <div class="step-desc">Choose which platforms to generate for: <strong style="color:var(--tx)">Facebook, Instagram, TikTok, or WhatsApp</strong>. Each platform gets a tailored post. Pick your language — English, Wolof, Mandinka, or French.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Generate & copy your posts</div>
+        <div class="step-desc">Click <strong style="color:var(--tx)">Generate Posts with AI</strong>. The tool creates optimized posts for each platform with hashtags. Click <strong style="color:var(--tx)">Copy</strong> to paste directly into Facebook, Instagram, or WhatsApp.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-title">Schedule your posts</div>
+        <div class="step-desc">Use the <strong style="color:var(--tx)">Schedule tab</strong> to plan posts ahead. Pick a date on the calendar, add your post content, and set the time. Consistent posting (3-5 times per week) builds your audience.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-title">Use templates for quick posts</div>
+        <div class="step-desc">The <strong style="color:var(--tx)">Templates tab</strong> has ready-made post formats for common situations — promotions, new products, testimonials, and more. Click a template to auto-fill the post form.</div>
+      </div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-title">Best times to post in The Gambia</div>
+        <div class="step-desc"><strong style="color:var(--tx)">Facebook</strong>: 12pm-2pm & 7pm-9pm · <strong style="color:var(--tx)">Instagram</strong>: 11am-1pm & 6pm-8pm · <strong style="color:var(--tx)">WhatsApp Status</strong>: 8am-9am & 8pm-10pm. Post when your customers are most active!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lf" id="lf-gen">
+    <button class="gen-btn" id="gen-btn" onclick="generatePosts()">
+      <svg width="14" height="14" fill="white" viewBox="0 0 20 20"><path d="M10 1l2.4 6.6L19 10l-6.6 2.4L10 19l-2.4-6.6L1 10l6.6-2.4z"/></svg>
+      Generate Posts with AI
+    </button>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="rh">
+    <span class="rh-title">PREVIEW</span>
+    <div class="rh-actions">
+      <button class="btn" onclick="copyAll()">Copy All</button>
+      <button class="btn" onclick="clearPosts()">Clear</button>
+    </div>
+  </div>
+  <div class="posts-area" id="posts-area">
+    <div class="empty-state">
+      <div style="font-size:48px">📱</div>
+      <h3>Ready to generate</h3>
+      <p>Fill in the business info and post details, then click "Generate Posts with AI"</p>
+    </div>
+  </div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── AUTH GUARD ───
+(function(){const a=localStorage.getItem('webgen_auth');if(!a){window.location.href='login.html';return;}try{const d=JSON.parse(a);if(!d||!d.token||!d.user){window.location.href='login.html';return;}if(d.user.role==='klant'){window.location.href='index.html';return;}}catch(e){window.location.href='login.html';}})();
+
+let selPlatforms=['facebook','instagram'];
+let selToneV='friendly';
+let selLangV='en';
+let generatedPosts={};
+let schedule=JSON.parse(localStorage.getItem('wg_schedule')||'[]');
+let calDate=new Date();
+
+// API key
+function saveKey(v){localStorage.setItem('wg_smapi',v);document.getElementById('key-icon').textContent=v.startsWith('sk-ant-')?'🟢':'🟡';}
+function loadKey(){
+  const k=localStorage.getItem('wg_smapi')||'';if(k){document.getElementById('api-key').value=k;document.getElementById('key-icon').textContent=k.startsWith('sk-ant-')?'🟢':'🟡';}
+  const w=localStorage.getItem('wg_worker_url')||'';if(w){document.getElementById('worker-url-sm').value=w;}
+  const o=localStorage.getItem('wg_ollama_url')||'';if(o){document.getElementById('ollama-url-sm').value=o;loadOllamaModels(o);}
+}
+function saveOllamaUrl(v){localStorage.setItem('wg_ollama_url',v);loadOllamaModels(v);}
+async function loadOllamaModels(url){
+  const sel=document.getElementById('ollama-model-sm');const icon=document.getElementById('ollama-icon-sm');
+  if(!url){icon.textContent='⚪';sel.innerHTML='<option>—</option>';return;}
+  try{const r=await fetch(url+'/api/tags');const d=await r.json();
+  sel.innerHTML=(d.models||[]).map(m=>`<option value="${m.name}">${m.name}</option>`).join('');
+  const saved=localStorage.getItem('wg_ollama_model');if(saved)sel.value=saved;
+  sel.onchange=()=>localStorage.setItem('wg_ollama_model',sel.value);
+  icon.textContent='🟢';}catch(e){icon.textContent='🔴';sel.innerHTML='<option>Error</option>';}
+}
+
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);}
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+
+function showTab(i){
+  [0,1,2,3].forEach(j=>{
+    document.querySelectorAll('.tab')[j].classList.toggle('on',i===j);
+    document.getElementById('scroll-'+j).style.display=i===j?'':'none';
+  });
+  document.getElementById('lf-gen').style.display=i===0?'':'none';
+  if(i===1)renderCalendar();
+  if(i===2)renderTemplates();
+}
+
+function togglePlat(el){
+  const p=el.dataset.p;
+  if(el.classList.contains('on')){if(selPlatforms.length<=1){toast('Keep at least one platform');return;}selPlatforms=selPlatforms.filter(x=>x!==p);el.classList.remove('on');}
+  else{selPlatforms.push(p);el.classList.add('on');}
+}
+function selTone(el){document.querySelectorAll('.tone-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');selToneV=el.dataset.t;}
+function selLang(el){document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');selLangV=el.dataset.l;}
+
+const LANG_LABELS={en:'English',nl:'Dutch/Nederlands',wo:'Wolof (Gambia)',md:'Mandinka (Gambia)',fr:'French/Français'};
+const PLAT_COLORS={facebook:'#1877F2',instagram:'#E1306C',tiktok:'#69C9D0',whatsapp:'#25D366'};
+const PLAT_NAMES={facebook:'Facebook',instagram:'Instagram',tiktok:'TikTok',whatsapp:'WhatsApp'};
+
+const GAMBIA_TAGS=['#Gambia','#Banjul','#Serrekunda','#GambiaIsGoodForBusiness','#GambiaBusiness','#GambianMade','#ScorpionNation','#VisitGambia','#SmileCoast'];
+const AFRICA_TAGS=['#Africa','#WestAfrica','#MadeInAfrica','#SupportLocalAfrica','#AfricanBusiness','#AfricanFood','#BlackOwnedBusiness'];
+
+const TEMPLATES=[
+  {title:'Daily Special 🍽️',type:'product',about:'Today\'s special: [dish name], only D[price]. Freshly prepared, limited plates!',cta:'Call or WhatsApp to reserve your plate now!',tone:'exciting'},
+  {title:'Weekend Promotion 🎉',type:'promotion',about:'This weekend only: [discount]% off all [products]. Valid Saturday and Sunday only!',cta:'Don\'t miss out — order before stock runs out!',tone:'urgent'},
+  {title:'New Arrival 🆕',type:'product',about:'Just arrived: [product name]! [Short description of the product and why it\'s great].',cta:'Available now at our shop. Visit us or WhatsApp to order!',tone:'exciting'},
+  {title:'Customer Review ⭐',type:'testimonial',about:'Our happy customer [Name] says: "[their quote about your business]"',cta:'Join hundreds of satisfied customers. Visit us today!',tone:'warm'},
+  {title:'Opening Hours 🕐',type:'opening',about:'We are open [days] from [time] to [time]. Find us at [location].',cta:'Come visit us or WhatsApp us anytime!',tone:'friendly'},
+  {title:'Behind the Scenes 👨‍🍳',type:'behind',about:'A look at how we prepare [product/service]. Quality and care in every step!',cta:'Taste the difference. Order from us today!',tone:'warm'},
+  {title:'Holiday Greeting 🎊',type:'holiday',about:'Wishing all our customers a blessed [holiday name]! We are [open/closed] during the holiday.',cta:'From our family to yours — thank you for your support!',tone:'warm'},
+  {title:'Tip of the Day 💡',type:'tip',about:'Did you know? [interesting tip related to your industry]. This is why [reason it matters].',cta:'Follow us for more tips! And visit us at [location].',tone:'friendly'},
+  {title:'Flash Sale ⚡',type:'promotion',about:'FLASH SALE today only! [product] now D[price] (was D[original price]). Hurry, limited time!',cta:'Order now before it\'s gone! Call/WhatsApp [number].',tone:'urgent'},
+  {title:'New Menu Item 🍽️',type:'product',about:'Introducing our NEW [dish]: [description, ingredients, price].',cta:'Try it today! Available at our restaurant.',tone:'exciting'},
+  {title:'Event Announcement 📢',type:'event',about:'We are hosting [event name] on [date] at [time]. [What will happen at the event].',cta:'Everyone is welcome! Share this with your friends and family.',tone:'exciting'},
+  {title:'Ramadan Special 🌙',type:'holiday',about:'Ramadan Mubarak! Special Iftar menu available: [items and prices]. Order before [time].',cta:'Support your local business this holy month. WhatsApp us to order!',tone:'warm'},
+];
+
+function renderTemplates(){
+  document.getElementById('template-list').innerHTML=TEMPLATES.map((t,i)=>`
+  <div style="background:var(--sf2);border:1px solid var(--br);border-radius:9px;padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:border-color .12s" onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor='var(--br)'" onclick="useTemplate(${i})">
+    <div style="font-size:13px;font-weight:600;margin-bottom:4px">${t.title}</div>
+    <div style="font-size:11px;color:var(--mu);line-height:1.5;margin-bottom:7px">${t.about.substring(0,80)}...</div>
+    <button class="btn" style="font-size:10px;padding:4px 9px" onclick="useTemplate(${i})">Use this template</button>
+  </div>`).join('');
+}
+
+function useTemplate(i){
+  const t=TEMPLATES[i];
+  document.getElementById('post-type').value=t.type;
+  document.getElementById('post-about').value=t.about;
+  document.getElementById('post-cta').value=t.cta;
+  document.querySelectorAll('.tone-btn').forEach(b=>{b.classList.remove('on');if(b.dataset.t===t.tone)b.classList.add('on');});
+  selToneV=t.tone;
+  showTab(0);
+  toast('Template loaded — customize and generate!');
+}
+
+// CALENDAR
+function renderCalendar(){
+  const y=calDate.getFullYear(),m=calDate.getMonth();
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-lbl').textContent=months[m]+' '+y;
+  const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const firstDay=new Date(y,m,1).getDay();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML=days.map(d=>`<div class="cal-day">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++) grid.innerHTML+=`<div></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const posts=schedule.filter(s=>s.date===dateStr);
+    const isToday=new Date().toDateString()===new Date(y,m,d).toDateString();
+    grid.innerHTML+=`<div class="cal-cell ${posts.length?'has-post':''}" style="${isToday?'border-color:var(--ac);color:var(--ac)':''}">
+      <div class="cnum">${d}</div>
+      ${posts.length?`<div class="cdots">${posts.slice(0,3).map(p=>`<div class="cdot" style="background:${PLAT_COLORS[p.platform]||'var(--mu)'}"></div>`).join('')}</div>`:''}
+    </div>`;
+  }
+  // Scheduled list
+  const upcoming=schedule.filter(s=>new Date(s.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  document.getElementById('sched-list').innerHTML=upcoming.length?upcoming.map((s,i)=>{
+    const d=new Date(s.date);
+    return `<div class="sched-item">
+      <div class="sched-date" style="background:${PLAT_COLORS[s.platform]}22;color:${PLAT_COLORS[s.platform]}">
+        <div class="day">${d.getDate()}</div>
+        <div class="month">${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}</div>
+      </div>
+      <div class="sched-info">
+        <div class="sched-plat">${PLAT_NAMES[s.platform]||s.platform} · ${s.time||''}</div>
+        <div class="sched-preview">${s.preview||'—'}</div>
+      </div>
+      <button class="btn" style="font-size:10px;color:var(--rd)" onclick="removeScheduled(${i})">✕</button>
+    </div>`;
+  }).join(''):`<div style="text-align:center;padding:20px;color:var(--mu);font-size:12px">No scheduled posts yet</div>`;
+}
+
+function prevMonth(){calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCalendar();}
+function nextMonth(){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+1,1);renderCalendar();}
+function removeScheduled(i){schedule.splice(i,1);localStorage.setItem('wg_schedule',JSON.stringify(schedule));renderCalendar();}
+
+function schedulePost(platform,preview){
+  const date=gv('sched-date');const time=gv('sched-time');
+  if(!date){toast('Set a date first in the Post tab');return;}
+  schedule.push({platform,date,time,preview:preview.substring(0,60)});
+  localStorage.setItem('wg_schedule',JSON.stringify(schedule));
+  toast('Scheduled for '+date+' at '+time);
+}
+
+// GENERATE
+async function generatePosts(){
+  const apiKey=document.getElementById('api-key').value.trim();
+  const ollamaU=(localStorage.getItem('wg_ollama_url')||'').trim();
+  const ollamaM=localStorage.getItem('wg_ollama_model')||'';
+  const workerU=(localStorage.getItem('wg_worker_url')||'').trim();
+  if(!apiKey && !ollamaU && !workerU){toast('Enter your API key, Worker URL, or configure Ollama');return;}
+  const about=gv('post-about');
+  if(!about){toast('Fill in what to post about');return;}
+
+  const btn=document.getElementById('gen-btn');btn.disabled=true;
+  const hashStyle=document.getElementById('hashtag-style').value;
+  let tags=gv('custom-tags');
+  if(hashStyle==='gambia') tags=GAMBIA_TAGS.slice(0,6).join(' ')+' '+(tags||'');
+  else if(hashStyle==='africa') tags=AFRICA_TAGS.slice(0,5).join(' ')+' '+(tags||'');
+
+  document.getElementById('posts-area').innerHTML=`<div class="loading-state"><div class="spinner"></div><div class="load-txt">Generating posts...</div>
+  <div class="load-steps">
+  <div class="lst on" id="ls1"><div class="lsd"></div>Analyzing content</div>
+  <div class="lst" id="ls2"><div class="lsd"></div>Writing ${selPlatforms.join(', ')}</div>
+  <div class="lst" id="ls3"><div class="lsd"></div>Adding hashtags & emojis</div>
+  </div></div>`;
+
+  setTimeout(()=>{const e=document.getElementById('ls1');if(e){e.className='lst done';const e2=document.getElementById('ls2');if(e2)e2.className='lst on';}},2000);
+  setTimeout(()=>{const e=document.getElementById('ls2');if(e){e.className='lst done';const e3=document.getElementById('ls3');if(e3)e3.className='lst on';}},4000);
+
+  const platInstructions=selPlatforms.map(p=>{
+    if(p==='facebook') return 'FACEBOOK: 1-3 paragraphs, conversational, can be longer, good for storytelling. Include a clear CTA.';
+    if(p==='instagram') return 'INSTAGRAM: Punchy opening line, shorter paragraphs, very visual language, heavy emojis if requested. First line must hook. Also create a short INSTAGRAM STORY version (1-2 sentences max, very bold).';
+    if(p==='tiktok') return 'TIKTOK: Very short, trendy, hook in first line ("POV:", "This is your sign to...", etc.), speaks to young audience.';
+    if(p==='whatsapp') return 'WHATSAPP: Short broadcast message, uses *bold* for emphasis, ends with CTA and phone number/link.';
+    return '';
+  }).join('\n');
+
+  const prompt=`You are a social media expert for Gambian businesses. Create engaging social media posts.
+
+BUSINESS: ${gv('b-name')||'Local Gambian Business'} · ${gv('b-loc')||'The Gambia'} · WhatsApp: ${gv('b-wa')||''}
+POST TYPE: ${gv('post-type')}
+TOPIC: ${about}
+CTA: ${gv('post-cta')||'Visit us or WhatsApp us to order!'}
+TONE: ${selToneV}
+LANGUAGE: ${LANG_LABELS[selLangV]}
+EMOJIS: ${gv('emoji-style')}
+HASHTAGS to use: ${hashStyle==='none'?'None':tags}
+
+Create posts for these platforms:
+${platInstructions}
+
+IMPORTANT:
+- Write in ${LANG_LABELS[selLangV]} language
+- Make it feel authentic for The Gambia / West Africa
+- Reference local context naturally if appropriate
+- ${selToneV==='warm'?'Use warm African greetings and family/community language':''}
+- ${gv('b-wa')?'Include WhatsApp number '+gv('b-wa')+' in posts where appropriate':''}
+
+Return ONLY a valid JSON object with this structure (no markdown, no extra text):
+{
+  "facebook": {"text": "...", "hashtags": "..."},
+  "instagram": {"text": "...", "hashtags": "...", "story": "..."},
+  "tiktok": {"text": "...", "hashtags": "..."},
+  "whatsapp": {"text": "..."}
+}
+Only include platforms that were requested: ${selPlatforms.join(', ')}`;
+
+  try{
+    const workerUrl=(localStorage.getItem('wg_worker_url')||'').trim();
+    const ollamaUrl=(localStorage.getItem('wg_ollama_url')||'').trim();
+    const ollamaModel=localStorage.getItem('wg_ollama_model')||'';
+    let resp, raw='';
+    if(ollamaUrl && ollamaModel){
+      resp=await fetch(ollamaUrl+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:ollamaModel,messages:[{role:'user',content:prompt}],stream:false})});
+      const data=await resp.json();
+      raw=(data.message&&data.message.content)||'';
+    } else if(workerUrl){
+      resp=await fetch(workerUrl+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+      const data=await resp.json();
+      raw=(data.content||[]).map(b=>b.text||'').join('');
+    } else {
+      resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+      const data=await resp.json();
+      raw=(data.content||[]).map(b=>b.text||'').join('');
+    }
+    let posts={};
+    try{posts=JSON.parse(raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/```\s*$/,'').trim());}
+    catch(e){posts={error:raw};}
+    generatedPosts=posts;
+    renderPosts(posts);
+  }catch(e){
+    document.getElementById('posts-area').innerHTML=`<div class="empty-state"><div style="font-size:36px">⚠️</div><h3>Error</h3><p>${e.message}</p></div>`;
+  }
+  btn.disabled=false;
+}
+
+function renderPosts(posts){
+  const biz=gv('b-name')||'Business';
+  const initials=biz.substring(0,2).toUpperCase();
+  const pa=document.getElementById('posts-area');
+  if(posts.error){pa.innerHTML=`<div class="empty-state"><h3>Error</h3><p>${posts.error.substring(0,200)}</p></div>`;return;}
+
+  let html='';
+  if(posts.facebook){
+    html+=postCard('facebook',posts.facebook,initials,biz);
+  }
+  if(posts.instagram){
+    html+=postCard('instagram',posts.instagram,initials,biz);
+    if(posts.instagram.story){
+      html+=`<div class="post-group">
+        <div class="post-group-title"><div class="platform-icon" style="background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7)">S</div>Instagram Story</div>
+        <div class="story-card">
+          <div class="story-text">${posts.instagram.story}</div>
+          <div class="story-cta">Swipe Up ↑</div>
+        </div>
+        ${copyBar('instagram_story',posts.instagram.story)}
+      </div>`;
+    }
+  }
+  if(posts.tiktok) html+=postCard('tiktok',posts.tiktok,initials,biz);
+  if(posts.whatsapp) html+=postCard('whatsapp',posts.whatsapp,initials,biz);
+
+  pa.innerHTML=html||'<div class="empty-state"><h3>No posts generated</h3></div>';
+
+  // Schedule
+  const schedDate=gv('sched-date');
+  if(schedDate){
+    selPlatforms.forEach(p=>{
+      if(posts[p]){
+        const preview=(posts[p].text||'').substring(0,60);
+        schedule.push({platform:p,date:schedDate,time:gv('sched-time')||'09:00',preview});
+      }
+    });
+    localStorage.setItem('wg_schedule',JSON.stringify(schedule));
+    if(schedule.length) toast('Posts scheduled for '+schedDate);
+  }
+}
+
+function postCard(platform,data,initials,biz){
+  const color=PLAT_COLORS[platform]||'#888';
+  const name=PLAT_NAMES[platform];
+  const text=data.text||'';
+  const tags=data.hashtags||'';
+  const schedDate=gv('sched-date');
+  return `<div class="post-group">
+    <div class="post-group-title">
+      <div class="platform-icon" style="background:${color}">${name[0]}</div>
+      ${name}
+      ${schedDate?`<span style="font-size:10px;color:var(--mu);margin-left:auto">Scheduled: ${schedDate}</span>`:''}
+    </div>
+    <div class="post-card">
+      <div class="post-card-head">
+        <div class="post-avatar" style="background:${color}">${initials}</div>
+        <div><div class="post-author">${biz}</div><div class="post-handle">${platform==='instagram'?'@'+biz.toLowerCase().replace(/\s/g,''):biz+' · just now'}</div></div>
+      </div>
+      <div class="post-img-slot">📷 Add your photo here</div>
+      <div class="post-body">
+        <div class="post-text">${text}</div>
+        ${tags?`<div class="post-hashtags">${tags}</div>`:''}
+      </div>
+      ${copyBar(platform,text+(tags?'\n\n'+tags:''))}
+    </div>
+  </div>`;
+}
+
+function copyBar(platform,text){
+  return `<div class="post-footer">
+    <div class="post-stats"><span>Copy to clipboard</span></div>
+    <div class="post-actions">
+      <button class="btn" onclick="copyText(${JSON.stringify(text)})">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+    </div>
+  </div>`;
+}
+
+function copyText(t){navigator.clipboard.writeText(t).then(()=>toast('Copied!'));}
+function copyAll(){
+  const all=Object.values(generatedPosts).map(p=>(p.text||'')+(p.hashtags?'\n'+p.hashtags:'')).join('\n\n---\n\n');
+  if(!all){toast('Generate posts first');return;}
+  navigator.clipboard.writeText(all).then(()=>toast('All posts copied!'));
+}
+function clearPosts(){generatedPosts={};document.getElementById('posts-area').innerHTML=`<div class="empty-state"><div style="font-size:48px">📱</div><h3>Ready to generate</h3><p>Fill in the details and click Generate</p></div>`;}
+
+loadKey();
+renderTemplates();
+renderCalendar();
+</script>
+</body>
+</html>

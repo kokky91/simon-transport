@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>WhatsApp Catalog Generator — WebGen Gambia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--sf:#13131a;--sf2:#1c1c27;--sf3:#222230;
+  --br:#2a2a3a;--ac:#00e5a0;--ac2:#7b5cff;--tx:#f0f0ff;--mu:#8888aa;
+  --rd:#ff4d6d;--yl:#ffd166;--wa:#25D366;--wa2:#128C7E;--r:10px;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow:hidden}
+.app{display:flex;height:100vh}
+
+/* LEFT PANEL */
+.left{width:460px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--br);display:flex;flex-direction:column}
+.lh{padding:14px 18px;border-bottom:1px solid var(--br);flex-shrink:0}
+.logo-r{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+.logo-d{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--wa),var(--wa2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-d svg{width:15px;height:15px;fill:white}
+.logo-r span{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.3px}
+.tg{font-size:11px;color:var(--mu)}
+
+.tabs{display:flex;border-bottom:1px solid var(--br);flex-shrink:0}
+.tab{flex:1;padding:9px 0;font-size:11px;font-weight:500;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;text-align:center;transition:all .15s}
+.tab.on{color:var(--wa);border-bottom-color:var(--wa)}
+.tab:hover:not(.on){color:var(--tx)}
+
+.tc{flex:1;overflow:hidden;position:relative}
+.tp{position:absolute;inset:0;overflow-y:auto;padding:14px 17px;display:none}
+.tp.on{display:block}
+.tp::-webkit-scrollbar{width:3px}
+.tp::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+.sl{font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--wa);text-transform:uppercase;margin:13px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--br)}
+.sl:first-child{margin-top:0}
+.fd{margin-bottom:9px}
+.fd label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mu);margin-bottom:3px;font-weight:500}
+.fi{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--wa)}
+textarea.fi{resize:vertical;min-height:54px;line-height:1.5}
+select.fi option{background:var(--sf2)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* PRODUCT CARDS IN BUILDER */
+.prod-card{background:var(--sf2);border:1px solid var(--br);border-radius:9px;margin-bottom:10px;overflow:hidden}
+.prod-card-head{display:flex;align-items:center;gap:10px;padding:10px;cursor:pointer;user-select:none}
+.prod-card-img{width:52px;height:52px;border-radius:7px;object-fit:cover;flex-shrink:0;background:var(--sf3);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.prod-card-img img{width:100%;height:100%;object-fit:cover}
+.prod-card-img svg{width:20px;height:20px;opacity:.3}
+.prod-card-info{flex:1;min-width:0}
+.prod-card-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-card-price{font-size:12px;color:var(--wa);font-weight:600}
+.prod-card-cat{font-size:10px;color:var(--mu)}
+.prod-card-toggle{color:var(--mu);font-size:12px;transition:transform .2s}
+.prod-card-toggle.open{transform:rotate(90deg)}
+.prod-card-body{padding:0 10px 10px;display:none}
+.prod-card-body.open{display:block}
+.prod-card-body .fi{margin-bottom:6px}
+
+/* IMAGE UPLOAD IN PRODUCT */
+.img-upload-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.img-slot{width:80px;height:80px;border:1.5px dashed var(--br);border-radius:8px;position:relative;overflow:hidden;cursor:pointer;background:var(--sf3);flex-shrink:0;transition:border-color .2s}
+.img-slot:hover{border-color:var(--wa)}
+.img-slot.hi{border-style:solid;border-color:var(--wa)}
+.img-slot input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.img-slot img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.img-slot .iph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--mu)}
+.img-slot .iph svg{width:18px;height:18px;opacity:.4}
+.img-slot .iph span{font-size:9px}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--br);background:var(--sf2);color:var(--mu);transition:all .15s;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;justify-content:center}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.wa{background:var(--wa);color:white;border:none;font-weight:600}
+.btn.wa:hover{background:var(--wa2)}
+.btn.danger{color:var(--rd)}
+.btn.danger:hover{background:var(--rd);color:white;border-color:var(--rd)}
+.btn svg{width:13px;height:13px;flex-shrink:0}
+.add-btn{width:100%;padding:8px;background:var(--sf2);border:1.5px dashed var(--br);border-radius:8px;color:var(--mu);font-size:12px;cursor:pointer;transition:all .15s;margin-bottom:4px}
+.add-btn:hover{border-color:var(--wa);color:var(--wa)}
+
+.lf{padding:12px 17px;border-top:1px solid var(--br);flex-shrink:0;display:flex;gap:8px}
+.gen-btn{flex:1;padding:12px;background:linear-gradient(135deg,var(--wa),var(--wa2));border:none;border-radius:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:white;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.gen-btn:hover{opacity:.9}
+
+/* RIGHT PANEL */
+.right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.rh{padding:12px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--sf)}
+.rh-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.rh-actions{display:flex;gap:7px}
+.preview-wrap{flex:1;overflow:hidden;display:flex;gap:0}
+
+/* WA PHONE FRAME */
+.phone-col{width:340px;flex-shrink:0;padding:16px;display:flex;flex-direction:column;align-items:center;border-right:1px solid var(--br);overflow-y:auto;background:var(--sf)}
+.phone-col::-webkit-scrollbar{width:3px}
+.phone-col::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.phone-frame{width:300px;background:#111;border-radius:36px;padding:12px;box-shadow:0 0 0 2px #2a2a3a;flex-shrink:0}
+.phone-screen{background:#0a0a0a;border-radius:26px;overflow:hidden}
+.wa-header{background:#1f2c34;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.wa-avatar{width:32px;height:32px;border-radius:50%;background:var(--wa2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
+.wa-name{font-size:13px;font-weight:600;color:#e9edef;line-height:1.2}
+.wa-online{font-size:10px;color:#8696a0}
+.wa-chat-bg{background:#0b141a;padding:8px;min-height:200px}
+.wa-msg{background:#1f2c34;border-radius:8px 8px 8px 2px;padding:8px 10px;margin-bottom:6px;max-width:240px}
+.wa-msg-text{font-size:12px;color:#e9edef;line-height:1.5}
+.wa-msg-time{font-size:10px;color:#8696a0;text-align:right;margin-top:4px}
+.wa-catalog-card{background:#1f2c34;border-radius:10px;overflow:hidden;margin-bottom:6px}
+.wa-catalog-img{width:100%;height:130px;object-fit:cover;background:#2a3942;display:flex;align-items:center;justify-content:center;color:#8696a0;font-size:11px}
+.wa-catalog-img img{width:100%;height:100%;object-fit:cover}
+.wa-catalog-body{padding:8px 10px 10px}
+.wa-catalog-name{font-size:13px;font-weight:600;color:#e9edef;margin-bottom:2px}
+.wa-catalog-price{font-size:13px;color:var(--wa);font-weight:700;margin-bottom:4px}
+.wa-catalog-desc{font-size:11px;color:#8696a0;line-height:1.4;margin-bottom:8px}
+.wa-catalog-btn{background:var(--wa2);color:white;border:none;border-radius:5px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;width:100%}
+.wa-catalog-btn:hover{background:var(--wa)}
+.wa-input-bar{background:#1f2c34;padding:8px;display:flex;align-items:center;gap:6px}
+.wa-input{flex:1;background:#2a3942;border:none;border-radius:20px;padding:6px 12px;color:#e9edef;font-size:12px;outline:none}
+
+/* CATALOG PREVIEW */
+.catalog-col{flex:1;overflow-y:auto;padding:16px;background:var(--bg)}
+.catalog-col::-webkit-scrollbar{width:4px}
+.catalog-col::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.catalog-preview{background:white;border-radius:12px;overflow:hidden;max-width:900px;margin:0 auto}
+.cat-header{background:linear-gradient(135deg,var(--wa2),var(--wa));padding:24px 28px;color:white;position:relative}
+.cat-logo{width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:24px}
+.cat-biz-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:3px}
+.cat-tagline{font-size:13px;opacity:.85}
+.cat-contact{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.cat-contact-item{display:flex;align-items:center;gap:5px;font-size:12px;opacity:.9}
+.cat-body{padding:20px 24px;color:#1a1a1a}
+.cat-section{margin-bottom:24px}
+.cat-section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#666;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #f0f0f0}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.cat-item{border:1px solid #f0f0f0;border-radius:10px;overflow:hidden;transition:box-shadow .15s}
+.cat-item:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.cat-item-img{height:140px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cat-item-img img{width:100%;height:100%;object-fit:cover}
+.cat-item-img svg{width:32px;height:32px;opacity:.2}
+.cat-item-body{padding:10px 12px 12px}
+.cat-item-badge{display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.cat-item-name{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:3px;line-height:1.3}
+.cat-item-price{font-size:14px;font-weight:700;color:var(--wa2);margin-bottom:4px}
+.cat-item-desc{font-size:11px;color:#888;line-height:1.4;margin-bottom:8px}
+.cat-item-wa{display:flex;align-items:center;justify-content:center;gap:5px;background:var(--wa);color:white;border:none;border-radius:6px;padding:6px;width:100%;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none}
+.cat-item-wa svg{width:13px;height:13px;fill:white}
+.cat-footer{background:#f9f9f9;padding:16px 24px;text-align:center;font-size:11px;color:#888}
+
+/* MESSAGES TAB */
+.msg-card{background:var(--sf2);border:1px solid var(--br);border-radius:9px;padding:12px;margin-bottom:10px}
+.msg-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.msg-card-title{font-size:12px;font-weight:600;color:var(--tx)}
+.msg-card-tag{font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(37,211,102,.15);color:var(--wa)}
+.msg-text{background:var(--sf3);border-radius:7px;padding:10px;font-size:12px;color:var(--mu);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.copy-row{display:flex;gap:6px;margin-top:8px}
+
+/* GUIDE TAB */
+.guide-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--br)}
+.guide-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--wa),var(--wa2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;margin-top:1px}
+.step-content{}
+.step-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--mu);line-height:1.6}
+.step-img{background:var(--sf2);border:1px solid var(--br);border-radius:7px;padding:8px;margin-top:8px;font-size:11px;color:var(--mu);text-align:center}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--mu)}
+.empty-state svg{width:40px;height:40px;opacity:.3}
+.empty-state h3{font-family:'Syne',sans-serif;font-size:16px;color:var(--tx);font-weight:600}
+.empty-state p{font-size:12px;text-align:center;max-width:240px;line-height:1.6}
+
+.toast{position:fixed;bottom:16px;right:16px;background:var(--sf);border:1px solid var(--wa);border-radius:8px;padding:9px 14px;font-size:12px;color:var(--wa);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+
+@media (max-width: 900px) {
+  .app{flex-direction:column;height:auto;overflow-y:auto}
+  .left{width:100%;height:auto}
+  .right{height:60vh;min-height:350px}
+  .preview-wrap{flex-direction:column}
+  .phone-col{width:100%;border-right:none;border-bottom:1px solid var(--br);padding:12px}
+  .phone-frame{width:260px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LEFT -->
+<div class="left">
+  <div class="lh">
+    <div class="logo-r">
+      <a href="index.html" style="color:var(--mu);font-size:10px;text-decoration:none;padding:2px 6px;background:var(--sf2);border:1px solid var(--br);border-radius:4px;transition:all .15s;flex-shrink:0;display:inline-flex;align-items:center;gap:3px" onmouseover="this.style.borderColor='var(--ac)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--br)';this.style.color='var(--mu)'"><svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L3 7v11h4v-6h6v6h4V7z"/></svg></a>
+      <div class="logo-d">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.115 1.527 5.845L0 24l6.335-1.527A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.359-.213-3.72.978.994-3.645-.233-.374A9.818 9.818 0 1112 21.818z"/></svg>
+      </div>
+      <span>WA Catalog Generator</span>
+    </div>
+    <div class="tg">WhatsApp Business catalog for Gambian businesses</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="showTab(0)">Business</div>
+    <div class="tab" onclick="showTab(1)">Products</div>
+    <div class="tab" onclick="showTab(2)">Messages</div>
+    <div class="tab" onclick="showTab(3)">Guide</div>
+  </div>
+
+  <div class="tc">
+    <!-- TAB 0: BUSINESS -->
+    <div class="tp on" id="tp-0">
+      <div class="sl">Business Info</div>
+      <div class="fd"><label>Business name *</label><input class="fi" id="b-name" placeholder="e.g. Fatou's Kitchen" oninput="liveUpdate()"></div>
+      <div class="fd"><label>Tagline</label><input class="fi" id="b-tagline" placeholder="e.g. Fresh food, Gambian soul" oninput="liveUpdate()"></div>
+      <div class="fd"><label>WhatsApp number *</label><input class="fi" id="b-wa" placeholder="+220 xxx xxxx" oninput="liveUpdate()"></div>
+      <div class="fd"><label>Phone</label><input class="fi" id="b-phone" placeholder="+220 ..."></div>
+      <div class="fd"><label>Location</label><input class="fi" id="b-loc" placeholder="e.g. Kairaba Avenue, Serrekunda" oninput="liveUpdate()"></div>
+      <div class="fd"><label>Email</label><input class="fi" id="b-email" placeholder="info@..."></div>
+      <div class="fd"><label>Instagram</label><input class="fi" id="b-ig" placeholder="@username"></div>
+      <div class="fd"><label>Facebook</label><input class="fi" id="b-fb" placeholder="facebook.com/..."></div>
+      <div class="sl">Catalog Settings</div>
+      <div class="fd"><label>Currency</label>
+        <select class="fi" id="b-currency" onchange="liveUpdate()">
+          <option value="D">GMD (D)</option>
+          <option value="$">USD ($)</option>
+          <option value="€">EUR (€)</option>
+        </select>
+      </div>
+      <div class="fd"><label>Welcome message</label><textarea class="fi" id="b-welcome" placeholder="e.g. Welcome! Browse our catalog and send us a message to order." oninput="liveUpdate()"></textarea></div>
+      <div class="fd"><label>Footer note</label><input class="fi" id="b-footer" placeholder="e.g. Delivery available · Order via WhatsApp"></div>
+      <div class="sl">Business Logo</div>
+      <div class="img-upload-row">
+        <div class="img-slot" id="logo-slot">
+          <input type="file" accept="image/*" onchange="uploadLogo(this)">
+          <div class="iph"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Logo</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.7;padding-top:4px">Upload your business logo. It appears in the catalog header.<br><span style="font-size:10px">PNG, JPG or SVG</span></div>
+      </div>
+    </div>
+
+    <!-- TAB 1: PRODUCTS -->
+    <div class="tp" id="tp-1">
+      <div class="sl">Products & Services <span id="prod-count" style="font-weight:400;color:var(--mu)">(0)</span></div>
+      <div id="prod-list"></div>
+      <button class="add-btn" onclick="addProduct()">+ Add product / service</button>
+      <div class="sl" style="margin-top:12px">Categories</div>
+      <div class="fd"><label>Category names <small>comma-separated</small></label><input class="fi" id="b-cats" placeholder="e.g. Food, Drinks, Desserts, Snacks" oninput="liveUpdate()"></div>
+    </div>
+
+    <!-- TAB 2: MESSAGES -->
+    <div class="tp" id="tp-2">
+      <div class="sl">Auto-Generated WhatsApp Messages</div>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:12px;line-height:1.6">Copy these ready-made messages and use them in your WhatsApp Business app. Fill in product info first.</p>
+      <div id="msg-list"></div>
+    </div>
+
+    <!-- TAB 3: GUIDE -->
+    <div class="tp" id="tp-3">
+      <div class="sl">How to Set Up WhatsApp Business Catalog</div>
+      <div class="guide-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Download WhatsApp Business app</div>
+          <div class="step-desc">Go to Google Play Store or Apple App Store and download <strong style="color:var(--tx)">WhatsApp Business</strong> (free). It's different from the regular WhatsApp app. Register with your business phone number.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Set up your business profile</div>
+          <div class="step-desc">Go to <strong style="color:var(--tx)">Settings → Business Profile</strong>. Add your business name, category, address, email and description. Upload your logo as your profile photo.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Open the Catalog</div>
+          <div class="step-desc">Go to <strong style="color:var(--tx)">Settings → Business Tools → Catalog</strong>. Tap the + button to add your first product.</div>
+          <div class="step-img">Settings → Business Tools → Catalog → Add Item (+)</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Add each product</div>
+          <div class="step-desc">For every product, add: <strong style="color:var(--tx)">Photo</strong> (use the photos from your catalog), <strong style="color:var(--tx)">Name</strong>, <strong style="color:var(--tx)">Price</strong> (in GMD), and <strong style="color:var(--tx)">Description</strong>. You can add up to 500 items.</div>
+          <div class="step-img">📷 Photo · 📝 Name · 💰 Price · 📄 Description</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Share your catalog</div>
+          <div class="step-desc">Once your catalog is set up, customers can see it by visiting your WhatsApp profile. You can also share individual products by tapping the product and then <strong style="color:var(--tx)">Share</strong>. Each product gets its own share link.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Use the HTML catalog for your website</div>
+          <div class="step-desc">Download the catalog from this tool and host it on your website via Namecheap. Every product has a <strong style="color:var(--tx)">"Order via WhatsApp"</strong> button that opens a chat with a pre-written order message.</div>
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <div class="step-title">Set up Quick Replies</div>
+          <div class="step-desc">In WhatsApp Business, go to <strong style="color:var(--tx)">Business Tools → Quick Replies</strong>. Add shortcuts for common messages like your price list, opening hours and order confirmation. This saves a lot of time!</div>
+          <div class="step-img">/ → quick reply shortcut → send</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lf">
+    <button class="gen-btn" onclick="downloadCatalog()">
+      <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.115 1.527 5.845L0 24l6.335-1.527A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.359-.213-3.72.978.994-3.645-.233-.374A9.818 9.818 0 1112 21.818z"/></svg>
+      Download HTML Catalog
+    </button>
+    <button class="btn" onclick="copyWaLink()" style="flex-shrink:0" title="Copy WhatsApp link">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="14" height="14"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      WA Link
+    </button>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="rh">
+    <span class="rh-title" id="preview-tabs-title">PREVIEW</span>
+    <div class="rh-actions">
+      <button class="btn" id="view-phone-btn" onclick="setView('phone')" style="color:var(--wa);border-color:var(--wa)">📱 Phone</button>
+      <button class="btn" id="view-catalog-btn" onclick="setView('catalog')">🌐 Web Catalog</button>
+    </div>
+  </div>
+  <div class="preview-wrap">
+    <!-- PHONE VIEW -->
+    <div id="phone-view" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center;background:var(--sf)">
+      <div style="font-size:11px;color:var(--mu);margin-bottom:12px;text-align:center">WhatsApp Business preview — how customers see your catalog</div>
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="wa-header">
+            <div class="wa-avatar" id="wa-avatar">BN</div>
+            <div>
+              <div class="wa-name" id="wa-biz-name">Business Name</div>
+              <div class="wa-online">tap to view catalog</div>
+            </div>
+          </div>
+          <div class="wa-chat-bg" id="wa-chat-bg">
+            <div class="wa-msg">
+              <div class="wa-msg-text" id="wa-welcome-msg">Welcome! Browse our products below.</div>
+              <div class="wa-msg-time">Now</div>
+            </div>
+            <div id="wa-products-preview"></div>
+          </div>
+          <div class="wa-input-bar">
+            <div class="wa-input">Type a message...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- CATALOG VIEW -->
+    <div id="catalog-view" style="flex:1;overflow-y:auto;padding:16px;background:var(--bg);display:none">
+      <div style="font-size:11px;color:var(--mu);margin-bottom:12px;text-align:center">Web catalog preview — this is the HTML file you download</div>
+      <div class="catalog-preview" id="catalog-preview-content">
+        <div style="padding:48px;text-align:center;color:#888">
+          <div style="font-size:32px;margin-bottom:12px">📦</div>
+          <div style="font-size:15px;font-weight:600;color:#333;margin-bottom:6px">Add products to preview</div>
+          <div style="font-size:13px">Fill in your business info and add products on the left</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── AUTH GUARD ───
+(function(){const a=localStorage.getItem('webgen_auth');if(!a){window.location.href='login.html';return;}try{const d=JSON.parse(a);if(!d||!d.token||!d.user){window.location.href='login.html';return;}if(d.user.role==='klant'){window.location.href='index.html';return;}}catch(e){window.location.href='login.html';}})();
+
+let products = [];
+let logoB64 = '';
+let logoMime = '';
+let currentView = 'phone';
+let prodCounter = 0;
+
+// ===== UTILS =====
+function toast(m,t=2200){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),t);}
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function waNum(){return gv('b-wa').replace(/[^0-9]/g,'');}
+function currency(){return document.getElementById('b-currency')?.value||'D';}
+
+// ===== TABS =====
+function showTab(i){
+  document.querySelectorAll('.tp').forEach((p,j)=>p.classList.toggle('on',i===j));
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',i===j));
+  if(i===2) renderMessages();
+}
+
+function setView(v){
+  currentView=v;
+  document.getElementById('phone-view').style.display=v==='phone'?'flex':'none';
+  document.getElementById('catalog-view').style.display=v==='catalog'?'':'none';
+  document.getElementById('view-phone-btn').style.cssText=v==='phone'?'color:var(--wa);border-color:var(--wa)':'';
+  document.getElementById('view-catalog-btn').style.cssText=v==='catalog'?'color:var(--wa);border-color:var(--wa)':'';
+}
+
+// ===== LOGO UPLOAD =====
+async function uploadLogo(inp){
+  const f=inp.files[0];if(!f)return;
+  const b=await fileToB64(f);logoB64=b;logoMime=f.type;
+  const slot=document.getElementById('logo-slot');
+  slot.classList.add('hi');
+  slot.innerHTML=`<input type="file" accept="image/*" onchange="uploadLogo(this)"><img src="data:${f.type};base64,${b}">`;
+  liveUpdate();
+}
+async function fileToB64(f){return new Promise(r=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.readAsDataURL(f);});}
+
+// ===== PRODUCTS =====
+function addProduct(){
+  const id = ++prodCounter;
+  const prod = {id, name:'', price:'', category:'', badge:'', description:'', img:'', imgMime:''};
+  products.push(prod);
+  renderProductList();
+  // auto-expand the new one
+  setTimeout(()=>{const body=document.getElementById('pb-'+id);const toggle=document.getElementById('pt-'+id);if(body&&toggle){body.classList.add('open');toggle.classList.add('open');}},50);
+}
+
+function renderProductList(){
+  const list=document.getElementById('prod-list');
+  document.getElementById('prod-count').textContent=`(${products.length})`;
+  if(!products.length){list.innerHTML='';return;}
+  list.innerHTML=products.map((p,i)=>`
+  <div class="prod-card" id="pc-${p.id}">
+    <div class="prod-card-head" onclick="toggleProd(${p.id})">
+      <div class="prod-card-img" id="pimg-${p.id}">
+        ${p.img?`<img src="data:${p.imgMime};base64,${p.img}">`:'<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>'}
+      </div>
+      <div class="prod-card-info">
+        <div class="prod-card-name">${p.name||'New product'}</div>
+        <div class="prod-card-price">${p.price?currency()+p.price:''}</div>
+        <div class="prod-card-cat">${p.category||''} ${p.badge?'· '+p.badge:''}</div>
+      </div>
+      <span class="prod-card-toggle" id="pt-${p.id}">▶</span>
+    </div>
+    <div class="prod-card-body" id="pb-${p.id}">
+      <div class="img-upload-row">
+        <div class="img-slot ${p.img?'hi':''}" id="pslot-${p.id}">
+          <input type="file" accept="image/*" onchange="uploadProdImg(this,${p.id})">
+          ${p.img?`<img src="data:${p.imgMime};base64,${p.img}">`:'<div class="iph"><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo</span></div>'}
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <input class="fi" placeholder="Product / service name *" value="${p.name}" onchange="updateProd(${p.id},'name',this.value)">
+          <div style="display:flex;gap:5px">
+            <input class="fi" placeholder="Price (e.g. 150)" value="${p.price}" style="flex:1" onchange="updateProd(${p.id},'price',this.value)">
+            <select class="fi" style="width:110px" onchange="updateProd(${p.id},'category',this.value)">
+              <option value="">Category</option>
+              ${getCategoryOptions(p.category)}
+            </select>
+          </div>
+        </div>
+      </div>
+      <input class="fi" placeholder="Badge label (e.g. Popular, New, Spicy, Best Seller)" value="${p.badge}" style="margin-bottom:6px" onchange="updateProd(${p.id},'badge',this.value)">
+      <textarea class="fi" placeholder="Description — ingredients, details, what's included..." onchange="updateProd(${p.id},'description',this.value)">${p.description}</textarea>
+      <div style="display:flex;gap:6px;margin-top:7px">
+        <button class="btn" onclick="duplicateProd(${p.id})" style="flex:1;font-size:11px">Duplicate</button>
+        <button class="btn danger" onclick="deleteProd(${p.id})" style="flex:1;font-size:11px">Delete</button>
+      </div>
+    </div>
+  </div>`).join('');
+  liveUpdate();
+}
+
+function getCategoryOptions(selected){
+  const cats=gv('b-cats').split(',').map(c=>c.trim()).filter(Boolean);
+  const defaults=['Food','Drinks','Desserts','Snacks','Products','Services','Packages'];
+  const all=[...new Set([...cats,...defaults])];
+  return all.map(c=>`<option ${c===selected?'selected':''}>${c}</option>`).join('');
+}
+
+function toggleProd(id){
+  const body=document.getElementById('pb-'+id);
+  const toggle=document.getElementById('pt-'+id);
+  if(!body)return;
+  body.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+
+function updateProd(id,field,val){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  p[field]=val;
+  // update header live
+  const card=document.getElementById('pc-'+id);
+  if(card){
+    const nameEl=card.querySelector('.prod-card-name');
+    const priceEl=card.querySelector('.prod-card-price');
+    const catEl=card.querySelector('.prod-card-cat');
+    if(nameEl) nameEl.textContent=p.name||'New product';
+    if(priceEl) priceEl.textContent=p.price?currency()+p.price:'';
+    if(catEl) catEl.textContent=`${p.category||''} ${p.badge?'· '+p.badge:''}`;
+  }
+  liveUpdate();
+}
+
+async function uploadProdImg(inp,id){
+  const f=inp.files[0];if(!f)return;
+  const b=await fileToB64(f);
+  const p=products.find(x=>x.id===id);if(!p)return;
+  p.img=b;p.imgMime=f.type;
+  const slot=document.getElementById('pslot-'+id);
+  const pimgDiv=document.getElementById('pimg-'+id);
+  if(slot){slot.classList.add('hi');slot.innerHTML=`<input type="file" accept="image/*" onchange="uploadProdImg(this,${id})"><img src="data:${f.type};base64,${b}">`;}
+  if(pimgDiv){pimgDiv.innerHTML=`<img src="data:${f.type};base64,${b}">`;}
+  liveUpdate();
+}
+
+function deleteProd(id){
+  products=products.filter(x=>x.id!==id);
+  renderProductList();
+}
+
+function duplicateProd(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  const newP={...p,id:++prodCounter,name:p.name+' (copy)'};
+  products.push(newP);
+  renderProductList();
+}
+
+// ===== LIVE UPDATE (PREVIEW) =====
+function liveUpdate(){
+  updatePhonePreview();
+  if(currentView==='catalog') updateCatalogPreview();
+}
+
+function updatePhonePreview(){
+  const name=gv('b-name')||'Business Name';
+  const initials=name.split(' ').slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
+  document.getElementById('wa-biz-name').textContent=name;
+  document.getElementById('wa-avatar').textContent=initials;
+  document.getElementById('wa-welcome-msg').textContent=gv('b-welcome')||'Welcome! Browse our products and message us to order.';
+
+  const prods=products.filter(p=>p.name).slice(0,3);
+  const waNum2=waNum();
+  document.getElementById('wa-products-preview').innerHTML=prods.map(p=>`
+  <div class="wa-catalog-card">
+    <div class="wa-catalog-img">
+      ${p.img?`<img src="data:${p.imgMime};base64,${p.img}">`:`<span>${p.name}</span>`}
+    </div>
+    <div class="wa-catalog-body">
+      <div class="wa-catalog-name">${p.name}</div>
+      <div class="wa-catalog-price">${currency()}${p.price||'—'}</div>
+      <div class="wa-catalog-desc">${p.description?.substring(0,60)||''}${(p.description?.length||0)>60?'...':''}</div>
+      <button class="wa-catalog-btn" onclick="window.open('https://wa.me/${waNum2}?text=${encodeURIComponent('Hi! I would like to order: '+p.name+' ('+currency()+(p.price||'—')+'). Is it available?')}')">Order via WhatsApp</button>
+    </div>
+  </div>`).join('')+(products.filter(p=>p.name).length>3?`<div style="text-align:center;padding:8px;font-size:11px;color:#8696a0">+${products.filter(p=>p.name).length-3} more products...</div>`:'');
+}
+
+function updateCatalogPreview(){
+  const el=document.getElementById('catalog-preview-content');
+  el.innerHTML=buildCatalogHTML(true);
+}
+
+function buildCatalogHTML(preview=false){
+  const name=gv('b-name')||'Business Name';
+  const tagline=gv('b-tagline');
+  const waNum2=waNum();
+  const loc=gv('b-loc');
+  const email=gv('b-email');
+  const ig=gv('b-ig');
+  const footer=gv('b-footer');
+  const cur=currency();
+
+  const cats=[...new Set(products.filter(p=>p.name&&p.category).map(p=>p.category))];
+  const uncategorized=products.filter(p=>p.name&&!p.category);
+  const allSections=[...cats.map(cat=>({title:cat,items:products.filter(p=>p.name&&p.category===cat)})),...(uncategorized.length?[{title:'All Products',items:uncategorized}]:[])];
+  if(!cats.length&&uncategorized.length) allSections.splice(0,1,{title:'Our Products & Services',items:products.filter(p=>p.name)});
+
+  const logoHTML=logoB64?`<img src="data:${logoMime};base64,${logoB64}" style="width:56px;height:56px;border-radius:12px;object-fit:contain;background:rgba(255,255,255,.2)">`:
+    `<div style="width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:22px;font-weight:700;color:white">${name.substring(0,2).toUpperCase()}</div>`;
+
+  if(!products.filter(p=>p.name).length&&!preview) return '<div style="padding:48px;text-align:center;color:#888"><div style="font-size:32px;margin-bottom:12px">📦</div><div style="font-size:15px;font-weight:600;color:#333;margin-bottom:6px">No products yet</div><div style="font-size:13px">Add products in the Products tab</div></div>';
+
+  return `${!preview?`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${name} — WhatsApp Catalog</title><style>
+  *{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f5;color:#1a1a1a}
+  .cat-header{background:linear-gradient(135deg,#128C7E,#25D366);padding:24px 28px;color:white}
+  .cat-logo{margin-bottom:10px}.cat-biz-name{font-size:22px;font-weight:700;margin-bottom:3px}
+  .cat-tagline{font-size:13px;opacity:.85}.cat-contact{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+  .cat-contact-item{display:flex;align-items:center;gap:5px;font-size:12px;opacity:.9}
+  .cat-body{max-width:900px;margin:0 auto;padding:20px 16px}
+  .cat-section{margin-bottom:28px}.cat-section-title{font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#666;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #e0e0e0}
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+  .cat-item{background:white;border:1px solid #f0f0f0;border-radius:10px;overflow:hidden;transition:box-shadow .15s}
+  .cat-item:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+  .cat-item-img{height:150px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .cat-item-img img{width:100%;height:100%;object-fit:cover}
+  .cat-item-body{padding:10px 12px 12px}
+  .cat-item-badge{display:inline-block;background:#e8f5e9;color:#2e7d32;font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px;margin-bottom:5px;text-transform:uppercase}
+  .cat-item-name{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.3}
+  .cat-item-price{font-size:15px;font-weight:700;color:#128C7E;margin-bottom:4px}
+  .cat-item-desc{font-size:11px;color:#888;line-height:1.4;margin-bottom:8px}
+  .cat-item-wa{display:flex;align-items:center;justify-content:center;gap:6px;background:#25D366;color:white;border:none;border-radius:6px;padding:8px;width:100%;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none}
+  .cat-footer{background:#f0f0f0;padding:16px 24px;text-align:center;font-size:11px;color:#888;margin-top:20px}
+  @media(max-width:600px){.cat-grid{grid-template-columns:1fr 1fr}.cat-header{padding:16px}}
+  </style></head><body>`:''}
+  <div class="cat-header">
+    <div class="cat-logo">${logoHTML}</div>
+    <div class="cat-biz-name">${name}</div>
+    ${tagline?`<div class="cat-tagline">${tagline}</div>`:''}
+    <div class="cat-contact">
+      ${waNum2?`<div class="cat-contact-item">📱 <a href="https://wa.me/${waNum2}" style="color:white;text-decoration:none">WhatsApp</a></div>`:''}
+      ${loc?`<div class="cat-contact-item">📍 ${loc}</div>`:''}
+      ${email?`<div class="cat-contact-item">✉️ ${email}</div>`:''}
+      ${ig?`<div class="cat-contact-item">📸 ${ig}</div>`:''}
+    </div>
+  </div>
+  <div class="cat-body">
+    ${gv('b-welcome')?`<div style="background:#e8f5e9;border-left:4px solid #25D366;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:13px;color:#1b5e20">${gv('b-welcome')}</div>`:''}
+    ${allSections.map(sec=>`
+    <div class="cat-section">
+      <div class="cat-section-title">${sec.title}</div>
+      <div class="cat-grid">
+        ${sec.items.map(p=>`<div class="cat-item">
+          <div class="cat-item-img">${p.img?`<img src="data:${p.imgMime};base64,${p.img}" alt="${p.name}">`:`<svg width="40" height="40" fill="none" stroke="#ccc" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`}</div>
+          <div class="cat-item-body">
+            ${p.badge?`<div class="cat-item-badge">${p.badge}</div>`:''}
+            <div class="cat-item-name">${p.name}</div>
+            ${p.price?`<div class="cat-item-price">${cur}${p.price}</div>`:''}
+            ${p.description?`<div class="cat-item-desc">${p.description}</div>`:''}
+            ${waNum2?`<a class="cat-item-wa" href="https://wa.me/${waNum2}?text=${encodeURIComponent('Hi '+name+'! I would like to order:\n\n🛒 '+p.name+(p.price?' ('+cur+p.price+')':'')+'\n\nIs it available?')}" target="_blank">
+              <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.115 1.527 5.845L0 24l6.335-1.527A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.359-.213-3.72.978.994-3.645-.233-.374A9.818 9.818 0 1112 21.818z"/></svg>
+              Order via WhatsApp
+            </a>`:''}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="cat-footer">
+    ${footer||''}${footer&&waNum2?' · ':''}${waNum2?`<a href="https://wa.me/${waNum2}" style="color:#128C7E">WhatsApp us to order</a>`:''}
+    <br>© ${new Date().getFullYear()} ${name}
+  </div>
+  ${!preview?'</body></html>':''}`;
+}
+
+// ===== MESSAGES TAB =====
+function renderMessages(){
+  const name=gv('b-name')||'[Business Name]';
+  const waNum2=waNum();
+  const cur=currency();
+  const msgs=[];
+
+  // Welcome message
+  msgs.push({title:'Welcome / Auto-reply message',tag:'Auto-reply',text:`👋 Hi! Welcome to *${name}*!\n\n${gv('b-tagline')||'We are happy to serve you.'}\n\n📋 *Our catalog:* Type CATALOG to see all products\n🛒 *To order:* Tell us what you'd like\n📍 *Location:* ${gv('b-loc')||'[Your location]'}\n⏰ *Hours:* Monday - Saturday, 8am - 8pm\n\nHow can we help you today?`});
+
+  // Price list
+  const priceList=products.filter(p=>p.name&&p.price).map(p=>`• *${p.name}* — ${cur}${p.price}${p.description?' ('+p.description.substring(0,40)+')':''}`).join('\n');
+  if(priceList){
+    msgs.push({title:'Full price list',tag:'Price list',text:`📋 *${name} — Price List*\n\n${priceList}\n\n_To order, reply with the product name and quantity._\n📍 ${gv('b-loc')||''}\n📱 ${gv('b-wa')||''}`});
+  }
+
+  // Order confirmation
+  msgs.push({title:'Order confirmation',tag:'Order',text:`✅ *Order Confirmed!*\n\nThank you for your order at *${name}*!\n\nWe have received your order and will prepare it shortly.\n\n📦 Estimated time: [15-30 minutes]\n📍 Pickup: ${gv('b-loc')||'[Location]'}\n\nFor delivery, extra charges may apply.\n\nThank you for choosing us! 🙏`});
+
+  // Out of stock
+  msgs.push({title:'Out of stock reply',tag:'Stock',text:`😔 We're sorry, *[Product name]* is currently out of stock.\n\nWe will have it available again by *[date/time]*.\n\n📋 In the meantime, here are some alternatives:\n• [Alternative 1]\n• [Alternative 2]\n\nWould you like to order something else? 😊`});
+
+  // Delivery info
+  msgs.push({title:'Delivery information',tag:'Delivery',text:`🚚 *Delivery Information — ${name}*\n\n✅ We offer delivery to:\n• Banjul\n• Serrekunda\n• Bakau\n• Kololi\n\n💰 *Delivery fees:*\n• Nearby (0-3km): D30\n• Further (3-7km): D50\n• Free delivery on orders over D500\n\n⏰ *Delivery time:* 30-60 minutes\n\nReply with your address to confirm! 📍`});
+
+  // Closing time
+  msgs.push({title:'Closing time / after hours',tag:'Closing',text:`🌙 Hi! We are currently *closed*.\n\n⏰ Our opening hours:\nMonday - Saturday: 8:00 AM - 8:00 PM\nSunday: 10:00 AM - 6:00 PM\n\nWe'll reply to your message as soon as we open! 😊\n\nYou can also browse our catalog anytime:\n[Your website URL]\n\n— *${name}*`});
+
+  // Individual product messages
+  products.filter(p=>p.name&&p.price).slice(0,3).forEach(p=>{
+    msgs.push({title:`Product: ${p.name}`,tag:'Product',text:`🛍️ *${p.name}*\n\n💰 Price: *${cur}${p.price}*${p.category?'\n📂 Category: '+p.category:''}\n\n${p.description||'A great product from '+name+'.'}\n\n_To order, reply with:_\n"I want to order ${p.name}"\n\n📱 ${name} · ${gv('b-loc')||''}`});
+  });
+
+  document.getElementById('msg-list').innerHTML=msgs.map((m,i)=>`
+  <div class="msg-card">
+    <div class="msg-card-head">
+      <div class="msg-card-title">${m.title}</div>
+      <span class="msg-card-tag">${m.tag}</span>
+    </div>
+    <div class="msg-text" id="msg-text-${i}">${m.text}</div>
+    <div class="copy-row">
+      <button class="btn" onclick="copyMsg(${i})" style="flex:1;font-size:11px">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy message
+      </button>
+      ${waNum()?`<a class="btn wa" href="https://wa.me/${waNum()}?text=${encodeURIComponent(m.text)}" target="_blank" style="flex:1;font-size:11px;text-decoration:none">
+        Send via WhatsApp
+      </a>`:''}
+    </div>
+  </div>`).join('');
+}
+
+function copyMsg(i){
+  const el=document.getElementById('msg-text-'+i);
+  if(!el)return;
+  navigator.clipboard.writeText(el.textContent).then(()=>toast('Message copied!'));
+}
+
+// ===== DOWNLOAD =====
+function downloadCatalog(){
+  const name=gv('b-name');
+  if(!name){toast('Enter business name first');return;}
+  const html=buildCatalogHTML(false);
+  const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download=slug+'-whatsapp-catalog.html';
+  a.click();
+  toast('Catalog downloaded! Upload to your website.');
+}
+
+function copyWaLink(){
+  const num=waNum();
+  if(!num){toast('Enter WhatsApp number first');return;}
+  const link=`https://wa.me/${num}`;
+  navigator.clipboard.writeText(link).then(()=>toast('WhatsApp link copied: '+link));
+}
+
+// Update catalog view on tab switch
+document.getElementById('view-catalog-btn').addEventListener('click',updateCatalogPreview);
+
+liveUpdate();
+</script>
+</body>
+</html>

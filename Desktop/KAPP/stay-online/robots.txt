@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /login.html
+Disallow: /client-portal.html
+Disallow: /webgen-crm.html
+
+Sitemap: https://webgen-gambia.pages.dev/sitemap.xml

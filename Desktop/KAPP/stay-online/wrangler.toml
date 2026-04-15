@@ -1,0 +1,13 @@
+name = "webgen-gambia"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "CRM_DATA"
+# ⚠️  VERVANG dit met je eigen KV namespace ID!
+#     Maak aan via: wrangler kv namespace create "CRM_DATA"
+id = "735471f622dd4267ace68dd256bad737"
+
+# ⚠️  Stel wachtwoord VEILIG in via CLI (niet in dit bestand):
+#     wrangler secret put ADMIN_PASSWORD
+#     wrangler secret put ANTHROPIC_API_KEY

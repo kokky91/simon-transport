@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <title>WebGen Gambia — KOK Enterprises</title>
+<meta name="description" content="AI-powered web agency platform for Gambian businesses. Generate websites, WhatsApp catalogs, social media posts, and Google Business profiles in under 30 seconds.">
+<meta name="keywords" content="web agency Gambia, website generator, WhatsApp catalog, Gambian business, AI website builder, KOK Enterprises">
+<meta property="og:title" content="WebGen Gambia — AI Web Agency Toolkit">
+<meta property="og:description" content="Build websites, WhatsApp catalogs, social media posts and Google Business profiles for Gambian businesses. All-in-one agency platform by KOK Enterprises.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://webgen-gambia.pages.dev">
+<meta property="og:image" content="https://webgen-gambia.pages.dev/og-image.png">
+<meta property="og:site_name" content="WebGen Gambia">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WebGen Gambia — AI Web Agency Toolkit">
+<meta name="twitter:description" content="AI-powered web agency platform for Gambian businesses. Generate websites, catalogs, social posts in seconds.">
+<link rel="sitemap" href="sitemap.xml">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -165,12 +177,47 @@ footer{margin-top:auto;padding:20px 40px;border-top:1px solid var(--br);display:
   .phase-row{grid-template-columns:1fr 1fr}
   footer{flex-direction:column;gap:8px;padding:16px 20px}
 }
+/* FLOATING WHATSAPP BUTTON */
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:90;width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.4);cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none}
+.wa-float:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.5)}
+.wa-float svg{width:28px;height:28px;fill:white}
+.wa-tooltip{position:absolute;right:68px;top:50%;transform:translateY(-50%);background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--tx);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+.wa-float:hover .wa-tooltip{opacity:1}
+
+/* PRICING SECTION */
+.pricing{margin:28px auto 0;max-width:1100px;width:100%;padding:0 40px}
+.pricing-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;text-align:center;margin-bottom:6px}
+.pricing-sub{text-align:center;font-size:13px;color:var(--mu);margin-bottom:20px}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.price-card{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:20px 16px;position:relative;transition:all .2s}
+.price-card:hover{border-color:var(--ac);transform:translateY(-2px)}
+.price-card.popular{border-color:var(--ac2);box-shadow:0 0 30px rgba(123,92,255,.1)}
+.popular-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--ac2),var(--ac));padding:3px 12px;border-radius:999px;font-size:10px;font-weight:700;color:#000;white-space:nowrap}
+.price-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
+.price-amount{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--ac);margin-bottom:2px}
+.price-amount span{font-size:13px;font-weight:400;color:var(--mu)}
+.price-period{font-size:11px;color:var(--mu);margin-bottom:12px}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.price-features li{font-size:12px;color:var(--mu);display:flex;align-items:center;gap:6px}
+.price-features li::before{content:'✓';color:var(--ac);font-weight:700;font-size:11px}
+.price-features li.off{opacity:.35}
+.price-features li.off::before{content:'—';color:var(--mu)}
+.price-cta{display:block;text-align:center;padding:9px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--br);background:var(--sf2);color:var(--mu);cursor:pointer;text-decoration:none;transition:all .15s}
+.price-cta:hover{border-color:var(--ac);color:var(--ac)}
+.price-card.popular .price-cta{background:linear-gradient(135deg,var(--ac2),var(--ac));color:#000;border:none}
+.payment-note{text-align:center;margin-top:14px;font-size:11px;color:var(--mu);line-height:1.6}
+
+@media (max-width: 900px) {
+  .pricing-grid{grid-template-columns:repeat(2,1fr)}
+}
 @media (max-width: 600px) {
   .tools{grid-template-columns:1fr}
   .stats{grid-template-columns:1fr 1fr}
   .phase-row{grid-template-columns:1fr}
   .hero-title{font-size:22px}
   .quick{padding:0 20px;margin:14px 20px 0}
+  .pricing-grid{grid-template-columns:1fr}
+  .pricing{padding:0 20px}
 }
 </style>
 </head>
@@ -426,6 +473,76 @@ footer{margin-top:auto;padding:20px 40px;border-top:1px solid var(--br);display:
   </div>
 </div>
 
+<!-- PRICING SECTION -->
+<div class="pricing" id="pricing-section">
+  <div class="pricing-title">Simple, transparent pricing</div>
+  <div class="pricing-sub">All prices in Gambian Dalasi (GMD) · Monthly subscription · No hidden fees</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">Starter</div>
+      <div class="price-amount">D500 <span>/mo</span></div>
+      <div class="price-period">+ D3,500 one-time setup fee</div>
+      <ul class="price-features">
+        <li>Professional website (1 page)</li>
+        <li>Mobile responsive design</li>
+        <li>Custom domain setup</li>
+        <li>Monthly content update</li>
+        <li class="off">WhatsApp catalog</li>
+        <li class="off">Social media posts</li>
+        <li class="off">Google Business profile</li>
+      </ul>
+      <a href="https://wa.me/2203308868?text=Hi%20KOK%20Enterprises!%20I'm%20interested%20in%20the%20Starter%20package%20(D500/mo)" class="price-cta" target="_blank">Get Started</a>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Business</div>
+      <div class="price-amount">D1,000 <span>/mo</span></div>
+      <div class="price-period">+ D3,500 one-time setup fee</div>
+      <ul class="price-features">
+        <li>Professional website (multi-page)</li>
+        <li>Mobile responsive design</li>
+        <li>Custom domain + SSL</li>
+        <li>Weekly content updates</li>
+        <li>Social media posts (4/mo)</li>
+        <li class="off">WhatsApp catalog</li>
+        <li class="off">Google Business profile</li>
+      </ul>
+      <a href="https://wa.me/2203308868?text=Hi%20KOK%20Enterprises!%20I'm%20interested%20in%20the%20Business%20package%20(D1,000/mo)" class="price-cta" target="_blank">Get Started</a>
+    </div>
+    <div class="price-card popular">
+      <div class="popular-badge">Most Popular</div>
+      <div class="price-name">Pro</div>
+      <div class="price-amount">D2,000 <span>/mo</span></div>
+      <div class="price-period">+ D3,500 one-time setup fee</div>
+      <ul class="price-features">
+        <li>Professional website (multi-page)</li>
+        <li>WhatsApp product catalog</li>
+        <li>Social media posts (8/mo)</li>
+        <li>Google Business optimization</li>
+        <li>SEO keywords & analytics</li>
+        <li>Priority support</li>
+        <li class="off">CRM access</li>
+      </ul>
+      <a href="https://wa.me/2203308868?text=Hi%20KOK%20Enterprises!%20I'm%20interested%20in%20the%20Pro%20package%20(D2,000/mo)" class="price-cta" target="_blank">Get Started</a>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Premium</div>
+      <div class="price-amount">D3,500 <span>/mo</span></div>
+      <div class="price-period">+ D3,500 one-time setup fee</div>
+      <ul class="price-features">
+        <li>Everything in Pro</li>
+        <li>Full CRM access</li>
+        <li>Unlimited content updates</li>
+        <li>Social media posts (12/mo)</li>
+        <li>Custom branding & design</li>
+        <li>Dedicated account manager</li>
+        <li>24/7 WhatsApp support</li>
+      </ul>
+      <a href="https://wa.me/2203308868?text=Hi%20KOK%20Enterprises!%20I'm%20interested%20in%20the%20Premium%20package%20(D3,500/mo)" class="price-cta" target="_blank">Get Started</a>
+    </div>
+  </div>
+  <div class="payment-note">Payment via Afrimoney, QMoney, bank transfer, or cash. Contact us for custom packages.</div>
+</div>
+
 <!-- USER MANAGEMENT (admin only) -->
 <div class="admin-panel" id="admin-panel">
   <div class="admin-card">
@@ -466,14 +583,29 @@ footer{margin-top:auto;padding:20px 40px;border-top:1px solid var(--br);display:
   </div>
 </div>
 
+<!-- FLOATING WHATSAPP BUTTON -->
+<a href="https://wa.me/2203308868?text=Hi%20KOK%20Enterprises!%20I'm%20interested%20in%20your%20web%20services." class="wa-float" target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.115 1.527 5.845L0 24l6.335-1.527A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.359-.213-3.72.978.994-3.645-.233-.374A9.818 9.818 0 1112 21.818z"/></svg>
+  <div class="wa-tooltip">Chat with us on WhatsApp</div>
+</a>
+
 <footer>
-  <div class="footer-left">© 2026 KOK Enterprises · WebGen Gambia Agency Platform · All tools work offline — no internet needed (except for website generation)</div>
+  <div class="footer-left">
+    <div>© 2026 KOK Enterprises · WebGen Gambia Agency Platform</div>
+    <div style="font-size:11px;margin-top:4px">
+      📞 +220 330 8868 · 📧 Diederikkok91@gmail.com · 📍 The Gambia, West Africa
+    </div>
+  </div>
   <div class="footer-right">
-    <a class="footer-link" onclick="window.open('https://console.anthropic.com','_blank')">Get API key</a>
-    <a class="footer-link" onclick="window.open('https://namecheap.com','_blank')">Namecheap</a>
-    <a class="footer-link" onclick="window.open('https://wa.me','_blank')">WhatsApp Business</a>
+    <a class="footer-link" href="https://wa.me/2203308868" target="_blank">💬 WhatsApp</a>
+    <a class="footer-link" href="#pricing-section">Pricing</a>
+    <a class="footer-link" onclick="window.open('https://console.anthropic.com','_blank')">API Console</a>
   </div>
 </footer>
+
+<!-- Cloudflare Web Analytics — replace TOKEN with your Cloudflare analytics token -->
+<!-- Get your token at: dash.cloudflare.com → Analytics & Logs → Web Analytics → Add site -->
+<!-- <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_CF_ANALYTICS_TOKEN"}'></script> -->
 
 <script>
 // ─── AUTH CONFIG ───
