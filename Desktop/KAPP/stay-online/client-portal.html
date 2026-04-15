@@ -45,8 +45,12 @@ body{display:flex;flex-direction:column}
 .logout-btn:hover{border-color:var(--rd);color:var(--rd)}
 
 /* ── TABS ── */
-.tabs{display:flex;gap:2px;padding:8px 24px;border-bottom:1px solid var(--br);background:var(--sf);overflow-x:auto}
+.tabs-wrap{position:relative}
+.tabs{display:flex;gap:2px;padding:8px 24px;border-bottom:1px solid var(--br);background:var(--sf);overflow-x:auto;scroll-behavior:smooth}
 .tabs::-webkit-scrollbar{display:none}
+.scroll-fade{position:absolute;top:0;bottom:1px;width:32px;pointer-events:none;z-index:2}
+.scroll-fade.left{left:0;background:linear-gradient(to right,var(--sf),transparent)}
+.scroll-fade.right{right:0;background:linear-gradient(to left,var(--sf),transparent)}
 .tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;color:var(--mu);transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .tab:hover{color:var(--tx);background:var(--sf2)}
 .tab.on{background:rgba(0,229,160,.1);color:var(--ac);font-weight:600}
@@ -214,12 +218,16 @@ select.fi{cursor:pointer}
 </div>
 
 <!-- TABS -->
-<div class="tabs" id="tab-bar">
-  <div class="tab on" data-tab="dashboard" onclick="switchTab('dashboard')"><span class="tab-icon">📊</span> <span data-i18n="tab_dashboard">Dashboard</span></div>
-  <div class="tab" data-tab="products" onclick="switchTab('products')"><span class="tab-icon">🛍️</span> <span data-i18n="tab_products">Products</span></div>
-  <div class="tab" data-tab="blog" onclick="switchTab('blog')"><span class="tab-icon">📝</span> <span data-i18n="tab_blog">Blog</span></div>
-  <div class="tab" data-tab="gallery" onclick="switchTab('gallery')"><span class="tab-icon">📸</span> <span data-i18n="tab_gallery">Gallery</span></div>
-  <div class="tab" data-tab="siteinfo" onclick="switchTab('siteinfo')"><span class="tab-icon">ℹ️</span> <span data-i18n="tab_siteinfo">Site Info</span></div>
+<div class="tabs-wrap">
+  <div class="scroll-fade left" id="fade-left" style="display:none"></div>
+  <div class="tabs" id="tab-bar" onscroll="updateScrollFades()">
+    <div class="tab on" data-tab="dashboard" onclick="switchTab('dashboard')"><span class="tab-icon">📊</span> <span data-i18n="tab_dashboard">Dashboard</span></div>
+    <div class="tab" data-tab="products" onclick="switchTab('products')"><span class="tab-icon">🛍️</span> <span data-i18n="tab_products">Products</span></div>
+    <div class="tab" data-tab="blog" onclick="switchTab('blog')"><span class="tab-icon">📝</span> <span data-i18n="tab_blog">Blog</span></div>
+    <div class="tab" data-tab="gallery" onclick="switchTab('gallery')"><span class="tab-icon">📸</span> <span data-i18n="tab_gallery">Gallery</span></div>
+    <div class="tab" data-tab="siteinfo" onclick="switchTab('siteinfo')"><span class="tab-icon">ℹ️</span> <span data-i18n="tab_siteinfo">Site Info</span></div>
+  </div>
+  <div class="scroll-fade right" id="fade-right"></div>
 </div>
 
 <!-- ═══════ DASHBOARD ═══════ -->
@@ -729,6 +737,13 @@ function switchTab(tab){
   document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id==='p-'+tab));
   renderAll();
 }
+function updateScrollFades(){
+  const el=document.getElementById('tab-bar');if(!el)return;
+  const fl=document.getElementById('fade-left'),fr=document.getElementById('fade-right');
+  if(fl)fl.style.display=el.scrollLeft>8?'':'none';
+  if(fr)fr.style.display=(el.scrollWidth-el.scrollLeft-el.clientWidth)>8?'':'none';
+}
+setTimeout(updateScrollFades,200);
 
 // ═══════════════════════════════════════════
 // RENDER ALL
