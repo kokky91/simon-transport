@@ -1,0 +1,42 @@
+# ══════════════════════════════════════════════════
+# WebGen Gambia — Cloudflare Worker Configuration
+# ══════════════════════════════════════════════════
+#
+# SETUP INSTRUCTIES (eenmalig):
+# 1. Installeer Wrangler:  npm install -g wrangler
+# 2. Login:                wrangler login
+# 3. Maak KV namespace:    wrangler kv namespace create "WEBGEN_KV"
+#    → Kopieer het "id" dat je krijgt hieronder bij [[kv_namespaces]]
+# 4. Maak preview KV:      wrangler kv namespace create "WEBGEN_KV" --preview
+#    → Kopieer het "id" bij preview_id
+# 5. Deploy:               wrangler deploy
+#
+# ══════════════════════════════════════════════════
+
+name = "webgen-gambia"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV Storage — vul je eigen IDs in na stap 3 & 4 hierboven
+[[kv_namespaces]]
+binding = "WEBGEN_KV"
+id = "1748e887683d40c7b5a57dafe7ea9f66"
+preview_id = "a0d5534076f14224b927029096e6fad0"
+
+# Environment variabelen
+[vars]
+ENVIRONMENT = "production"
+ALLOWED_ORIGINS = "https://webgen-gambia.pages.dev,http://localhost:5173,http://127.0.0.1:5173"
+MAX_REQUESTS_PER_MINUTE = "60"
+FROM_EMAIL = "noreply@webgengambia.com"
+SITE_URL = "https://webgen-gambia.pages.dev"
+SITE_NAME = "WebGen Gambia"
+
+# Custom domein (optioneel — voeg toe als je een eigen domein hebt)
+# routes = [
+#   { pattern = "api.webgengambia.com/*", zone_name = "webgengambia.com" }
+# ]
+
+# Cloudflare Pages configuratie voor de frontend
+# Deploy apart via: npx wrangler pages deploy . --project-name=webgen-gambia

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Portal — WebGen Gambia</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link rel="dns-prefetch" href="https://webgen-gambia.diederikkok123.workers.dev">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080c10; --bg2:#0e1318; --bg3:#141b23; --card:#111820;
+  --border:#1e2d3d; --border2:#2a3a4d;
+  --teal:#00c896; --teal-dim:rgba(0,200,150,0.12);
+  --gold:#f5a200; --gold-dim:rgba(245,162,0,0.12);
+  --red:#ff4757; --red-dim:rgba(255,71,87,0.12);
+  --blue:#3b82f6; --blue-dim:rgba(59,130,246,0.12);
+  --green:#10b981; --green-dim:rgba(16,185,129,0.12);
+  --text:#c8d6e5; --muted:#6b7f95; --white:#f0f4f8;
+  --radius:12px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+h1,h2,h3{font-family:'Syne',sans-serif;color:var(--white);font-weight:700}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.brand{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--white)}
+.brand span{color:var(--teal)}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.nav-link{font-size:12px;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;transition:all 0.2s}
+.nav-link:hover{color:var(--text);background:var(--bg3)}
+
+/* LAYOUT */
+.container{max-width:1100px;margin:0 auto;padding:24px 20px}
+
+/* LOGIN */
+.login-wrap{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+.login-logo{text-align:center;margin-bottom:8px;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--white)}
+.login-logo span{color:var(--teal)}
+.login-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:24px}
+.tabs{display:flex;gap:4px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px}
+.tab-btn{flex:1;padding:9px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;border-radius:7px;cursor:pointer;transition:all 0.2s}
+.tab-btn.active{background:var(--teal-dim);color:var(--teal)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.input{width:100%;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s}
+.input:focus{border-color:var(--teal)}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal),#00a87e);color:#000;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 14px rgba(0,200,150,0.25)}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,200,150,0.35)}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+.btn-ghost{width:100%;padding:11px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:8px}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+.login-error{background:var(--red-dim);color:var(--red);padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
+
+/* DASHBOARD */
+.hero{background:linear-gradient(135deg,var(--card) 0%,var(--bg2) 100%);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.hero-info h2{font-size:22px;margin-bottom:4px}
+.hero-info p{color:var(--muted);font-size:13px}
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.status-active{background:var(--green-dim);color:var(--green)}
+.status-pending{background:var(--gold-dim);color:var(--gold)}
+.status-suspended{background:var(--red-dim);color:var(--red)}
+.referral-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.referral-box code{background:var(--bg);padding:4px 10px;border-radius:6px;font-size:12px;color:var(--teal);user-select:all}
+.btn-copy{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(0,200,150,0.25);padding:6px 12px;border-radius:6px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.btn-copy:hover{background:rgba(0,200,150,0.2)}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;transition:border-color 0.2s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.stat-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--white);line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:6px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+
+.ref-table{width:100%;border-collapse:collapse;font-size:13px}
+.ref-table th{text-align:left;padding:10px 12px;background:var(--bg2);color:var(--muted);font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:0.5px;border-bottom:1px solid var(--border)}
+.ref-table td{padding:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.ref-table tr:last-child td{border-bottom:none}
+.ref-empty{text-align:center;color:var(--muted);padding:32px 16px;font-size:13px;line-height:1.7}
+.ref-empty-icon{font-size:36px;margin-bottom:8px}
+.pill{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px}
+.pill-pending{background:var(--gold-dim);color:var(--gold)}
+.pill-paid{background:var(--green-dim);color:var(--green)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:9999;animation:toastIn 0.3s ease}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:var(--red);color:var(--red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:640px){
+  .container{padding:16px 12px}
+  .hero{padding:20px;flex-direction:column;align-items:flex-start}
+  .stat-value{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Web<span>Gen</span> Gambia — Agent Portal</div>
+  <div class="topbar-actions">
+    <a class="nav-link" href="index.html">🏠 Hub</a>
+    <a class="nav-link" href="klant.html">🧑‍💼 Client</a>
+    <a class="nav-link" href="landing.html">🌐 Website</a>
+    <button id="nav-logout" class="nav-link" style="cursor:pointer;border:none;background:none;display:none" onclick="doLogout()">Sign out</button>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- LOGIN / REGISTER -->
+<div id="login-view" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">Web<span>Gen</span> Agent</div>
+    <div class="login-sub">Sell WebGen to Gambian businesses. Earn commission on every client.</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="login" onclick="switchTab('login')">Sign in</button>
+      <button class="tab-btn" data-tab="register" onclick="switchTab('register')">Become an agent</button>
+    </div>
+
+    <div id="login-error" class="login-error"></div>
+
+    <!-- LOGIN TAB -->
+    <div id="tab-login">
+      <div class="form-group">
+        <label>Phone number</label>
+        <input class="input" id="login-phone" type="tel" placeholder="+220 123 4567" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input class="input" id="login-password" type="password" placeholder="Your password" autocomplete="current-password">
+      </div>
+      <button class="btn-primary" id="btn-login" onclick="doLogin()">Sign in</button>
+    </div>
+
+    <!-- REGISTER TAB -->
+    <div id="tab-register" style="display:none">
+      <div class="form-group">
+        <label>Full name</label>
+        <input class="input" id="reg-name" placeholder="Modou Sowe">
+      </div>
+      <div class="form-group">
+        <label>Phone number</label>
+        <input class="input" id="reg-phone" type="tel" placeholder="+220 123 4567">
+      </div>
+      <div class="form-group">
+        <label>Email (optional)</label>
+        <input class="input" id="reg-email" type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>Location</label>
+        <input class="input" id="reg-location" placeholder="Serrekunda, Brikama, Bakau…">
+      </div>
+      <div class="form-group">
+        <label>Choose a password</label>
+        <input class="input" id="reg-password" type="password" placeholder="Min. 8 characters">
+      </div>
+      <button class="btn-primary" id="btn-register" onclick="doRegister()">Create agent account</button>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5">After signup, an admin approves your account. You'll get a referral link to share with businesses.</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-view" style="display:none">
+
+  <div class="hero">
+    <div class="hero-info">
+      <h2>Welcome, <span id="dash-name">Agent</span></h2>
+      <p>Your referral link is how clients get linked to your account</p>
+    </div>
+    <span class="status-badge" id="dash-status">—</span>
+  </div>
+
+  <div class="referral-box">
+    <div style="flex:1;min-width:180px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Your referral link</div>
+      <code id="dash-reflink">—</code>
+    </div>
+    <button class="btn-copy" onclick="copyReferralLink()">📋 Copy link</button>
+    <button class="btn-copy" onclick="copyWhatsAppInvite()" style="background:var(--blue-dim);color:var(--blue);border-color:rgba(59,130,246,0.25)">💬 WhatsApp invite</button>
+  </div>
+
+  <h3 style="margin:24px 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)">Your stats</h3>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total clients</div>
+      <div class="stat-value" id="stat-clients">0</div>
+      <div class="stat-sub" id="stat-clients-sub">all time</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total commission</div>
+      <div class="stat-value" id="stat-total" style="color:var(--teal)">D 0</div>
+      <div class="stat-sub">earned since joining</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Paid out</div>
+      <div class="stat-value" id="stat-paid">D 0</div>
+      <div class="stat-sub">already received</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pending payout</div>
+      <div class="stat-value" id="stat-pending" style="color:var(--gold)">D 0</div>
+      <div class="stat-sub">awaiting next payout cycle</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">This month
+      <span style="font-size:11px;color:var(--muted);font-weight:500" id="dash-month">—</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+      <div style="background:var(--bg2);padding:14px;border-radius:10px">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">New clients</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--white);margin-top:4px" id="month-clients">0</div>
+      </div>
+      <div style="background:var(--bg2);padding:14px;border-radius:10px">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Commission earned</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--teal);margin-top:4px" id="month-commission">D 0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent referrals</div>
+    <div id="referrals-container">
+      <div class="ref-empty">
+        <div class="ref-empty-icon">🤝</div>
+        No referrals yet — share your link with local businesses<br>
+        <span style="font-size:11px">You earn <strong style="color:var(--teal)">D 400-750</strong> per signed up client depending on plan.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,var(--card) 0%,var(--teal-dim) 150%);border-color:rgba(0,200,150,0.2)">
+    <div class="card-title">💡 How to get your first client</div>
+    <ol style="font-size:13px;line-height:1.9;padding-left:22px;color:var(--text)">
+      <li>Copy your referral link above</li>
+      <li>Send it via WhatsApp to a local shop owner (kapper, restaurant, fashion boutique)</li>
+      <li>When they sign up, they'll get 14 days free trial — you get <strong style="color:var(--teal)">commission when they upgrade to a paid plan</strong></li>
+      <li>Check this dashboard to track your earnings</li>
+    </ol>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+const API_BASE = 'https://webgen-gambia.diederikkok123.workers.dev';
+let authToken = localStorage.getItem('webgen-agent-token') || null;
+let agentData = null;
+
+function toast(msg, kind='success') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + kind;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2800);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.getElementById('tab-login').style.display = name === 'login' ? 'block' : 'none';
+  document.getElementById('tab-register').style.display = name === 'register' ? 'block' : 'none';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function api(method, path, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    const r = await fetch(API_BASE + path, opts);
+    const data = await r.json().catch(() => null);
+    return { ok: r.ok, status: r.status, data };
+  } catch (e) {
+    return { ok: false, status: 0, data: { error: 'Network error — check your connection.' } };
+  }
+}
+
+async function doLogin() {
+  const phone = document.getElementById('login-phone').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!phone || !password) { showError('Please fill in phone and password.'); return; }
+
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const res = await api('POST', '/api/agent/login', { phone, password });
+  btn.disabled = false; btn.textContent = 'Sign in';
+
+  if (res.ok && res.data?.success && res.data.token) {
+    authToken = res.data.token;
+    localStorage.setItem('webgen-agent-token', authToken);
+    localStorage.setItem('webgen-agent-code', res.data.agentCode);
+    await loadDashboard(res.data.agentCode);
+  } else {
+    showError(res.data?.error || 'Login failed. Check your phone and password.');
+  }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const location = document.getElementById('reg-location').value.trim();
+  const password = document.getElementById('reg-password').value;
+  if (!name || !phone || !password) { showError('Name, phone and password are required.'); return; }
+  if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
+
+  const btn = document.getElementById('btn-register');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  const res = await api('POST', '/api/agent/register', { name, phone, email, location, password });
+  btn.disabled = false; btn.textContent = 'Create agent account';
+
+  if (res.ok && res.data?.success) {
+    toast(`Account created! Your code: ${res.data.agentCode}`, 'success');
+    // Auto-login
+    document.getElementById('login-phone').value = phone;
+    document.getElementById('login-password').value = password;
+    switchTab('login');
+    setTimeout(doLogin, 400);
+  } else {
+    showError(res.data?.error || 'Registration failed.');
+  }
+}
+
+async function loadDashboard(agentCode) {
+  const code = agentCode || localStorage.getItem('webgen-agent-code');
+  if (!code || !authToken) return;
+
+  const res = await api('GET', `/api/agents/${code}/dashboard`);
+  if (!res.ok || !res.data?.success) {
+    if (res.status === 401) {
+      // Token expired
+      doLogout(); return;
+    }
+    toast(res.data?.error || 'Failed to load dashboard', 'error');
+    return;
+  }
+
+  const d = res.data;
+  agentData = d.agent;
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('dashboard-view').style.display = 'block';
+  document.getElementById('nav-logout').style.display = 'inline-block';
+
+  // Hero
+  document.getElementById('dash-name').textContent = d.agent.name || 'Agent';
+  const statusEl = document.getElementById('dash-status');
+  const st = (d.agent.status || 'pending').toLowerCase();
+  statusEl.textContent = '● ' + st;
+  statusEl.className = 'status-badge status-' + (st === 'active' ? 'active' : st === 'suspended' ? 'suspended' : 'pending');
+
+  // Referral link — base path is parent directory (strip the filename segment)
+  const segments = location.pathname.split('/');
+  segments.pop();
+  const basePath = segments.join('/') + '/';
+  const reflink = location.origin + basePath + `landing.html?ref=${d.agent.code}`;
+  document.getElementById('dash-reflink').textContent = reflink;
+  document.getElementById('dash-reflink').dataset.link = reflink;
+
+  // Stats
+  document.getElementById('stat-clients').textContent = d.stats.totalClients;
+  document.getElementById('stat-total').textContent = 'D ' + (d.stats.totalCommission || 0).toLocaleString();
+  document.getElementById('stat-paid').textContent = 'D ' + (d.stats.paidCommission || 0).toLocaleString();
+  document.getElementById('stat-pending').textContent = 'D ' + (d.stats.pendingCommission || 0).toLocaleString();
+
+  // This month
+  const now = new Date();
+  document.getElementById('dash-month').textContent = now.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  document.getElementById('month-clients').textContent = d.stats.thisMonth.clients;
+  document.getElementById('month-commission').textContent = 'D ' + d.stats.thisMonth.commission.toLocaleString();
+
+  // Recent referrals
+  const container = document.getElementById('referrals-container');
+  if (d.recentReferrals && d.recentReferrals.length > 0) {
+    let rows = '<table class="ref-table"><thead><tr><th>Date</th><th>Client</th><th>Commission</th><th>Status</th></tr></thead><tbody>';
+    d.recentReferrals.forEach(r => {
+      const date = new Date(r.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      const pill = r.status === 'paid' ? '<span class="pill pill-paid">Paid</span>' : '<span class="pill pill-pending">Pending</span>';
+      rows += `<tr><td>${date}</td><td><code style="background:var(--bg2);padding:2px 8px;border-radius:4px;font-size:11px">${r.clientCode}</code></td><td><strong style="color:var(--teal)">D ${r.commission.toLocaleString()}</strong></td><td>${pill}</td></tr>`;
+    });
+    rows += '</tbody></table>';
+    container.innerHTML = rows;
+  }
+  // else keep the empty state as-is
+}
+
+function copyReferralLink() {
+  const link = document.getElementById('dash-reflink').dataset.link || document.getElementById('dash-reflink').textContent;
+  if (!link || link === '—') return;
+  navigator.clipboard.writeText(link).then(
+    () => toast('Referral link copied!', 'success'),
+    () => toast('Copy failed — select and copy manually', 'error')
+  );
+}
+
+function copyWhatsAppInvite() {
+  const link = document.getElementById('dash-reflink').dataset.link || document.getElementById('dash-reflink').textContent;
+  if (!link || link === '—') return;
+  const msg = `Hi! I work with WebGen Gambia — a platform that helps Gambian businesses get online with WhatsApp catalog, QR menus, and invoices. Starting from D 700/month. Try 14 days free: ${link}`;
+  const wa = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  window.open(wa, '_blank');
+}
+
+function doLogout() {
+  authToken = null;
+  agentData = null;
+  localStorage.removeItem('webgen-agent-token');
+  localStorage.removeItem('webgen-agent-code');
+  document.getElementById('dashboard-view').style.display = 'none';
+  document.getElementById('login-view').style.display = 'flex';
+  document.getElementById('nav-logout').style.display = 'none';
+  document.getElementById('login-phone').value = '';
+  document.getElementById('login-password').value = '';
+  switchTab('login');
+  toast('Signed out', 'success');
+}
+
+// Enter-key submits
+document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+
+// Auto-restore session on page load
+window.addEventListener('DOMContentLoaded', () => {
+  if (authToken && localStorage.getItem('webgen-agent-code')) {
+    loadDashboard();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kassa — Restaurant Dashboard — WebGen Gambia</title>
+<meta name="theme-color" content="#00c896">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#0a0e13;--bg2:#0f1620;--bg3:#141c26;--card:#1a232d;--card-hover:#20293a;
+  --border:#243241;--border-light:#2e4055;
+  --teal:#00c896;--teal2:#00a87e;--teal-light:#00e6a8;
+  --gold:#f5a200;--gold-light:#ffbe33;
+  --red:#ff5a6e;--red2:#e03e52;
+  --blue:#4ab3ff;--purple:#a78bfa;--orange:#ff9447;
+  --text:#e8edf2;--muted:#8097b0;--muted2:#4a5d73;--white:#fff;
+  --radius:12px;--radius-lg:16px;
+  --shadow:0 4px 20px rgba(0,0,0,0.3);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.5);
+  --tr:0.22s cubic-bezier(0.4,0,0.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;overflow:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-0.01em}
+button{font-family:inherit}
+
+.app{display:flex;height:100vh}
+
+/* ============ SIDEBAR ============ */
+.sidebar{
+  width:240px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;
+}
+.brand{padding:18px 18px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.brand-mark{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),var(--teal2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne';font-weight:800;font-size:18px;color:#000;
+}
+.brand-text{font-family:'Syne';font-weight:700;font-size:15px}
+.brand-text span{color:var(--teal)}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+.nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;
+  color:var(--muted);cursor:pointer;transition:var(--tr);font-weight:500;font-size:13px;
+  margin-bottom:2px;position:relative;
+}
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:var(--card);color:var(--teal)}
+.nav-item.active::before{
+  content:'';position:absolute;left:-10px;top:6px;bottom:6px;width:3px;
+  background:var(--teal);border-radius:0 3px 3px 0;
+}
+.nav-icon{font-size:17px;width:22px;text-align:center}
+.nav-badge{
+  margin-left:auto;background:var(--teal);color:#000;
+  font-size:10px;font-weight:800;padding:2px 7px;border-radius:100px;
+}
+.nav-badge.red{background:var(--red);color:#fff}
+.nav-section{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:0.1em;padding:14px 12px 6px}
+
+.sidebar-foot{padding:12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
+.sidebar-foot b{color:var(--teal);display:block;font-family:'Syne'}
+
+/* ============ MAIN ============ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{
+  padding:14px 22px;border-bottom:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;gap:14px;flex-shrink:0;
+}
+.page-title{font-size:19px;font-weight:700}
+.topbar-stats{display:flex;gap:10px;margin-left:auto}
+.mini-stat{
+  padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;
+  display:flex;align-items:center;gap:10px;
+}
+.mini-stat-icon{font-size:16px}
+.mini-stat-val{font-weight:700;font-family:'Syne';color:var(--teal)}
+.mini-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+
+.content{flex:1;overflow-y:auto;padding:22px}
+.page{display:none}
+.page.active{display:block;animation:fade 0.3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ TABLES GRID (HOME) ============ */
+.tables-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;
+}
+.table-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px;cursor:pointer;transition:var(--tr);position:relative;overflow:hidden;
+  min-height:140px;
+}
+.table-card:hover{transform:translateY(-3px);border-color:var(--teal);background:var(--card-hover)}
+.table-card.status-empty{--statusc:var(--muted2)}
+.table-card.status-occupied{--statusc:var(--blue);border-color:rgba(74,179,255,0.4)}
+.table-card.status-pending{--statusc:var(--orange);border-color:rgba(255,148,71,0.5);animation:glow 2s ease-in-out infinite}
+.table-card.status-ready{--statusc:var(--teal);border-color:rgba(0,200,150,0.5)}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(255,148,71,0)}50%{box-shadow:0 0 0 4px rgba(255,148,71,0.18)}}
+
+.tc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.tc-num{font-family:'Syne';font-weight:800;font-size:28px;line-height:1}
+.tc-status{
+  font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
+  padding:3px 8px;border-radius:100px;background:color-mix(in srgb,var(--statusc) 18%,transparent);
+  color:var(--statusc);
+}
+.tc-info{font-size:12px;color:var(--muted);margin-top:auto}
+.tc-amount{font-family:'Syne';font-weight:700;color:var(--text);font-size:16px;margin-top:6px}
+.tc-badge{
+  position:absolute;top:10px;right:10px;background:var(--red);color:#fff;
+  width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ============ ORDERS ============ */
+.orders-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.filter-pill{
+  padding:7px 14px;background:var(--card);border:1px solid var(--border);border-radius:100px;
+  font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:var(--tr);
+}
+.filter-pill:hover{color:var(--text);border-color:var(--muted)}
+.filter-pill.active{background:var(--teal);color:#000;border-color:var(--teal)}
+
+.orders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.order-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:16px;transition:var(--tr);
+}
+.order-card:hover{border-color:var(--border-light)}
+.oc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.oc-id{font-family:'Syne';font-weight:700;font-size:13px;color:var(--muted);letter-spacing:0.05em}
+.oc-table{background:var(--bg3);padding:4px 10px;border-radius:8px;font-weight:700;font-size:12px;color:var(--teal)}
+.oc-items{margin:10px 0;font-size:13px}
+.oc-item{padding:4px 0;display:flex;justify-content:space-between;gap:8px}
+.oc-item .qty{color:var(--teal);font-weight:700;min-width:24px}
+.oc-note{
+  background:var(--bg3);padding:8px 10px;border-radius:8px;font-size:12px;color:var(--muted);
+  font-style:italic;margin:8px 0;border-left:2px solid var(--gold);
+}
+.oc-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px dashed var(--border)}
+.oc-total{font-family:'Syne';font-weight:700;color:var(--teal);font-size:17px}
+.oc-time{font-size:11px;color:var(--muted);margin-top:2px}
+
+.status-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;
+}
+.status-tag{
+  display:inline-flex;align-items:center;font-size:11px;font-weight:700;
+  padding:4px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.08em;
+}
+.st-new{background:rgba(255,148,71,0.15);color:var(--orange)}
+.st-new .status-dot{background:var(--orange);animation:blink 1.2s infinite}
+.st-preparing{background:rgba(74,179,255,0.15);color:var(--blue)}
+.st-preparing .status-dot{background:var(--blue)}
+.st-ready{background:rgba(0,200,150,0.15);color:var(--teal)}
+.st-ready .status-dot{background:var(--teal);animation:blink 1.2s infinite}
+.st-served{background:rgba(167,139,250,0.15);color:var(--purple)}
+.st-served .status-dot{background:var(--purple)}
+.st-paid{background:rgba(139,145,153,0.15);color:var(--muted)}
+.st-paid .status-dot{background:var(--muted)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.oc-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.btn-sm{
+  padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg3);color:var(--text);transition:var(--tr);
+}
+.btn-sm:hover{border-color:var(--teal);color:var(--teal)}
+.btn-sm.primary{background:var(--teal);color:#000;border-color:var(--teal)}
+.btn-sm.primary:hover{background:var(--teal2);color:#000}
+.btn-sm.danger:hover{border-color:var(--red);color:var(--red)}
+
+/* ============ MENU EDITOR ============ */
+.menu-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.menu-items-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.menu-ed-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:12px;display:flex;gap:10px;align-items:center;
+}
+.menu-ed-emoji{
+  font-size:32px;width:52px;height:52px;border-radius:10px;
+  background:var(--bg3);display:flex;align-items:center;justify-content:center;
+}
+.menu-ed-main{flex:1;min-width:0}
+.menu-ed-name{font-weight:700;font-size:14px;margin-bottom:2px}
+.menu-ed-cat{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.menu-ed-price{font-family:'Syne';color:var(--teal);font-weight:700;margin-top:2px}
+.menu-ed-actions{display:flex;gap:4px;flex-direction:column}
+.menu-ed-icon-btn{
+  width:28px;height:28px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--muted);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:var(--tr);
+}
+.menu-ed-icon-btn:hover{color:var(--teal);border-color:var(--teal)}
+.menu-ed-icon-btn.del:hover{color:var(--red);border-color:var(--red)}
+
+/* ============ QR CODES ============ */
+.qr-config{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:18px;margin-bottom:18px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;
+}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.qr-card{
+  background:white;border-radius:12px;padding:16px;text-align:center;color:#000;
+  display:flex;flex-direction:column;align-items:center;
+}
+.qr-card canvas{max-width:160px;height:auto;margin-bottom:10px}
+.qr-card-title{font-family:'Syne';font-weight:800;color:#000;font-size:17px}
+.qr-card-sub{font-size:11px;color:#555;margin-top:2px}
+
+/* ============ RESERVATIONS ============ */
+.res-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.res-list{display:flex;flex-direction:column;gap:10px}
+.res-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;
+}
+.res-date{
+  background:var(--bg3);border-radius:10px;padding:10px 14px;text-align:center;min-width:70px;
+}
+.res-date-d{font-family:'Syne';font-weight:800;font-size:22px;line-height:1}
+.res-date-m{font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:0.1em;margin-top:2px}
+.res-main{flex:1;min-width:200px}
+.res-name{font-weight:700;font-size:15px;margin-bottom:2px}
+.res-meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px}
+.res-meta b{color:var(--text);font-weight:600}
+.res-notes{font-size:12px;color:var(--muted);font-style:italic;margin-top:4px}
+.res-actions{display:flex;gap:6px}
+
+/* ============ FORM ============ */
+.form-input,.form-select,.form-textarea{
+  padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);font-family:inherit;font-size:13px;transition:var(--tr);width:100%;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--teal)}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em}
+.form-group{margin-bottom:12px}
+
+.btn{
+  padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;
+  border:none;transition:var(--tr);display:inline-flex;align-items:center;gap:6px;
+}
+.btn-primary{background:var(--teal);color:#000}
+.btn-primary:hover{background:var(--teal2);transform:translateY(-1px)}
+.btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--teal);color:var(--teal)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-danger:hover{background:var(--red2)}
+
+/* ============ MODAL ============ */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px;
+}
+.modal-bg.show{display:flex}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  width:100%;max-width:480px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:var(--shadow-lg);
+}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-body{padding:18px 20px;overflow-y:auto;flex:1}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+
+/* ============ EMPTY ============ */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .emoji{font-size:52px;margin-bottom:12px;opacity:0.5}
+
+/* ============ TOAST ============ */
+.toast-container{position:fixed;top:20px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:8px}
+.toast{
+  background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);
+  padding:12px 16px;border-radius:10px;font-size:13px;min-width:240px;
+  box-shadow:var(--shadow);animation:toastIn 0.3s;
+}
+.toast.success{border-left-color:var(--teal)}
+.toast.info{border-left-color:var(--blue)}
+.toast.warn{border-left-color:var(--orange)}
+@keyframes toastIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ============ TABLE DETAIL ============ */
+.table-detail{padding:10px 0}
+.td-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.td-title{font-size:22px}
+.td-total{font-family:'Syne';font-weight:800;color:var(--teal);font-size:22px}
+.td-orders{display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto}
+
+/* ========== TABLET (up to 1024) ========== */
+@media (max-width:1024px){
+  .sidebar{width:72px}
+  .brand-text,.brand-sub{display:none}
+  .nav-item span:not(.nav-icon):not(.nav-badge){display:none}
+  .nav-item{justify-content:center;padding:12px 8px}
+  .nav-item .nav-badge{position:absolute;top:6px;right:6px;padding:1px 5px;font-size:10px}
+  .nav-section{text-align:center;font-size:9px;padding:10px 4px}
+  .nav-item.active::before{left:auto;right:0}
+  #staffSwitcher label{display:none}
+  #staffSwitcher select{font-size:11px;padding:5px 6px}
+  .sidebar-foot{font-size:11px;padding:12px 8px;text-align:center}
+  .topbar{padding:0 16px}
+  .topbar-stats{gap:10px}
+  .mini-stat{padding:6px 8px}
+  .mini-stat-val{font-size:14px}
+  .content{padding:16px}
+  .page-title{font-size:18px}
+  h2{font-size:18px}
+  .tables-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .table-card{padding:14px}
+  .orders-grid{grid-template-columns:1fr !important}
+  .filter-pill{font-size:12px;padding:6px 10px}
+  .res-filters,.orders-filters{flex-wrap:wrap}
+  .qr-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  .modal{max-width:92vw !important;margin:20px auto}
+}
+
+/* ========== MOBILE (up to 640) ========== */
+@media (max-width:640px){
+  body{font-size:14px}
+  .app{flex-direction:column}
+  .sidebar{
+    position:fixed;bottom:0;left:0;right:0;top:auto;
+    width:100% !important;height:auto;
+    flex-direction:row;z-index:500;
+    border-top:1px solid var(--border);border-right:none;
+    padding:6px 4px;gap:2px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .sidebar::-webkit-scrollbar{display:none}
+  .brand,.nav-section,#staffSwitcher,.sidebar-foot{display:none}
+  .nav{display:flex;flex-direction:row;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
+  .nav::-webkit-scrollbar{display:none}
+  .nav-item{flex-shrink:0;flex-direction:column;gap:2px;padding:8px 10px;border-radius:8px;min-width:60px;justify-content:center;font-size:10px;position:relative}
+  .nav-item .nav-icon{font-size:20px}
+  .nav-item.active{background:var(--teal-bg,rgba(0,200,150,0.15));color:var(--teal)}
+  .nav-item.active::before{display:none}
+  .main{margin-bottom:72px}
+  .topbar{padding:10px 14px;flex-wrap:wrap;gap:8px}
+  .topbar-stats{order:2;width:100%;justify-content:space-between}
+  .mini-stat{flex:1;padding:6px;min-width:0}
+  .mini-stat-lbl{font-size:10px}
+  .mini-stat-val{font-size:13px}
+  .content{padding:14px 12px}
+  .tables-grid{grid-template-columns:repeat(2,1fr) !important;gap:8px}
+  .table-card{padding:12px}
+  .tc-num{font-size:22px}
+  .tc-badge{top:8px;right:8px;padding:2px 6px;font-size:10px}
+  .qr-config{flex-direction:column}
+  .qr-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr)) !important}
+  .menu-items-list{grid-template-columns:1fr !important}
+  .modal{max-width:96vw !important;max-height:90vh;overflow-y:auto}
+  .modal-head{padding:14px 18px}
+  .modal-body{padding:14px 18px}
+  .modal-foot{padding:12px 18px;flex-wrap:wrap}
+  .btn{padding:10px 14px;font-size:13px}
+  h2{font-size:16px;margin-bottom:10px}
+  .order-card{padding:12px}
+  .filter-pill{font-size:11px;padding:5px 9px}
+  .kassa-tab{font-size:10px}
+  /* Finance KPI cards stay 2-col on mobile */
+  #finKPIs{grid-template-columns:repeat(2,1fr) !important;gap:8px !important}
+  #finBreakdownRow{grid-template-columns:1fr !important}
+  #finChart{height:120px !important}
+  #dealsGrid,#staffList,#kitchenGrid{grid-template-columns:1fr !important}
+}
+
+/* Touch-friendly tap targets everywhere */
+@media (pointer:coarse){
+  button,.nav-item,.filter-pill,.cat-pill,.menu-item,.table-card{min-height:44px}
+  .form-input,.form-select{min-height:44px;font-size:16px}
+  .icon-btn,.menu-ed-icon-btn{width:40px;height:40px}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <div>
+        <div class="brand-text">WebGen <span>Kassa</span></div>
+        <div class="brand-sub" id="brandSub">Demo Restaurant</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active" data-page="tables" data-role="front">
+        <span class="nav-icon">🪑</span><span>Tafels</span>
+        <span class="nav-badge" id="badgeTables" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-page="orders" data-role="front">
+        <span class="nav-icon">📋</span><span>Bestellingen</span>
+        <span class="nav-badge red" id="badgeOrders" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-page="kitchen" data-role="kitchen">
+        <span class="nav-icon">👨‍🍳</span><span>Keuken</span>
+        <span class="nav-badge red" id="badgeKitchen" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-page="reservations" data-role="front">
+        <span class="nav-icon">📅</span><span>Reserveringen</span>
+        <span class="nav-badge" id="badgeRes" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-page="finance" data-role="manager">
+        <span class="nav-icon">💰</span><span>Financieel</span>
+      </div>
+      <div class="nav-item" data-page="deals" data-role="manager">
+        <span class="nav-icon">🎯</span><span>Deals</span>
+        <span class="nav-badge" id="badgeDeals" style="display:none">0</span>
+      </div>
+      <div class="nav-section">Configuratie</div>
+      <div class="nav-item" data-page="menu" data-role="manager">
+        <span class="nav-icon">🍽️</span><span>Menu</span>
+      </div>
+      <div class="nav-item" data-page="staff" data-role="manager">
+        <span class="nav-icon">👥</span><span>Medewerkers</span>
+        <span class="nav-badge" id="badgeStaff" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-page="qr" data-role="manager">
+        <span class="nav-icon">📱</span><span>QR codes</span>
+      </div>
+      <div class="nav-item" data-page="settings" data-role="manager">
+        <span class="nav-icon">⚙️</span><span>Instellingen</span>
+      </div>
+    </nav>
+
+    <!-- Staff switcher (manager picks active role) -->
+    <div id="staffSwitcher" style="padding:12px 18px;border-top:1px solid var(--border);font-size:12px">
+      <label style="display:block;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:10px">Ingelogd als</label>
+      <select id="currentStaff" onchange="setCurrentStaff(this.value)" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 9px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer">
+        <option value="manager">👔 Manager (alles)</option>
+      </select>
+    </div>
+
+    <div class="sidebar-foot">
+      Vandaag<br>
+      <b id="todayRevenue">GMD 0</b>
+      <span id="todayOrders">0 bestellingen</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <h1 class="page-title" id="pageTitle">Tafel overzicht</h1>
+      <div class="topbar-stats">
+        <div class="mini-stat">
+          <span class="mini-stat-icon">🔔</span>
+          <div>
+            <div class="mini-stat-val" id="statPending">0</div>
+            <div class="mini-stat-lbl">Nieuw</div>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-stat-icon">👨‍🍳</span>
+          <div>
+            <div class="mini-stat-val" id="statPreparing">0</div>
+            <div class="mini-stat-lbl">In keuken</div>
+          </div>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-stat-icon">💰</span>
+          <div>
+            <div class="mini-stat-val" id="statRevenue">GMD 0</div>
+            <div class="mini-stat-lbl">Vandaag</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- PAGE: TABLES -->
+      <div class="page active" id="page-tables">
+        <div class="tables-grid" id="tablesGrid"></div>
+      </div>
+
+      <!-- PAGE: ORDERS -->
+      <div class="page" id="page-orders">
+        <div class="orders-filters" id="ordersFilters"></div>
+        <div class="orders-grid" id="ordersGrid"></div>
+      </div>
+
+      <!-- PAGE: KITCHEN — streamlined view for kitchen staff -->
+      <div class="page" id="page-kitchen">
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <div style="padding:10px 18px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);border-radius:10px;font-size:13px"><b id="kitchenNewCount">0</b> nieuw</div>
+          <div style="padding:10px 18px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);border-radius:10px;font-size:13px"><b id="kitchenPrepCount">0</b> in bereiding</div>
+          <div style="padding:10px 18px;background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.35);border-radius:10px;font-size:13px"><b id="kitchenReadyCount">0</b> klaar</div>
+        </div>
+        <div id="kitchenGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px"></div>
+        <div id="kitchenEmpty" style="display:none;text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:12px">🍳</div><p>Geen actieve bestellingen — de keuken is rustig.</p></div>
+      </div>
+
+      <!-- PAGE: STAFF (Medewerkers) -->
+      <div class="page" id="page-staff">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+          <div>
+            <h2 style="margin-bottom:4px">Medewerkers</h2>
+            <p style="color:var(--muted);font-size:13px">Voeg medewerkers toe en bepaal per persoon welke tabs ze kunnen zien.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openStaffEdit()">+ Nieuwe medewerker</button>
+        </div>
+        <div id="staffList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px"></div>
+      </div>
+
+      <!-- PAGE: RESERVATIONS -->
+      <div class="page" id="page-reservations">
+        <div class="res-filters" id="resFilters"></div>
+        <div class="res-list" id="resList"></div>
+      </div>
+
+      <!-- PAGE: DEALS -->
+      <div class="page" id="page-deals">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+          <div>
+            <h2 style="margin-bottom:4px">Week-deals & aanbiedingen</h2>
+            <p style="color:var(--muted);font-size:13px">Stel tijdelijke kortingen of dealprijzen in. Actieve deals verschijnen automatisch bovenin de bestelpagina.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openDealEdit()">+ Nieuwe deal</button>
+        </div>
+        <div id="dealsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px"></div>
+      </div>
+
+      <!-- PAGE: FINANCE -->
+      <div class="page" id="page-finance">
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center">
+          <div id="finRangeFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+          <div style="flex:1"></div>
+          <button class="btn-sm" onclick="exportFinanceCSV()">📥 Export CSV</button>
+        </div>
+
+        <!-- KPI cards -->
+        <div id="finKPIs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px"></div>
+
+        <!-- Breakdown + Top items -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px" id="finBreakdownRow">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px">Verdeling</div>
+            <div id="finBreakdown"></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px">Top 5 gerechten</div>
+            <div id="finTopItems"></div>
+          </div>
+        </div>
+
+        <!-- Revenue per day chart -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px">Omzet per dag</div>
+          <div id="finChart" style="display:flex;gap:6px;align-items:flex-end;height:180px;padding-top:10px"></div>
+        </div>
+
+        <!-- Orders table -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:12px">Bestellingen in deze periode</div>
+          <div id="finOrdersTable" style="overflow-x:auto"></div>
+        </div>
+      </div>
+
+      <!-- PAGE: MENU -->
+      <div class="page" id="page-menu">
+        <div class="menu-head">
+          <div>
+            <h2 style="margin-bottom:4px">Menu beheer</h2>
+            <p style="color:var(--muted);font-size:13px" id="menuCount">0 gerechten</p>
+          </div>
+          <button class="btn btn-primary" onclick="openMenuEdit()">+ Nieuw gerecht</button>
+        </div>
+        <div class="menu-items-list" id="menuItemsList"></div>
+      </div>
+
+      <!-- PAGE: QR -->
+      <div class="page" id="page-qr">
+        <div id="qrBaseStatus" style="display:none;margin-bottom:14px;padding:12px 14px;border-radius:12px;font-size:13px"></div>
+        <div class="qr-config">
+          <div class="form-group" style="flex:1;margin:0">
+            <label class="form-label">Aantal tafels</label>
+            <input type="number" class="form-input" id="qrCount" value="8" min="1" max="99">
+          </div>
+          <div class="form-group" style="flex:2;margin:0">
+            <label class="form-label">Basis URL</label>
+            <input type="text" class="form-input" id="qrBase" readonly style="color:var(--muted);background:var(--bg)" placeholder="ga naar Instellingen om in te stellen">
+            <div style="margin-top:4px;font-size:11px;color:var(--muted)">Wijzig de basis-URL onder <a href="#" onclick="document.querySelector('.nav-item[data-page=&quot;settings&quot;]').click();return false" style="color:var(--teal)">Instellingen</a>.</div>
+          </div>
+          <button class="btn btn-primary" onclick="generateQRs()">Genereer QR's</button>
+          <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+        </div>
+        <div class="qr-grid" id="qrGrid"></div>
+        <div style="margin-top:18px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--muted)">
+          💡 <b style="color:var(--text)">Tip:</b> Print de QR codes, plak ze op je tafels, en klanten scannen om direct het menu te zien en te bestellen. Elke tafel krijgt een unieke code. Voor afhaal leg je een losse QR bij de kassa of op de gevel.
+        </div>
+      </div>
+
+      <!-- PAGE: SETTINGS -->
+      <div class="page" id="page-settings">
+        <div style="max-width:520px">
+          <h2 style="margin-bottom:16px">Restaurant instellingen</h2>
+          <div class="form-group">
+            <label class="form-label">Restaurant naam</label>
+            <input type="text" class="form-input" id="setName">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ondertitel / specialiteit</label>
+            <input type="text" class="form-input" id="setSub" placeholder="bv. Gambian Kitchen & Grill">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group">
+              <label class="form-label">Valuta</label>
+              <select class="form-select" id="setCurrency">
+                <option>GMD</option><option>EUR</option><option>USD</option><option>GBP</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Aantal tafels</label>
+              <input type="number" class="form-input" id="setTables" min="1" max="99" step="1">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group">
+              <label class="form-label">📱 WhatsApp-nummer</label>
+              <input type="tel" class="form-input" id="setWhatsapp" placeholder="+220 XXX XXXX">
+            </div>
+            <div class="form-group">
+              <label class="form-label">📞 Telefoon</label>
+              <input type="tel" class="form-input" id="setPhone" placeholder="+220 XXX XXXX">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Restaurant ID (in de QR-link)</label>
+            <input type="text" class="form-input" id="setId" readonly style="color:var(--muted)">
+          </div>
+
+          <div style="margin:16px 0;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700">🔗 Reserveer-link voor op je website</div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="text" class="form-input" id="setResUrl" readonly style="font-family:monospace;font-size:12px;color:var(--teal);background:var(--bg)">
+              <button class="btn-sm" onclick="copyResUrl()">📋 Kopieer</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">
+              Zet deze link op je restaurant-website (knop "Reserveren"). Boekingen verschijnen automatisch onder het kopje <b style="color:var(--text)">Reserveringen</b> hierboven.
+            </div>
+          </div>
+
+          <div style="margin:16px 0;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700">📱 QR basis-URL (naar bestel-pagina)</div>
+            <input type="text" class="form-input" id="setQrBase" oninput="onQrBaseChange()" placeholder="https://jouwsite.com/bestel.html" style="font-family:monospace;font-size:12px">
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="useLanUrl()" title="Gebruik het LAN IP van deze computer — werkt alleen op hetzelfde WiFi">📡 LAN IP gebruiken</button>
+              <button type="button" class="btn-sm" onclick="useCustomDomain()">🌐 Eigen domein…</button>
+            </div>
+            <div id="qrBaseWarning" style="display:none;margin-top:10px;padding:10px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.35);border-radius:8px;font-size:12px;color:#fca5a5">
+              ⚠️ <b style="color:#fff">QR werkt niet op telefoons</b> — deze URL wijst naar <code id="qrWarnLocal">localhost</code>. Gebruik LAN IP (zelfde WiFi) of je publieke domein.
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">
+              Dit is de basis van elke QR-code — tafel-QR's krijgen <code>?r=…&t=N</code> eraan, afhaal krijgt <code>?m=takeaway</code>.
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveSettings()">Opslaan</button>
+          <button class="btn btn-secondary" onclick="resetDemo()">🔄 Demo data herstellen</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DEAL EDIT MODAL -->
+<div class="modal-bg" id="dealModal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-head">
+      <h3 id="dealModalTitle">Nieuwe deal</h3>
+      <button class="modal-close" onclick="closeModal('dealModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dealEditId">
+      <div style="display:grid;grid-template-columns:80px 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Emoji</label><input type="text" class="form-input" id="dealEmoji" maxlength="4" placeholder="🔥" style="text-align:center;font-size:20px"></div>
+        <div class="form-group"><label class="form-label">Naam</label><input type="text" class="form-input" id="dealName" placeholder="bv. Maandag Kip-Yassa Deal"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Type korting</label>
+          <select class="form-select" id="dealType">
+            <option value="discount">% Korting</option>
+            <option value="fixed">Vaste dealprijs</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="dealValueLbl">Korting (%)</label>
+          <input type="number" class="form-input" id="dealValue" min="1" max="99" placeholder="20">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="margin-bottom:6px">Geldig op</label>
+        <div id="dealDays" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">Klik dagen om te (de)selecteren. Niets geselecteerd = elke dag.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Van (optioneel)</label><input type="date" class="form-input" id="dealStart"></div>
+        <div class="form-group"><label class="form-label">Tot (optioneel)</label><input type="date" class="form-input" id="dealEnd"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="margin-bottom:6px">Geldt voor gerechten</label>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;max-height:220px;overflow-y:auto" id="dealItems"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">Niets aangevinkt = deal geldt op hele menu.</div>
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="dealActive" checked>
+          Deal is actief
+        </label>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px">
+        <button class="btn btn-primary" style="flex:1" onclick="saveDeal()">Opslaan</button>
+        <button class="btn btn-secondary" onclick="closeModal('dealModal')">Annuleren</button>
+        <button class="btn" id="dealDeleteBtn" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5" onclick="deleteDeal()">🗑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STAFF EDIT MODAL -->
+<div class="modal-bg" id="staffModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="staffModalTitle">Nieuwe medewerker</h3>
+      <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="staffEditId">
+      <div class="form-group">
+        <label class="form-label">Naam</label>
+        <input type="text" class="form-input" id="staffName" placeholder="bv. Isatou Jallow">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rol</label>
+        <select class="form-select" id="staffRole">
+          <option value="waiter">🤵 Bediening (Tafels · Bestellingen · Reserveringen)</option>
+          <option value="kitchen">👨‍🍳 Keuken (alleen Keuken)</option>
+          <option value="manager">👔 Manager (alles)</option>
+          <option value="custom">✏️ Aangepast</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pincode (4 cijfers, optioneel)</label>
+        <input type="text" class="form-input" id="staffPin" placeholder="bv. 1234" maxlength="4" inputmode="numeric" pattern="[0-9]*">
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="margin-bottom:8px">Mag zien:</label>
+        <div id="staffPermsList" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px">
+        <button class="btn btn-primary" style="flex:1" onclick="saveStaff()">Opslaan</button>
+        <button class="btn btn-secondary" onclick="closeModal('staffModal')">Annuleren</button>
+        <button class="btn" id="staffDeleteBtn" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5" onclick="deleteStaff()">🗑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MENU EDIT MODAL -->
+<div class="modal-bg" id="menuModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="menuModalTitle">Nieuw gerecht</h3>
+      <button class="modal-close" onclick="closeModal('menuModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label class="form-label">Naam</label>
+        <input type="text" class="form-input" id="editName" placeholder="bv. Benachin">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group">
+          <label class="form-label">Categorie</label>
+          <input type="text" class="form-input" id="editCat" placeholder="bv. Hoofdgerecht" list="catList">
+          <datalist id="catList"></datalist>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sub-categorie <span style="color:var(--muted);font-weight:400">(optioneel)</span></label>
+          <input type="text" class="form-input" id="editSubcat" placeholder="bv. Bier · Sap · Warm" list="subcatList">
+          <datalist id="subcatList"></datalist>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Omschrijving</label>
+        <textarea class="form-textarea" id="editDesc" rows="2" placeholder="Korte beschrijving"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 100px;gap:10px">
+        <div class="form-group">
+          <label class="form-label">Prijs</label>
+          <input type="number" class="form-input" id="editPrice" min="0" step="10">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Emoji</label>
+          <input type="text" class="form-input" id="editEmoji" placeholder="🍽️">
+        </div>
+      </div>
+
+      <!-- Photo upload / URL -->
+      <div class="form-group">
+        <label class="form-label">📸 Foto <span style="color:var(--muted);font-weight:400">(optioneel — vervangt de emoji)</span></label>
+        <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap">
+          <div id="editPhotoPreview" style="width:96px;height:96px;border-radius:10px;border:2px dashed var(--border);background:var(--bg) center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:28px;flex-shrink:0">🖼️</div>
+          <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px">
+            <input type="text" class="form-input" id="editPhoto" placeholder="Plak URL: https://…" oninput="previewPhoto(this.value)">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <label class="btn-sm" style="cursor:pointer;margin:0">📁 Bestand kiezen<input type="file" accept="image/*" style="display:none" onchange="uploadPhotoFile(this)"></label>
+              <label class="btn-sm" style="cursor:pointer;margin:0">📷 Camera<input type="file" accept="image/*" capture="environment" style="display:none" onchange="uploadPhotoFile(this)"></label>
+              <button type="button" class="btn-sm" onclick="clearPhoto()" style="color:var(--red);border-color:var(--red)">✕ Verwijder</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted)">Foto wordt opgeslagen in je browser (ideale grootte: max 800×800px).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Options / selectievakjes -->
+      <div style="margin-top:12px;padding:14px;background:rgba(0,200,150,0.04);border:1px solid rgba(0,200,150,0.2);border-radius:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div>
+            <div style="font-weight:700;color:#fff;font-size:13px">📋 Keuze-opties</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">bv. "Served with: friet / rijst" of "Extra's: avocado (+30)"</div>
+          </div>
+          <button class="btn-sm" type="button" onclick="addOptionGroup()">+ Groep</button>
+        </div>
+        <div id="editOptionsList"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('menuModal')">Annuleer</button>
+      <button class="btn btn-primary" onclick="saveMenuItem()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE DETAIL MODAL -->
+<div class="modal-bg" id="tableModal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-head">
+      <h3 id="tdTitle">Tafel —</h3>
+      <button class="modal-close" onclick="closeModal('tableModal')">✕</button>
+    </div>
+    <div class="modal-body" id="tdBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary" onclick="closeModal('tableModal')">Sluit</button>
+      <button class="btn btn-primary" onclick="closeTable()" id="tdCloseBtn">✓ Tafel afsluiten</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ============ CONFIG ============
+const RESTAURANT_ID = localStorage.getItem('wg_restaurant_id') || 'demo';
+localStorage.setItem('wg_restaurant_id', RESTAURANT_ID);
+const menuKey = 'wg_menu_' + RESTAURANT_ID;
+const ordersKey = 'wg_orders_' + RESTAURANT_ID;
+const resKey = 'wg_reservations_' + RESTAURANT_ID;
+const settingsKey = 'wg_settings_' + RESTAURANT_ID;
+
+const orderChannel = new BroadcastChannel('wg_orders_' + RESTAURANT_ID);
+const resChannel = new BroadcastChannel('wg_res_' + RESTAURANT_ID);
+const staffKey = 'wg_staff_' + RESTAURANT_ID;
+
+// All pages the system supports — single source of truth for permissions
+const ALL_PAGES = [
+  { id:'tables',       label:'🪑 Tafels' },
+  { id:'orders',       label:'📋 Bestellingen' },
+  { id:'kitchen',      label:'👨‍🍳 Keuken' },
+  { id:'reservations', label:'📅 Reserveringen' },
+  { id:'finance',      label:'💰 Financieel' },
+  { id:'deals',        label:'🎯 Deals' },
+  { id:'menu',         label:'🍽️ Menu' },
+  { id:'staff',        label:'👥 Medewerkers' },
+  { id:'qr',           label:'📱 QR codes' },
+  { id:'settings',     label:'⚙️ Instellingen' }
+];
+const ROLE_PRESETS = {
+  manager: ALL_PAGES.map(p => p.id),
+  waiter:  ['tables','orders','reservations'],
+  kitchen: ['kitchen'],
+  custom:  []
+};
+
+// ============ DEMO DATA ============
+const DEMO_MENU = {
+  name:'Demo Restaurant', subtitle:'Gambian Kitchen & Grill', currency:'GMD',
+  items:[
+    // ── Ontbijt ──
+    {id:'br1',cat:'Ontbijt',name:'Tapalapa & Egg',desc:'Gambiaans brood, gebakken ei, sla',price:90,emoji:'🥖'},
+    {id:'br2',cat:'Ontbijt',name:'Akara Sandwich',desc:'Bonen-ballen in vers tapalapa, sambal',price:110,emoji:'🥪'},
+    {id:'br3',cat:'Ontbijt',name:'Mbahal',desc:'Aardnoot-rijstpap, traditioneel ontbijt',price:130,emoji:'🥣'},
+    {id:'br4',cat:'Ontbijt',name:'Café Touba',desc:'Pittige Senegalese koffie met kruidnagel',price:60,emoji:'☕'},
+    // ── Voorgerecht ──
+    {id:'a1',cat:'Voorgerecht',name:'Pepper Soup',desc:'Spicy visbouillon met groenten en gember',price:150,emoji:'🍲'},
+    {id:'a2',cat:'Voorgerecht',name:'Akara (6 st.)',desc:'Krokante bonen-ballen, chili-saus',price:100,emoji:'🥟'},
+    {id:'a3',cat:'Voorgerecht',name:'Garden Salad',desc:'Tomaat, komkommer, sla, dressing',price:120,emoji:'🥗'},
+    {id:'a4',cat:'Voorgerecht',name:'Prawn Cocktail',desc:'Verse garnalen met cocktailsaus',price:280,emoji:'🍤'},
+    {id:'a5',cat:'Voorgerecht',name:'Spring Rolls (4 st.)',desc:'Knapperig met groenten en kip',price:160,emoji:'🥠'},
+    // ── Hoofdgerecht ──
+    {id:'b1',cat:'Hoofdgerecht',name:'Benachin (Vis)',desc:'Rijst met verse vis en groenten',price:350,emoji:'🍛'},
+    {id:'b1b',cat:'Hoofdgerecht',name:'Benachin (Vlees)',desc:'Rijst met rundvlees',price:380,emoji:'🍛'},
+    {id:'b2',cat:'Hoofdgerecht',name:'Domoda',desc:'Romige aardnoot-stew met kip en rijst',price:300,emoji:'🥘'},
+    {id:'b3',cat:'Hoofdgerecht',name:'Yassa Chicken',desc:'Halve kip, ui-citroen marinade',price:400,emoji:'🍗',options:[
+      {id:'og-yassa-side',name:'Served with',type:'single',required:true,choices:[{label:'Jollof Rice',priceAdjust:0},{label:'Witte Rijst',priceAdjust:0},{label:'Frietjes',priceAdjust:30},{label:'Plantain',priceAdjust:0}]},
+      {id:'og-yassa-spice',name:'Pikantheid',type:'single',required:false,choices:[{label:'Mild',priceAdjust:0},{label:'Medium',priceAdjust:0},{label:'Heet 🌶️',priceAdjust:0}]},
+      {id:'og-yassa-extras',name:"Extra's",type:'multi',required:false,choices:[{label:'Extra saus',priceAdjust:20},{label:'Avocado',priceAdjust:50},{label:'Gebakken ei',priceAdjust:30}]}
+    ]},
+    {id:'b4',cat:'Hoofdgerecht',name:'Grilled Fish',desc:'Gegrilde lady fish, chili-mayo',price:450,emoji:'🐟',options:[
+      {id:'og-fish-side',name:'Served with',type:'single',required:true,choices:[{label:'Jollof Rice',priceAdjust:0},{label:'Witte Rijst',priceAdjust:0},{label:'Frietjes',priceAdjust:30}]},
+      {id:'og-fish-sauce',name:'Saus',type:'single',required:false,choices:[{label:'Chili-mayo',priceAdjust:0},{label:'Pepper-sauce',priceAdjust:0},{label:'Knoflook-boter',priceAdjust:20}]}
+    ]},
+    {id:'b5',cat:'Hoofdgerecht',name:'Grilled Prawns',desc:'8 tijgergarnalen, knoflook-boter',price:650,emoji:'🦐'},
+    {id:'b6',cat:'Hoofdgerecht',name:'Mafé',desc:'Pinda-stew met rund en cassave',price:380,emoji:'🍲'},
+    {id:'b7',cat:'Hoofdgerecht',name:'Lamb Suya',desc:'Lamsspiesjes met yaji-spice',price:480,emoji:'🍢'},
+    {id:'b8',cat:'Hoofdgerecht',name:'Veggie Plate',desc:'Okra-stew, plantain, jollof',price:280,emoji:'🌱'},
+    {id:'b9',cat:'Hoofdgerecht',name:'Chef Burger',desc:'200g rund, cheddar, friet, salade',price:420,emoji:'🍔'},
+    // ── Bijgerecht ──
+    {id:'c1',cat:'Bijgerecht',name:'Jollof Rice',desc:'Tomaat-rijst specialty',price:120,emoji:'🍚'},
+    {id:'c2',cat:'Bijgerecht',name:'Plantain',desc:'Gebakken zoete weegbree',price:80,emoji:'🍌'},
+    {id:'c3',cat:'Bijgerecht',name:'French Fries',desc:'Verse friet met dipsaus',price:90,emoji:'🍟'},
+    {id:'c4',cat:'Bijgerecht',name:'Coconut Rice',desc:'Rijst met kokos en gember',price:140,emoji:'🥥'},
+    {id:'c5',cat:'Bijgerecht',name:'Steamed Veg',desc:'Wortel, bonen, broccoli',price:100,emoji:'🥦'},
+    // ── Drank · Sap & Smoothie ──
+    {id:'d1',cat:'Drank',subcat:'Sap & Smoothie',name:'Wonjo Juice',desc:'Verse hibiscus drank, gekoeld',price:60,emoji:'🧃'},
+    {id:'d5',cat:'Drank',subcat:'Sap & Smoothie',name:'Baobab Smoothie',desc:'Baobab fruit met yoghurt',price:120,emoji:'🥤'},
+    {id:'d10',cat:'Drank',subcat:'Sap & Smoothie',name:'Fresh Mango Juice',desc:'Dagvers geperst',price:90,emoji:'🥭'},
+    // ── Drank · Frisdrank ──
+    {id:'d6',cat:'Drank',subcat:'Frisdrank',name:'Ginger Beer',desc:'Pittige gemberbier (alcoholvrij)',price:80,emoji:'🍹'},
+    {id:'d7',cat:'Drank',subcat:'Frisdrank',name:'Coca-Cola',desc:'33cl flesje',price:60,emoji:'🥤'},
+    {id:'d11',cat:'Drank',subcat:'Frisdrank',name:'Fanta Orange',desc:'33cl flesje',price:60,emoji:'🍊'},
+    {id:'d12',cat:'Drank',subcat:'Frisdrank',name:'Sprite',desc:'33cl flesje',price:60,emoji:'🍋'},
+    // ── Drank · Bier ──
+    {id:'d3',cat:'Drank',subcat:'Bier',name:'JulBrew 33cl',desc:'Lokaal pils, ijskoud',price:100,emoji:'🍺'},
+    {id:'d4',cat:'Drank',subcat:'Bier',name:'JulBrew 50cl',desc:'Grote fles lokaal pils',price:150,emoji:'🍺'},
+    {id:'d13',cat:'Drank',subcat:'Bier',name:'Heineken',desc:'Import pils 33cl',price:130,emoji:'🍻'},
+    // ── Drank · Koffie & Thee ──
+    {id:'d2',cat:'Drank',subcat:'Koffie & Thee',name:'Attaya Tea',desc:'Klassieke munt-thee ceremonie',price:50,emoji:'🫖'},
+    {id:'d9',cat:'Drank',subcat:'Koffie & Thee',name:'Espresso',desc:'Dubbele Italiaanse espresso',price:70,emoji:'☕'},
+    {id:'d14',cat:'Drank',subcat:'Koffie & Thee',name:'Cappuccino',desc:'Met opgeschuimde melk',price:90,emoji:'☕'},
+    {id:'d15',cat:'Drank',subcat:'Koffie & Thee',name:'Masala Chai',desc:'Gekruide zwarte thee',price:70,emoji:'🍵'},
+    // ── Drank · Water ──
+    {id:'d8',cat:'Drank',subcat:'Water',name:'Bottled Water 50cl',desc:'Gekoeld',price:40,emoji:'💧'},
+    {id:'d16',cat:'Drank',subcat:'Water',name:'Sparkling Water',desc:'Bruisend 50cl',price:60,emoji:'💧'},
+    // ── Dessert ──
+    {id:'e1',cat:'Dessert',name:'Thiakry',desc:'Zoete couscous met yoghurt, rozijn',price:120,emoji:'🍮'},
+    {id:'e2',cat:'Dessert',name:'Mango Sorbet',desc:'Huisgemaakt met verse mango',price:140,emoji:'🍨'},
+    {id:'e3',cat:'Dessert',name:'Chocolate Brownie',desc:'Warm, met vanille-ijs',price:160,emoji:'🍫'},
+    {id:'e4',cat:'Dessert',name:'Fruit Plate',desc:'Verse seizoensvruchten',price:100,emoji:'🍉'}
+  ]
+};
+
+// ============ STATE ============
+let menu = loadJSON(menuKey, DEMO_MENU);
+let orders = loadJSON(ordersKey, []);
+let reservations = loadJSON(resKey, []);
+let settings = loadJSON(settingsKey, { numTables: 8 });
+let staff = loadJSON(staffKey, []);
+let currentStaffId = sessionStorage.getItem('wg_current_staff_' + RESTAURANT_ID) || 'manager';
+const dealsKey = 'wg_deals_' + RESTAURANT_ID;
+let deals = loadJSON(dealsKey, []);
+const DAY_LABELS = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+let orderFilter = 'active';
+let resFilter = 'upcoming';
+
+function loadJSON(k, fb){ try{return JSON.parse(localStorage.getItem(k)||'null') || fb} catch(e){return fb} }
+function saveJSON(k, v){ localStorage.setItem(k, JSON.stringify(v)) }
+
+// ============ NAVIGATION ============
+function switchToPage(page){
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('.nav-item[data-page="'+page+'"]')?.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+page)?.classList.add('active');
+  const titles = {tables:'Tafel overzicht',orders:'Bestellingen',kitchen:'Keuken',reservations:'Reserveringen',menu:'Menu beheer',staff:'Medewerkers',qr:'QR codes',settings:'Instellingen'};
+  document.getElementById('pageTitle').textContent = titles[page] || page;
+  if (page==='qr') generateQRs();
+  if (page==='settings') loadSettings();
+  if (page==='kitchen') renderKitchen();
+  if (page==='staff') renderStaff();
+  if (page==='finance') renderFinance();
+  if (page==='deals') renderDeals();
+}
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', () => switchToPage(el.dataset.page));
+});
+
+// ============ PERMISSIONS / STAFF ROLE FILTER ============
+function getCurrentPerms(){
+  if (currentStaffId === 'manager') return ALL_PAGES.map(p => p.id);
+  const s = staff.find(x => x.id === currentStaffId);
+  if (!s) return ALL_PAGES.map(p => p.id);
+  return Array.isArray(s.permissions) ? s.permissions : (ROLE_PRESETS[s.role] || []);
+}
+function applyPermissions(){
+  const allowed = new Set(getCurrentPerms());
+  // Manager always gets everything + staff mgmt
+  if (currentStaffId === 'manager') { allowed.add('staff'); }
+  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+    const page = item.dataset.page;
+    item.style.display = allowed.has(page) ? '' : 'none';
+  });
+  // If current active page is not allowed, jump to first allowed
+  const activePage = document.querySelector('.nav-item.active')?.dataset.page;
+  if (!allowed.has(activePage)) {
+    const first = ALL_PAGES.map(p => p.id).find(p => allowed.has(p));
+    if (first) switchToPage(first);
+  }
+}
+function setCurrentStaff(id){
+  currentStaffId = id;
+  sessionStorage.setItem('wg_current_staff_' + RESTAURANT_ID, id);
+  applyPermissions();
+  const s = staff.find(x => x.id === id);
+  toast(s ? 'Ingelogd als ' + s.name : 'Ingelogd als Manager', 'info');
+}
+function renderStaffSwitcher(){
+  const sel = document.getElementById('currentStaff');
+  const mgr = '<option value="manager">👔 Manager (alles)</option>';
+  const opts = staff.map(s => `<option value="${s.id}" ${s.id===currentStaffId?'selected':''}>${roleEmoji(s.role)} ${escapeHtml(s.name)}</option>`).join('');
+  sel.innerHTML = mgr + opts;
+  sel.value = currentStaffId;
+}
+function roleEmoji(role){ return {manager:'👔',waiter:'🤵',kitchen:'👨‍🍳',custom:'✏️'}[role] || '👤'; }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ============ TABLES VIEW ============
+function renderTables(){
+  const n = settings.numTables || 8;
+  const grid = document.getElementById('tablesGrid');
+  const out = [];
+
+  // Takeaway card — always first
+  const takeawayOrders = orders.filter(o => o.type === 'takeaway' && o.status !== 'paid');
+  const taPending = takeawayOrders.some(o => o.status === 'new');
+  const taReady = takeawayOrders.some(o => o.status === 'ready');
+  const taTotal = takeawayOrders.reduce((s, o) => s + o.total, 0);
+  let taStatus = 'empty', taLabel = 'Geen afhaal';
+  if (takeawayOrders.length) {
+    if (taPending) { taStatus = 'pending'; taLabel = 'Nieuw'; }
+    else if (taReady) { taStatus = 'ready'; taLabel = 'Klaar'; }
+    else { taStatus = 'occupied'; taLabel = 'In behandeling'; }
+  }
+  out.push(`
+    <div class="table-card status-${taStatus}" onclick="setOrderFilter('takeaway');document.querySelector('.nav-item[data-page=&quot;orders&quot;]').click()" style="border-style:dashed">
+      ${takeawayOrders.length?`<div class="tc-badge">${takeawayOrders.length}</div>`:''}
+      <div class="tc-top">
+        <div class="tc-num" style="font-size:28px">🛍️</div>
+        <div class="tc-status">${taLabel}</div>
+      </div>
+      <div class="tc-info">
+        ${takeawayOrders.length ? `${takeawayOrders.reduce((s,o)=>s+o.items.reduce((a,b)=>a+b.qty,0),0)} items · Afhaal` : 'Afhaal'}
+      </div>
+      ${taTotal?`<div class="tc-amount">${menu.currency} ${taTotal}</div>`:''}
+    </div>
+  `);
+
+  for (let i=1; i<=n; i++){
+    const tableOrders = orders.filter(o => o.type !== 'takeaway' && String(o.table)===String(i) && o.status!=='paid');
+    const hasPending = tableOrders.some(o => o.status==='new');
+    const hasReady = tableOrders.some(o => o.status==='ready');
+    const total = tableOrders.reduce((s,o)=>s+o.total,0);
+    let status = 'empty', label = 'Leeg';
+    if (tableOrders.length){
+      if (hasPending){ status='pending'; label='Nieuw'; }
+      else if (hasReady){ status='ready'; label='Klaar'; }
+      else { status='occupied'; label='Bezet'; }
+    }
+    out.push(`
+      <div class="table-card status-${status}" onclick="openTableDetail(${i})">
+        ${tableOrders.length?`<div class="tc-badge">${tableOrders.length}</div>`:''}
+        <div class="tc-top">
+          <div class="tc-num">T${String(i).padStart(2,'0')}</div>
+          <div class="tc-status">${label}</div>
+        </div>
+        <div class="tc-info">
+          ${tableOrders.length? `${tableOrders.reduce((s,o)=>s+o.items.reduce((a,b)=>a+b.qty,0),0)} items` : 'Geen bestelling'}
+        </div>
+        ${total? `<div class="tc-amount">${menu.currency} ${total}</div>` : ''}
+      </div>
+    `);
+  }
+  grid.innerHTML = out.join('');
+}
+
+let currentTable = null;
+function openTableDetail(tableNum){
+  currentTable = tableNum;
+  const tableOrders = orders.filter(o => String(o.table)===String(tableNum) && o.status!=='paid');
+  const total = tableOrders.reduce((s,o)=>s+o.total,0);
+  document.getElementById('tdTitle').textContent = 'Tafel ' + String(tableNum).padStart(2,'0');
+
+  if (!tableOrders.length){
+    document.getElementById('tdBody').innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">🪑</div>
+        <p>Deze tafel heeft nog geen open bestellingen.</p>
+      </div>
+    `;
+    document.getElementById('tdCloseBtn').style.display='none';
+  } else {
+    document.getElementById('tdCloseBtn').style.display='inline-flex';
+    const html = `
+      <div class="td-head">
+        <div>
+          <div style="font-size:12px;color:var(--muted)">Totaal te betalen</div>
+          <div class="td-total">${menu.currency} ${total}</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--muted);text-align:right">${tableOrders.length} bestelling${tableOrders.length>1?'en':''}</div>
+        </div>
+      </div>
+      <div class="td-orders">
+        ${tableOrders.map(o => renderOrderCard(o, true)).join('')}
+      </div>
+    `;
+    document.getElementById('tdBody').innerHTML = html;
+  }
+  document.getElementById('tableModal').classList.add('show');
+}
+
+function closeTable(){
+  if (!currentTable) return;
+  if (!confirm('Alle bestellingen van tafel '+currentTable+' markeren als betaald?')) return;
+  orders = orders.map(o => String(o.table)===String(currentTable) && o.status!=='paid' ? {...o,status:'paid',paidAt:Date.now()} : o);
+  saveJSON(ordersKey, orders);
+  closeModal('tableModal');
+  toast('Tafel '+currentTable+' afgesloten','success');
+  refreshAll();
+}
+
+// ============ ORDERS VIEW ============
+function renderOrdersFilters(){
+  const counts = {
+    active: orders.filter(o => o.status!=='paid').length,
+    new: orders.filter(o => o.status==='new').length,
+    preparing: orders.filter(o => o.status==='preparing').length,
+    ready: orders.filter(o => o.status==='ready').length,
+    served: orders.filter(o => o.status==='served').length,
+    paid: orders.filter(o => o.status==='paid').length,
+    takeaway: orders.filter(o => o.type==='takeaway' && o.status!=='paid').length,
+    dinein: orders.filter(o => o.type!=='takeaway' && o.status!=='paid').length,
+    all: orders.length,
+  };
+  const filters = [
+    {k:'active',l:'Actief',c:counts.active},
+    {k:'dinein',l:'🪑 Tafel',c:counts.dinein},
+    {k:'takeaway',l:'🛍️ Afhaal',c:counts.takeaway},
+    {k:'new',l:'Nieuw',c:counts.new},
+    {k:'preparing',l:'In keuken',c:counts.preparing},
+    {k:'ready',l:'Klaar',c:counts.ready},
+    {k:'served',l:'Geserveerd',c:counts.served},
+    {k:'paid',l:'Betaald',c:counts.paid},
+    {k:'all',l:'Alles',c:counts.all},
+  ];
+  document.getElementById('ordersFilters').innerHTML = filters.map(f =>
+    `<div class="filter-pill ${f.k===orderFilter?'active':''}" onclick="setOrderFilter('${f.k}')">${f.l} <b style="opacity:0.7">${f.c}</b></div>`
+  ).join('');
+}
+function setOrderFilter(f){ orderFilter = f; renderOrders(); renderOrdersFilters(); }
+
+function renderOrders(){
+  let filtered = orders;
+  if (orderFilter==='active') filtered = orders.filter(o => o.status!=='paid');
+  else if (orderFilter==='takeaway') filtered = orders.filter(o => o.type==='takeaway' && o.status!=='paid');
+  else if (orderFilter==='dinein') filtered = orders.filter(o => o.type!=='takeaway' && o.status!=='paid');
+  else if (orderFilter!=='all') filtered = orders.filter(o => o.status===orderFilter);
+
+  const grid = document.getElementById('ordersGrid');
+  if (!filtered.length){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="emoji">📋</div><p>Geen bestellingen in deze categorie</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(o => renderOrderCard(o)).join('');
+}
+
+function renderOrderCard(o, compact=false){
+  const ago = timeAgo(o.createdAt);
+  const statusLabels = {new:'Nieuw',preparing:'In keuken',ready:'Klaar',served:'Geserveerd',paid:'Betaald'};
+  const nextActions = {
+    new: [{s:'preparing', l:'👨‍🍳 Accepteer', p:true}],
+    preparing: [{s:'ready', l:'🔔 Klaar', p:true}],
+    ready: [{s:'served', l:'🍽️ Geserveerd', p:true}],
+    served: [{s:'paid', l:'💰 Betaald', p:true}],
+    paid: [],
+  };
+  const acts = nextActions[o.status] || [];
+  const isTakeaway = o.type === 'takeaway';
+  const isWhatsApp = o.channel === 'whatsapp';
+  const badge = isTakeaway
+    ? `<div class="oc-table" style="background:rgba(245,162,0,0.15);color:var(--gold);border:1px solid rgba(245,162,0,0.35)">🛍️ Afhalen${o.customer?.pickupTime ? ` · ${o.customer.pickupTime}` : ''}</div>`
+    : `<div class="oc-table">Tafel ${o.table}</div>`;
+  const channelBadge = isWhatsApp
+    ? `<span style="display:inline-flex;align-items:center;gap:3px;margin-right:6px;padding:2px 6px;background:rgba(37,211,102,0.15);color:#4ade80;border:1px solid rgba(37,211,102,0.35);border-radius:4px;font-size:10px;font-weight:700">💬 WA</span>`
+    : '';
+  const custLine = isTakeaway && o.customer
+    ? `<div class="oc-note" style="background:rgba(245,162,0,0.08);border-left:3px solid var(--gold)">👤 <strong>${o.customer.name}</strong> · <a href="tel:${o.customer.phone}" style="color:var(--teal);text-decoration:none">📞 ${o.customer.phone}</a>${o.customer.phone ? ` · <a href="https://wa.me/${o.customer.phone.replace(/\\D/g,'')}" target="_blank" style="color:#4ade80;text-decoration:none">💬 WhatsApp</a>` : ''}</div>`
+    : '';
+  return `
+    <div class="order-card">
+      <div class="oc-head">
+        <div>
+          <div class="oc-id">${channelBadge}${o.id}</div>
+          <div class="oc-time">${ago}</div>
+        </div>
+        <div style="text-align:right">
+          ${badge}
+          <div style="margin-top:6px"><span class="status-tag st-${o.status}"><span class="status-dot"></span>${statusLabels[o.status]}</span></div>
+        </div>
+      </div>
+      ${custLine}
+      <div class="oc-items">
+        ${o.items.map(it => `<div class="oc-item"><span><span class="qty">${it.qty}×</span> ${it.emoji||''} ${it.name}${it.optionsLabel?`<br><span style="color:var(--teal);font-size:11px;margin-left:24px">✓ ${escapeHtml(it.optionsLabel)}</span>`:''}</span><span>${o.currency} ${it.price*it.qty}</span></div>`).join('')}
+      </div>
+      ${o.note ? `<div class="oc-note">💬 ${o.note}</div>` : ''}
+      <div class="oc-foot">
+        <div class="oc-total">${o.currency} ${o.total}</div>
+        <div class="oc-actions">
+          ${acts.map(a => `<button class="btn-sm ${a.p?'primary':''}" onclick="updateStatus('${o.id}','${a.s}')">${a.l}</button>`).join('')}
+          ${!compact && o.status!=='paid' ? `<button class="btn-sm danger" onclick="cancelOrder('${o.id}')">✕</button>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateStatus(id, status){
+  orders = orders.map(o => o.id===id ? {...o, status, [status+'At']:Date.now()} : o);
+  saveJSON(ordersKey, orders);
+  orderChannel.postMessage({type:'status_update', orderId:id, status});
+  const msg = {preparing:'In de keuken',ready:'Gemarkeerd als klaar',served:'Geserveerd',paid:'Betaald'};
+  toast(msg[status]||'Bijgewerkt','success');
+  refreshAll();
+}
+
+function cancelOrder(id){
+  if (!confirm('Deze bestelling annuleren?')) return;
+  orders = orders.filter(o => o.id!==id);
+  saveJSON(ordersKey, orders);
+  toast('Bestelling geannuleerd','warn');
+  refreshAll();
+}
+
+// ============ RESERVATIONS ============
+function renderResFilters(){
+  const today = new Date().toISOString().split('T')[0];
+  const counts = {
+    upcoming: reservations.filter(r => r.date >= today && r.status!=='cancelled').length,
+    today: reservations.filter(r => r.date === today && r.status!=='cancelled').length,
+    pending: reservations.filter(r => r.status==='pending').length,
+    all: reservations.length,
+  };
+  const filters = [
+    {k:'upcoming',l:'Komend',c:counts.upcoming},
+    {k:'today',l:'Vandaag',c:counts.today},
+    {k:'pending',l:'Nog bevestigen',c:counts.pending},
+    {k:'all',l:'Alles',c:counts.all},
+  ];
+  document.getElementById('resFilters').innerHTML = filters.map(f =>
+    `<div class="filter-pill ${f.k===resFilter?'active':''}" onclick="setResFilter('${f.k}')">${f.l} <b style="opacity:0.7">${f.c}</b></div>`
+  ).join('');
+}
+function setResFilter(f){ resFilter = f; renderReservations(); renderResFilters(); }
+
+function renderReservations(){
+  const today = new Date().toISOString().split('T')[0];
+  let list = reservations;
+  if (resFilter==='upcoming') list = reservations.filter(r => r.date >= today && r.status!=='cancelled');
+  else if (resFilter==='today') list = reservations.filter(r => r.date === today && r.status!=='cancelled');
+  else if (resFilter==='pending') list = reservations.filter(r => r.status==='pending');
+  list = [...list].sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+
+  const box = document.getElementById('resList');
+  if (!list.length){
+    box.innerHTML = `<div class="empty-state"><div class="emoji">📅</div><p>Geen reserveringen</p></div>`;
+    return;
+  }
+  const months = ['JAN','FEB','MRT','APR','MEI','JUN','JUL','AUG','SEP','OKT','NOV','DEC'];
+  box.innerHTML = list.map(r => {
+    const d = new Date(r.date);
+    const statusStyle = {
+      pending:{c:'var(--orange)',l:'Wacht op bevestiging'},
+      confirmed:{c:'var(--teal)',l:'Bevestigd'},
+      seated:{c:'var(--blue)',l:'Aan tafel'},
+      completed:{c:'var(--muted)',l:'Voltooid'},
+      cancelled:{c:'var(--red)',l:'Geannuleerd'}
+    }[r.status] || {c:'var(--muted)',l:r.status};
+    return `
+      <div class="res-card">
+        <div class="res-date">
+          <div class="res-date-d">${d.getDate()}</div>
+          <div class="res-date-m">${months[d.getMonth()]}</div>
+        </div>
+        <div class="res-main">
+          <div class="res-name">${r.name} · ${r.guests}p</div>
+          <div class="res-meta">
+            <span>🕐 <b>${r.time}</b></span>
+            <span>📞 ${r.phone}</span>
+            ${r.email?`<span>✉️ ${r.email}</span>`:''}
+            <span style="color:${statusStyle.c}">● ${statusStyle.l}</span>
+          </div>
+          ${r.notes?`<div class="res-notes">💬 ${r.notes}</div>`:''}
+        </div>
+        <div class="res-actions">
+          ${r.status==='pending'?`<button class="btn-sm primary" onclick="updateRes('${r.id}','confirmed')">✓ Bevestig</button>`:''}
+          ${r.status==='confirmed'?`<button class="btn-sm primary" onclick="updateRes('${r.id}','seated')">🍽️ Aan tafel</button>`:''}
+          ${r.status==='seated'?`<button class="btn-sm primary" onclick="updateRes('${r.id}','completed')">✓ Voltooid</button>`:''}
+          ${!['cancelled','completed'].includes(r.status)?`<button class="btn-sm danger" onclick="updateRes('${r.id}','cancelled')">✕</button>`:''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateRes(id, status){
+  reservations = reservations.map(r => r.id===id ? {...r, status} : r);
+  saveJSON(resKey, reservations);
+  toast('Reservering bijgewerkt','success');
+  refreshAll();
+}
+
+// ============ MENU EDITOR ============
+// Preserve manual category ordering (used in kassa editor + bestel render)
+const CATEGORY_ORDER = ['Ontbijt','Voorgerecht','Hoofdgerecht','Bijgerecht','Menu','Drank','Dessert'];
+const CATEGORY_EMOJI = { 'Ontbijt':'🍳', 'Voorgerecht':'🥗', 'Hoofdgerecht':'🍽️', 'Bijgerecht':'🍚', 'Drank':'🥤', 'Dessert':'🍮', 'Menu':'📋' };
+function catOrderIdx(cat){ const i = CATEGORY_ORDER.indexOf(cat); return i === -1 ? 99 : i; }
+function groupByCatSub(items){
+  const byCat = new Map();
+  items.forEach(it => {
+    if (!byCat.has(it.cat)) byCat.set(it.cat, new Map());
+    const sub = it.subcat || '';
+    if (!byCat.get(it.cat).has(sub)) byCat.get(it.cat).set(sub, []);
+    byCat.get(it.cat).get(sub).push(it);
+  });
+  return byCat;
+}
+
+function renderMenuEditor(){
+  document.getElementById('menuCount').textContent = menu.items.length + ' gerechten';
+  const grouped = groupByCatSub(menu.items);
+  const cats = [...grouped.keys()].sort((a,b) => catOrderIdx(a) - catOrderIdx(b));
+  document.getElementById('catList').innerHTML = cats.map(c => `<option value="${c}">`).join('');
+  const box = document.getElementById('menuItemsList');
+  if (!menu.items.length){
+    box.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="emoji">🍽️</div><p>Nog geen gerechten. Voeg je eerste toe!</p></div>`;
+    return;
+  }
+  let html = '';
+  cats.forEach(cat => {
+    const subs = grouped.get(cat);
+    const catCount = [...subs.values()].reduce((s,arr)=>s+arr.length, 0);
+    html += `<div style="grid-column:1/-1;display:flex;align-items:baseline;gap:10px;margin:18px 0 6px 2px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+      <span style="font-size:22px">${CATEGORY_EMOJI[cat]||'🍽️'}</span>
+      <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:#fff">${escapeHtml(cat)}</span>
+      <span style="color:var(--muted);font-size:12px">${catCount} gerecht${catCount===1?'':'en'}</span>
+    </div>`;
+    const subKeys = [...subs.keys()].sort((a,b)=>{ if (!a) return -1; if (!b) return 1; return a.localeCompare(b); });
+    subKeys.forEach(sub => {
+      if (sub){
+        html += `<div style="grid-column:1/-1;font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.14em;text-transform:uppercase;margin:10px 0 4px 2px">— ${escapeHtml(sub)}</div>`;
+      }
+      subs.get(sub).forEach(it => {
+        const thumb = it.photo
+          ? `<div class="menu-ed-emoji" style="background:url('${it.photo}') center/cover;border-radius:8px"></div>`
+          : `<div class="menu-ed-emoji">${it.emoji||'🍽️'}</div>`;
+        const optBadge = it.options && it.options.length ? `<span style="font-size:10px;color:var(--teal);margin-left:6px;padding:1px 6px;background:rgba(0,200,150,0.1);border-radius:4px">⚙️ ${it.options.length} opties</span>` : '';
+        html += `<div class="menu-ed-card">
+          ${thumb}
+          <div class="menu-ed-main">
+            <div class="menu-ed-cat">${it.cat}${it.subcat?` · ${it.subcat}`:''}${optBadge}</div>
+            <div class="menu-ed-name">${escapeHtml(it.name)}</div>
+            <div class="menu-ed-price">${menu.currency} ${it.price}</div>
+          </div>
+          <div class="menu-ed-actions">
+            <button class="menu-ed-icon-btn" onclick="openMenuEdit('${it.id}')" title="Bewerk">✏️</button>
+            <button class="menu-ed-icon-btn del" onclick="deleteMenuItem('${it.id}')" title="Verwijder">🗑️</button>
+          </div>
+        </div>`;
+      });
+    });
+  });
+  box.innerHTML = html;
+}
+
+let currentEditOptions = []; // working copy of option-groups while modal is open
+let currentEditPhoto = ''; // working photo dataURL or URL
+
+function previewPhoto(url){
+  currentEditPhoto = url || '';
+  const pv = document.getElementById('editPhotoPreview');
+  if (currentEditPhoto){ pv.style.backgroundImage = `url('${currentEditPhoto}')`; pv.innerHTML=''; pv.style.border='1px solid var(--border)'; }
+  else { pv.style.backgroundImage = 'none'; pv.innerHTML='🖼️'; pv.style.border='2px dashed var(--border)'; }
+}
+
+async function uploadPhotoFile(input){
+  const file = input.files && input.files[0];
+  if (!file) return;
+  // Resize to max 800px and convert to jpeg dataURL to keep localStorage happy
+  try {
+    const dataUrl = await resizeImage(file, 800, 0.85);
+    document.getElementById('editPhoto').value = '';
+    previewPhoto(dataUrl);
+  } catch(e){ toast('Kon foto niet laden','warn'); }
+  input.value = '';
+}
+
+function clearPhoto(){
+  document.getElementById('editPhoto').value='';
+  previewPhoto('');
+}
+
+function resizeImage(file, maxSize=800, quality=0.85){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxSize/Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function openMenuEdit(id){
+  document.getElementById('menuModalTitle').textContent = id? 'Gerecht bewerken' : 'Nieuw gerecht';
+  const it = id ? menu.items.find(x => x.id===id) : {id:'',name:'',cat:'',subcat:'',desc:'',price:'',emoji:'',photo:'',options:[]};
+  document.getElementById('editId').value = it.id;
+  document.getElementById('editName').value = it.name;
+  document.getElementById('editCat').value = it.cat;
+  document.getElementById('editSubcat').value = it.subcat || '';
+  document.getElementById('editDesc').value = it.desc||'';
+  document.getElementById('editPrice').value = it.price;
+  document.getElementById('editEmoji').value = it.emoji||'';
+  // Photo
+  const photoField = document.getElementById('editPhoto');
+  const startsWithData = it.photo && it.photo.startsWith('data:');
+  photoField.value = startsWithData ? '' : (it.photo || '');
+  currentEditPhoto = it.photo || '';
+  previewPhoto(currentEditPhoto);
+  // Suggest existing subcategories
+  const subs = [...new Set(menu.items.map(i => i.subcat).filter(Boolean))].sort();
+  document.getElementById('subcatList').innerHTML = subs.map(s => `<option value="${escapeHtml(s)}">`).join('');
+  // Options
+  currentEditOptions = it.options ? JSON.parse(JSON.stringify(it.options)) : [];
+  renderOptionGroups();
+  document.getElementById('menuModal').classList.add('show');
+}
+
+function addOptionGroup(){
+  currentEditOptions.push({
+    id: 'og' + Date.now().toString(36),
+    name: '',
+    type: 'single',
+    required: false,
+    choices: [{ label:'', priceAdjust:0 }]
+  });
+  renderOptionGroups();
+}
+function removeOptionGroup(idx){
+  currentEditOptions.splice(idx, 1);
+  renderOptionGroups();
+}
+function addOptionChoice(gIdx){
+  currentEditOptions[gIdx].choices.push({ label:'', priceAdjust:0 });
+  renderOptionGroups();
+}
+function removeOptionChoice(gIdx, cIdx){
+  currentEditOptions[gIdx].choices.splice(cIdx, 1);
+  if (currentEditOptions[gIdx].choices.length === 0) currentEditOptions[gIdx].choices.push({label:'',priceAdjust:0});
+  renderOptionGroups();
+}
+function updateOptionField(gIdx, field, value){
+  if (field === 'required') currentEditOptions[gIdx].required = value;
+  else currentEditOptions[gIdx][field] = value;
+}
+function updateOptionChoiceField(gIdx, cIdx, field, value){
+  currentEditOptions[gIdx].choices[cIdx][field] = field === 'priceAdjust' ? (parseFloat(value)||0) : value;
+}
+
+function renderOptionGroups(){
+  const box = document.getElementById('editOptionsList');
+  if (!currentEditOptions.length){
+    box.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:12px;padding:12px">Geen opties. Klik <b style="color:var(--teal)">+ Groep</b> om bv. "Bijgerecht: rijst / friet" toe te voegen.</div>';
+    return;
+  }
+  box.innerHTML = currentEditOptions.map((g, gi) => `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 110px auto;gap:8px;align-items:center;margin-bottom:8px">
+        <input class="form-input" placeholder="Groepnaam (bv. Bijgerecht)" value="${escapeHtml(g.name)}" oninput="updateOptionField(${gi},'name',this.value)">
+        <select class="form-select" onchange="updateOptionField(${gi},'type',this.value)">
+          <option value="single" ${g.type==='single'?'selected':''}>⚪ Eén</option>
+          <option value="multi" ${g.type==='multi'?'selected':''}>☑️ Meer</option>
+        </select>
+        <button class="menu-ed-icon-btn del" type="button" onclick="removeOptionGroup(${gi})" title="Verwijder groep">🗑️</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:8px;cursor:pointer">
+        <input type="checkbox" ${g.required?'checked':''} onchange="updateOptionField(${gi},'required',this.checked)"> Verplicht kiezen
+      </label>
+      <div style="display:grid;gap:6px">
+        ${g.choices.map((c, ci) => `
+          <div style="display:grid;grid-template-columns:1fr 100px auto;gap:8px;align-items:center">
+            <input class="form-input" style="padding:7px 10px" placeholder="Keuze (bv. Rijst)" value="${escapeHtml(c.label)}" oninput="updateOptionChoiceField(${gi},${ci},'label',this.value)">
+            <input class="form-input" style="padding:7px 10px" type="number" step="10" placeholder="+0" value="${c.priceAdjust||0}" oninput="updateOptionChoiceField(${gi},${ci},'priceAdjust',this.value)" title="Prijs-toevoeging (bv. +30)">
+            <button class="menu-ed-icon-btn" type="button" onclick="removeOptionChoice(${gi},${ci})" title="Verwijder keuze">✕</button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn-sm" type="button" onclick="addOptionChoice(${gi})" style="margin-top:8px;font-size:11px">+ Keuze</button>
+    </div>`).join('');
+}
+
+function saveMenuItem(){
+  const id = document.getElementById('editId').value || 'm'+Date.now().toString(36);
+  // Sanitize options: only keep groups with a name and choices with a label
+  const options = currentEditOptions
+    .map(g => ({ ...g, choices: g.choices.filter(c => c.label && c.label.trim()) }))
+    .filter(g => g.name && g.name.trim() && g.choices.length);
+  const item = {
+    id,
+    name: document.getElementById('editName').value.trim(),
+    cat: document.getElementById('editCat').value.trim() || 'Overig',
+    subcat: document.getElementById('editSubcat').value.trim() || '',
+    desc: document.getElementById('editDesc').value.trim(),
+    price: parseFloat(document.getElementById('editPrice').value) || 0,
+    emoji: document.getElementById('editEmoji').value.trim() || '🍽️',
+    photo: currentEditPhoto || document.getElementById('editPhoto').value.trim() || '',
+    options
+  };
+  if (!item.name){ toast('Naam is verplicht','warn'); return; }
+  const idx = menu.items.findIndex(x => x.id===id);
+  if (idx>=0) menu.items[idx] = item; else menu.items.push(item);
+  saveJSON(menuKey, menu);
+  closeModal('menuModal');
+  toast(idx>=0?'Gerecht bijgewerkt':'Gerecht toegevoegd','success');
+  renderMenuEditor();
+}
+
+function deleteMenuItem(id){
+  if (!confirm('Dit gerecht verwijderen?')) return;
+  menu.items = menu.items.filter(x => x.id!==id);
+  saveJSON(menuKey, menu);
+  toast('Verwijderd','warn');
+  renderMenuEditor();
+}
+
+// ============ QR CODES ============
+function generateQRs(){
+  const n = parseInt(document.getElementById('qrCount').value) || 8;
+  settings.numTables = n;
+  // Use a saved base URL if available; otherwise use current origin (localhost in dev)
+  let base = document.getElementById('qrBase').value.trim();
+  if (!base){
+    base = settings.qrBase || (location.origin + location.pathname.replace('kassa.html','bestel.html'));
+    document.getElementById('qrBase').value = base;
+  }
+  settings.qrBase = base;
+  saveJSON(settingsKey, settings);
+  onQrBaseChange(); // trigger warning state
+  const grid = document.getElementById('qrGrid');
+  grid.innerHTML = '';
+
+  const makeQR = (container, url) => {
+    container.innerHTML = '';
+    new QRCode(container, { text:url, width:160, height:160, colorDark:'#000', colorLight:'#fff', correctLevel: QRCode.CorrectLevel.M });
+  };
+
+  // ── Takeaway QR (always first, visually distinct) ──
+  const taUrl = `${base}?r=${encodeURIComponent(RESTAURANT_ID)}&m=takeaway`;
+  const taCard = document.createElement('div');
+  taCard.className = 'qr-card';
+  taCard.style.background = 'linear-gradient(135deg, rgba(245,162,0,0.12), rgba(245,162,0,0.04))';
+  taCard.style.border = '2px dashed rgba(245,162,0,0.5)';
+  taCard.innerHTML = `
+    <div id="qr-takeaway"></div>
+    <div class="qr-card-title" style="color:var(--gold)">🛍️ Afhalen</div>
+    <div class="qr-card-sub">Scan om af te halen</div>
+    <div class="qr-card-sub" style="margin-top:6px;font-family:monospace;font-size:9px;word-break:break-all;opacity:.7">${taUrl.slice(0,44)}${taUrl.length>44?'…':''}</div>
+    <button class="btn-sm" style="margin-top:10px;width:100%" onclick="downloadQR('qr-takeaway','qr-afhaal.png')">↓ Download</button>
+  `;
+  grid.appendChild(taCard);
+  makeQR(document.getElementById('qr-takeaway'), taUrl);
+
+  // ── Table QRs (one per table, each unique via ?t=N) ──
+  for (let i=1; i<=n; i++){
+    const url = `${base}?r=${encodeURIComponent(RESTAURANT_ID)}&t=${i}`;
+    const tnum = String(i).padStart(2,'0');
+    const card = document.createElement('div');
+    card.className = 'qr-card';
+    card.innerHTML = `
+      <div id="qr-${i}"></div>
+      <div class="qr-card-title">Tafel ${tnum}</div>
+      <div class="qr-card-sub">Scan om te bestellen</div>
+      <div class="qr-card-sub" style="margin-top:6px;font-family:monospace;font-size:9px;word-break:break-all;opacity:.7">${url.slice(0,44)}${url.length>44?'…':''}</div>
+      <button class="btn-sm" style="margin-top:10px;width:100%" onclick="downloadQR('qr-${i}','qr-tafel-${tnum}.png')">↓ Download</button>
+    `;
+    grid.appendChild(card);
+    makeQR(document.getElementById('qr-'+i), url);
+  }
+}
+
+function downloadQR(containerId, filename){
+  const container = document.getElementById(containerId);
+  const canvas = container?.querySelector('canvas');
+  if (!canvas) return;
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+// Sync the two base-URL inputs (settings + QR page) and warn if URL is localhost
+function onQrBaseChange(ev){
+  const src = ev?.target;
+  const settingsInput = document.getElementById('setQrBase');
+  const qrInput = document.getElementById('qrBase');
+  // Whichever was edited is the source of truth
+  let base = '';
+  if (src && src.id === 'setQrBase') base = src.value.trim();
+  else if (src && src.id === 'qrBase') base = src.value.trim();
+  else base = (settingsInput?.value || qrInput?.value || '').trim();
+  if (settingsInput) settingsInput.value = base;
+  if (qrInput) qrInput.value = base;
+
+  const isLocal = /^(https?:\/\/)?(localhost|127\.0\.0\.1|0\.0\.0\.0)(:|\/|$)/i.test(base);
+  const warn = document.getElementById('qrBaseWarning');
+  if (warn) {
+    if (isLocal || !base) {
+      warn.style.display = 'block';
+      const lbl = document.getElementById('qrWarnLocal');
+      if (lbl) lbl.textContent = base || 'localhost';
+    } else {
+      warn.style.display = 'none';
+    }
+  }
+  if (base) {
+    settings.qrBase = base;
+    saveJSON(settingsKey, settings);
+  }
+}
+
+async function useLanUrl(){
+  const ip = prompt('Voer het LAN IP van deze computer in (zo te vinden via cmd: `ipconfig` → IPv4 Address).\n\nBijv.  192.168.1.10', localStorage.getItem('wg_lan_ip') || '');
+  if (!ip) return;
+  localStorage.setItem('wg_lan_ip', ip);
+  const port = location.port || '80';
+  const portPart = (port==='80'||port==='443') ? '' : (':' + port);
+  const path = location.pathname.replace('kassa.html','bestel.html');
+  const url = `http://${ip}${portPart}${path}`;
+  setBaseUrl(url);
+}
+
+function useCustomDomain(){
+  const current = (document.getElementById('setQrBase')?.value) || ('https://' + (location.hostname.replace(/^localhost.*/, 'jouwsite.com')) + '/bestel.html');
+  const url = prompt('Voer de publieke URL van je bestel-pagina in.\nVoorbeeld: https://jouwsite.com/bestel.html', current);
+  if (!url) return;
+  setBaseUrl(url.trim());
+}
+
+function setBaseUrl(url){
+  ['setQrBase','qrBase'].forEach(id => { const el = document.getElementById(id); if (el) el.value = url; });
+  onQrBaseChange({target:{id:'setQrBase',value:url}});
+  // If user is on QR page, re-generate immediately
+  if (document.getElementById('page-qr').classList.contains('active')) generateQRs();
+  toast('QR basis-URL bijgewerkt','success');
+}
+
+// ============ SETTINGS ============
+function loadSettings(){
+  document.getElementById('setName').value = menu.name||'';
+  document.getElementById('setSub').value = menu.subtitle||'';
+  document.getElementById('setCurrency').value = menu.currency||'GMD';
+  document.getElementById('setTables').value = settings.numTables || 8;
+  document.getElementById('setId').value = RESTAURANT_ID;
+  document.getElementById('setWhatsapp').value = menu.whatsapp || '';
+  document.getElementById('setPhone').value = menu.phone || '';
+  const base = location.origin + location.pathname.replace('kassa.html','reserveer.html');
+  document.getElementById('setResUrl').value = base + '?r=' + encodeURIComponent(RESTAURANT_ID);
+  // QR base URL (persisted in settings)
+  const qrBaseEl = document.getElementById('setQrBase');
+  const defaultBase = location.origin + location.pathname.replace('kassa.html','bestel.html');
+  qrBaseEl.value = settings.qrBase || defaultBase;
+  onQrBaseChange({target:{id:'setQrBase',value:qrBaseEl.value}});
+}
+function copyResUrl(){
+  const el = document.getElementById('setResUrl');
+  el.select();
+  navigator.clipboard.writeText(el.value).then(()=>toast('Link gekopieerd','success'));
+}
+function saveSettings(){
+  menu.name = document.getElementById('setName').value.trim() || 'Restaurant';
+  menu.subtitle = document.getElementById('setSub').value.trim();
+  menu.currency = document.getElementById('setCurrency').value;
+  menu.whatsapp = document.getElementById('setWhatsapp').value.trim();
+  menu.phone = document.getElementById('setPhone').value.trim();
+  const n = parseInt(document.getElementById('setTables').value) || 8;
+  settings.numTables = Math.max(1, Math.min(99, n));
+  saveJSON(menuKey, menu);
+  saveJSON(settingsKey, settings);
+  // Keep QR-page input in sync
+  const qrCountEl = document.getElementById('qrCount');
+  if (qrCountEl) qrCountEl.value = settings.numTables;
+  document.getElementById('brandSub').textContent = menu.name;
+  toast('Instellingen opgeslagen','success');
+  refreshAll();
+}
+function resetDemo(){
+  if (!confirm('Alle data wissen en demo data herstellen?')) return;
+  localStorage.removeItem(menuKey);
+  localStorage.removeItem(ordersKey);
+  localStorage.removeItem(resKey);
+  location.reload();
+}
+
+// ============ STATS & REFRESH ============
+function refreshStats(){
+  const todayStart = new Date().setHours(0,0,0,0);
+  const todayOrders = orders.filter(o => o.createdAt >= todayStart);
+  const paid = todayOrders.filter(o => o.status==='paid');
+  const revenue = paid.reduce((s,o)=>s+o.total,0);
+  const pending = orders.filter(o => o.status==='new').length;
+  const preparing = orders.filter(o => o.status==='preparing').length;
+
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statPreparing').textContent = preparing;
+  document.getElementById('statRevenue').textContent = (menu.currency||'GMD')+' '+revenue;
+  document.getElementById('todayRevenue').textContent = (menu.currency||'GMD')+' '+revenue;
+  document.getElementById('todayOrders').textContent = todayOrders.length+' bestellingen';
+
+  // Badges
+  const bT = document.getElementById('badgeTables');
+  const tablesWithOrders = new Set(orders.filter(o => o.status!=='paid').map(o => o.table)).size;
+  bT.textContent = tablesWithOrders;
+  bT.style.display = tablesWithOrders ? 'inline-flex' : 'none';
+
+  const bO = document.getElementById('badgeOrders');
+  bO.textContent = pending;
+  bO.style.display = pending ? 'inline-flex' : 'none';
+
+  const today = new Date().toISOString().split('T')[0];
+  const resPending = reservations.filter(r => r.status==='pending' || (r.date===today && r.status!=='cancelled')).length;
+  const bR = document.getElementById('badgeRes');
+  bR.textContent = resPending;
+  bR.style.display = resPending ? 'inline-flex' : 'none';
+
+  // Kitchen badge = orders awaiting kitchen attention
+  const kitchenActive = orders.filter(o => o.status==='new' || o.status==='preparing').length;
+  const bK = document.getElementById('badgeKitchen');
+  if (bK){ bK.textContent = kitchenActive; bK.style.display = kitchenActive ? 'inline-flex' : 'none'; }
+}
+
+function refreshAll(){
+  orders = loadJSON(ordersKey, []);
+  reservations = loadJSON(resKey, []);
+  menu = loadJSON(menuKey, DEMO_MENU);
+  staff = loadJSON(staffKey, []);
+  deals = loadJSON(dealsKey, []);
+  document.getElementById('brandSub').textContent = menu.name;
+  renderTables();
+  renderOrders();
+  renderOrdersFilters();
+  renderReservations();
+  renderResFilters();
+  renderMenuEditor();
+  renderKitchen();
+  renderStaff();
+  renderStaffSwitcher();
+  renderFinance();
+  renderDeals();
+  refreshStats();
+  if (currentTable){
+    const modal = document.getElementById('tableModal');
+    if (modal.classList.contains('show')) openTableDetail(currentTable);
+  }
+}
+
+// ============ DEALS ============
+function isDealActiveNow(d){
+  if (!d.active) return false;
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  if (d.startDate && today < d.startDate) return false;
+  if (d.endDate && today > d.endDate) return false;
+  if (Array.isArray(d.days) && d.days.length && !d.days.includes(now.getDay())) return false;
+  return true;
+}
+
+function renderDeals(){
+  const grid = document.getElementById('dealsGrid');
+  if (!grid) return;
+  const activeCount = deals.filter(isDealActiveNow).length;
+  const badge = document.getElementById('badgeDeals');
+  if (badge){ badge.textContent = activeCount; badge.style.display = activeCount ? 'inline-flex' : 'none'; }
+  if (!deals.length){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);background:var(--card);border:1px dashed var(--border);border-radius:14px"><div style="font-size:48px;margin-bottom:12px">🎯</div><p>Nog geen deals. Maak er eentje aan om klanten naar je restaurant te trekken.</p></div>`;
+    return;
+  }
+  grid.innerHTML = deals.map(d => {
+    const isActive = isDealActiveNow(d);
+    const valueLbl = d.type === 'fixed' ? `${menu.currency} ${d.value}` : `-${d.value}%`;
+    const daysLbl = (!d.days || !d.days.length) ? 'Elke dag' : d.days.map(i => DAY_LABELS[i]).join(' · ');
+    const itemsLbl = (!d.items || !d.items.length) ? 'Heel het menu' : `${d.items.length} gerecht${d.items.length===1?'':'en'}`;
+    return `<div style="background:var(--card);border:1px solid ${isActive?'rgba(0,200,150,0.4)':'var(--border)'};border-radius:14px;padding:16px;position:relative;overflow:hidden;${isActive?'box-shadow:0 4px 20px rgba(0,200,150,0.12)':''}">
+      ${isActive?'<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:rgba(0,200,150,0.2);color:#6ee7b7;border-radius:4px">Actief</div>':'<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:rgba(107,128,153,0.15);color:var(--muted);border-radius:4px">Uit</div>'}
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">
+        <div style="font-size:32px;line-height:1">${d.emoji||'🎯'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:16px;margin-bottom:2px">${escapeHtml(d.name)}</div>
+          <div style="color:var(--teal);font-weight:700;font-size:14px">${valueLbl}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 10px;font-size:12px;margin-bottom:12px">
+        <span style="color:var(--muted)">📅</span><span>${daysLbl}</span>
+        <span style="color:var(--muted)">🍽️</span><span>${itemsLbl}</span>
+        ${d.startDate||d.endDate?`<span style="color:var(--muted)">📆</span><span>${d.startDate||'—'} → ${d.endDate||'—'}</span>`:''}
+      </div>
+      <button class="btn-sm" style="width:100%" onclick="openDealEdit('${d.id}')">✎ Bewerken</button>
+    </div>`;
+  }).join('');
+}
+
+function openDealEdit(id){
+  const d = id ? deals.find(x => x.id === id) : null;
+  document.getElementById('dealModalTitle').textContent = d ? 'Deal bewerken' : 'Nieuwe deal';
+  document.getElementById('dealEditId').value = d ? d.id : '';
+  document.getElementById('dealEmoji').value = d?.emoji || '🔥';
+  document.getElementById('dealName').value = d?.name || '';
+  document.getElementById('dealType').value = d?.type || 'discount';
+  document.getElementById('dealValue').value = d?.value || '';
+  document.getElementById('dealStart').value = d?.startDate || '';
+  document.getElementById('dealEnd').value = d?.endDate || '';
+  document.getElementById('dealActive').checked = d ? !!d.active : true;
+  document.getElementById('dealDeleteBtn').style.display = d ? '' : 'none';
+  updateDealValueLabel();
+  document.getElementById('dealType').onchange = updateDealValueLabel;
+
+  // Days picker
+  const selectedDays = new Set(d?.days || []);
+  document.getElementById('dealDays').innerHTML = DAY_LABELS.map((lbl, i) =>
+    `<button type="button" class="day-pill ${selectedDays.has(i)?'active':''}" data-day="${i}" onclick="this.classList.toggle('active')" style="padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:${selectedDays.has(i)?'var(--teal)':'transparent'};color:${selectedDays.has(i)?'#000':'var(--text)'};cursor:pointer;font-weight:600;font-size:12px">${lbl}</button>`
+  ).join('');
+
+  // Items picker
+  const selItems = new Set(d?.items || []);
+  const byCat = {};
+  menu.items.forEach(it => { (byCat[it.cat]=byCat[it.cat]||[]).push(it); });
+  document.getElementById('dealItems').innerHTML = Object.entries(byCat).map(([cat, items]) =>
+    `<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:6px 0 4px">${escapeHtml(cat)}</div>` +
+    items.map(it => `<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;cursor:pointer"><input type="checkbox" data-dealitem="${it.id}" ${selItems.has(it.id)?'checked':''}>${it.emoji||''} ${escapeHtml(it.name)} <span style="color:var(--muted);margin-left:auto">${menu.currency} ${it.price}</span></label>`).join('')
+  ).join('');
+
+  document.getElementById('dealModal').classList.add('show');
+}
+
+function updateDealValueLabel(){
+  const type = document.getElementById('dealType').value;
+  const lbl = document.getElementById('dealValueLbl');
+  const input = document.getElementById('dealValue');
+  if (type === 'fixed'){ lbl.textContent = `Dealprijs (${menu.currency})`; input.placeholder = '750'; input.max = 99999; }
+  else { lbl.textContent = 'Korting (%)'; input.placeholder = '20'; input.max = 99; }
+}
+
+function saveDeal(){
+  const id = document.getElementById('dealEditId').value || 'd'+Date.now().toString(36);
+  const name = document.getElementById('dealName').value.trim();
+  if (!name){ toast('Naam is verplicht','warn'); return; }
+  const value = parseFloat(document.getElementById('dealValue').value) || 0;
+  if (value <= 0){ toast('Waarde moet groter dan 0 zijn','warn'); return; }
+  const days = [...document.querySelectorAll('#dealDays .day-pill.active')].map(el => +el.dataset.day);
+  const items = [...document.querySelectorAll('#dealItems input[type=checkbox]:checked')].map(el => el.dataset.dealitem);
+  const rec = {
+    id,
+    name,
+    emoji: document.getElementById('dealEmoji').value.trim() || '🔥',
+    type: document.getElementById('dealType').value,
+    value,
+    days,
+    items,
+    startDate: document.getElementById('dealStart').value || '',
+    endDate: document.getElementById('dealEnd').value || '',
+    active: document.getElementById('dealActive').checked
+  };
+  const idx = deals.findIndex(x => x.id===id);
+  if (idx >= 0) deals[idx] = rec; else deals.push(rec);
+  saveJSON(dealsKey, deals);
+  closeModal('dealModal');
+  toast(idx >= 0 ? 'Deal bijgewerkt' : 'Deal toegevoegd', 'success');
+  renderDeals();
+}
+
+function deleteDeal(){
+  const id = document.getElementById('dealEditId').value;
+  if (!id) return;
+  if (!confirm('Deze deal verwijderen?')) return;
+  deals = deals.filter(x => x.id !== id);
+  saveJSON(dealsKey, deals);
+  closeModal('dealModal');
+  toast('Deal verwijderd','warn');
+  renderDeals();
+}
+
+// ============ FINANCIEEL ============
+let finRange = 'today'; // today | week | month | 30d | all
+
+function finRangeBounds(){
+  const now = Date.now();
+  const start = new Date();
+  if (finRange === 'today') { start.setHours(0,0,0,0); return {from:start.getTime(), to:now}; }
+  if (finRange === 'week') { const d=new Date(); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); d.setHours(0,0,0,0); return {from:d.getTime(), to:now}; }
+  if (finRange === 'month') { const d=new Date(); d.setDate(1); d.setHours(0,0,0,0); return {from:d.getTime(), to:now}; }
+  if (finRange === '30d') { return {from:now - 30*86400000, to:now}; }
+  return {from:0, to:now};
+}
+function setFinRange(r){ finRange = r; renderFinance(); }
+
+function renderFinance(){
+  const filtersEl = document.getElementById('finRangeFilters');
+  if (!filtersEl) return;
+  const ranges = [{k:'today',l:'Vandaag'},{k:'week',l:'Deze week'},{k:'month',l:'Deze maand'},{k:'30d',l:'30 dagen'},{k:'all',l:'Alles'}];
+  filtersEl.innerHTML = ranges.map(r => `<div class="filter-pill ${r.k===finRange?'active':''}" onclick="setFinRange('${r.k}')">${r.l}</div>`).join('');
+
+  const {from, to} = finRangeBounds();
+  const scoped = orders.filter(o => o.createdAt >= from && o.createdAt <= to);
+  const paid = scoped.filter(o => o.status === 'paid');
+  const revenue = paid.reduce((s,o) => s+o.total, 0);
+  const orderCount = paid.length;
+  const avgOrder = orderCount ? Math.round(revenue/orderCount) : 0;
+  const itemsSold = paid.reduce((s,o) => s + o.items.reduce((a,b)=>a+b.qty,0), 0);
+  const cur = menu.currency || 'GMD';
+
+  // KPI cards
+  const kpis = [
+    {icon:'💰', label:'Omzet', value:`${cur} ${revenue.toLocaleString('nl-NL')}`, accent:'var(--teal)'},
+    {icon:'📋', label:'Bestellingen', value:orderCount, accent:'var(--gold)'},
+    {icon:'📊', label:'Gemiddeld', value:`${cur} ${avgOrder.toLocaleString('nl-NL')}`, accent:'#3b82f6'},
+    {icon:'🍽️', label:'Items verkocht', value:itemsSold, accent:'#a855f7'}
+  ];
+  document.getElementById('finKPIs').innerHTML = kpis.map(k => `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-12px;top:-12px;font-size:48px;opacity:.06">${k.icon}</div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:6px">${k.label}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:#fff">${k.value}</div>
+    </div>`).join('');
+
+  // Dine-in vs takeaway breakdown
+  const dineIn = paid.filter(o => o.type !== 'takeaway');
+  const takeaway = paid.filter(o => o.type === 'takeaway');
+  const dineInRev = dineIn.reduce((s,o)=>s+o.total,0);
+  const takeRev = takeaway.reduce((s,o)=>s+o.total,0);
+  const total = dineInRev + takeRev;
+  const dinePct = total ? Math.round(dineInRev/total*100) : 0;
+  const takePct = total ? 100 - dinePct : 0;
+  document.getElementById('finBreakdown').innerHTML = `
+    <div style="height:14px;background:var(--bg);border-radius:7px;overflow:hidden;display:flex;margin-bottom:12px">
+      <div style="width:${dinePct}%;background:var(--teal)"></div>
+      <div style="width:${takePct}%;background:var(--gold)"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--teal)"></span>🪑 Dine-in · <b style="color:#fff">${dineIn.length}</b></span><span style="color:var(--teal)">${cur} ${dineInRev.toLocaleString('nl-NL')} <span style="color:var(--muted)">(${dinePct}%)</span></span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-top:8px"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--gold)"></span>🛍️ Afhaal · <b style="color:#fff">${takeaway.length}</b></span><span style="color:var(--gold)">${cur} ${takeRev.toLocaleString('nl-NL')} <span style="color:var(--muted)">(${takePct}%)</span></span></div>`;
+
+  // Top-5 items
+  const itemStats = new Map();
+  paid.forEach(o => o.items.forEach(it => {
+    const cur = itemStats.get(it.id) || {name:it.name, emoji:it.emoji, qty:0, rev:0};
+    cur.qty += it.qty;
+    cur.rev += it.qty * it.price;
+    itemStats.set(it.id, cur);
+  }));
+  const top = [...itemStats.values()].sort((a,b)=>b.qty-a.qty).slice(0,5);
+  const maxQty = top[0]?.qty || 1;
+  document.getElementById('finTopItems').innerHTML = top.length ? top.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:22px">${t.emoji||'🍽️'}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;color:#fff;font-weight:600">${escapeHtml(t.name)}</div>
+        <div style="height:4px;background:var(--bg);border-radius:2px;margin-top:4px;overflow:hidden"><div style="height:100%;width:${(t.qty/maxQty*100).toFixed(0)}%;background:linear-gradient(to right,var(--teal),#6ee7b7)"></div></div>
+      </div>
+      <div style="text-align:right;font-size:12px"><div style="color:#fff;font-weight:700">${t.qty}×</div><div style="color:var(--muted)">${menu.currency} ${t.rev.toLocaleString('nl-NL')}</div></div>
+    </div>`).join('') : '<div style="color:var(--muted);font-size:13px;padding:20px 0;text-align:center">Geen verkopen in deze periode.</div>';
+
+  // Revenue per day chart
+  const dayMap = new Map();
+  paid.forEach(o => { const key = new Date(o.createdAt).toISOString().split('T')[0]; dayMap.set(key, (dayMap.get(key)||0) + o.total); });
+  // Build day list from range
+  const days = [];
+  const dFrom = new Date(from); dFrom.setHours(0,0,0,0);
+  const dTo = new Date(to); dTo.setHours(0,0,0,0);
+  let cursor = new Date(dFrom);
+  while (cursor <= dTo && days.length < 40) { days.push(new Date(cursor)); cursor.setDate(cursor.getDate()+1); }
+  if (!days.length || finRange === 'all') { days.length = 0; [...dayMap.keys()].sort().forEach(k => days.push(new Date(k))); if (!days.length) days.push(new Date()); }
+  const maxRev = Math.max(...days.map(d => dayMap.get(d.toISOString().split('T')[0]) || 0), 100);
+  document.getElementById('finChart').innerHTML = days.map(d => {
+    const key = d.toISOString().split('T')[0];
+    const rev = dayMap.get(key) || 0;
+    const h = rev ? Math.max(4, (rev/maxRev)*160) : 2;
+    const short = d.toLocaleDateString('nl-NL', {day:'2-digit', month:'short'});
+    return `<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;min-width:0" title="${short}: ${menu.currency} ${rev}">
+      <div style="font-size:10px;color:var(--muted);height:12px;overflow:hidden">${rev ? menu.currency+' '+rev : ''}</div>
+      <div style="width:100%;background:linear-gradient(to top,var(--teal),#6ee7b7);height:${h}px;border-radius:4px 4px 0 0;min-height:2px"></div>
+      <div style="font-size:10px;color:var(--muted);white-space:nowrap">${short}</div>
+    </div>`;
+  }).join('');
+
+  // Orders table
+  document.getElementById('finOrdersTable').innerHTML = scoped.length ? `
+    <table style="width:100%;font-size:13px;border-collapse:collapse">
+      <thead><tr style="color:var(--muted);font-weight:700;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em"><th style="padding:8px 6px;border-bottom:1px solid var(--border)">ID</th><th style="padding:8px 6px;border-bottom:1px solid var(--border)">Tijd</th><th style="padding:8px 6px;border-bottom:1px solid var(--border)">Type</th><th style="padding:8px 6px;border-bottom:1px solid var(--border)">Items</th><th style="padding:8px 6px;border-bottom:1px solid var(--border);text-align:right">Totaal</th><th style="padding:8px 6px;border-bottom:1px solid var(--border)">Status</th></tr></thead>
+      <tbody>${scoped.map(o => `<tr><td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03);font-family:monospace;font-size:11px">${o.id}</td><td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--muted);font-size:11px">${new Date(o.createdAt).toLocaleString('nl-NL',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td><td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03)">${o.type==='takeaway'?'🛍️ Afhaal':'🪑 T'+o.table}</td><td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--muted)">${o.items.reduce((a,b)=>a+b.qty,0)}</td><td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:right;font-family:'Syne',sans-serif;font-weight:700;color:var(--teal)">${menu.currency} ${o.total}</td><td style="padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:11px"><span class="status-tag st-${o.status}">${o.status}</span></td></tr>`).join('')}</tbody>
+    </table>` : '<div style="color:var(--muted);font-size:13px;padding:40px;text-align:center">Geen bestellingen in deze periode.</div>';
+}
+
+function exportFinanceCSV(){
+  const {from, to} = finRangeBounds();
+  const scoped = orders.filter(o => o.createdAt >= from && o.createdAt <= to);
+  if (!scoped.length) { toast('Geen bestellingen in deze periode','warn'); return; }
+  const header = ['Order ID','Datum','Tijd','Type','Tafel','Klant','Telefoon','Items','Aantal','Totaal','Valuta','Status','Kanaal','Notitie'];
+  const rows = scoped.map(o => [
+    o.id,
+    new Date(o.createdAt).toLocaleDateString('nl-NL'),
+    new Date(o.createdAt).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}),
+    o.type === 'takeaway' ? 'Afhaal' : 'Dine-in',
+    o.type === 'takeaway' ? '' : o.table,
+    o.customer?.name || '',
+    o.customer?.phone || '',
+    o.items.map(i => `${i.qty}x ${i.name}`).join(' | '),
+    o.items.reduce((a,b)=>a+b.qty,0),
+    o.total,
+    o.currency,
+    o.status,
+    o.channel || 'app',
+    (o.note || '').replace(/\n/g,' ')
+  ].map(v => {
+    const s = String(v ?? '');
+    return /[,;"\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+  }).join(','));
+  const csv = [header.join(','), ...rows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `kassa-${RESTAURANT_ID}-${finRange}-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  toast('CSV gedownload','success');
+}
+
+// ============ KITCHEN VIEW ============
+function renderKitchen(){
+  const grid = document.getElementById('kitchenGrid');
+  const empty = document.getElementById('kitchenEmpty');
+  if (!grid) return;
+  // Only orders that matter to the kitchen (not paid, not served)
+  const active = orders.filter(o => o.status==='new' || o.status==='preparing' || o.status==='ready');
+  // Sort oldest first — "first in, first out"
+  active.sort((a,b) => a.createdAt - b.createdAt);
+  document.getElementById('kitchenNewCount').textContent = active.filter(o=>o.status==='new').length;
+  document.getElementById('kitchenPrepCount').textContent = active.filter(o=>o.status==='preparing').length;
+  document.getElementById('kitchenReadyCount').textContent = active.filter(o=>o.status==='ready').length;
+  if (!active.length){ grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  grid.innerHTML = active.map(o => {
+    const isTakeaway = o.type === 'takeaway';
+    const where = isTakeaway ? `🛍️ Afhaal${o.customer?.pickupTime ? ` · ${o.customer.pickupTime}` : ''}` : `🪑 Tafel ${o.table}`;
+    const ageMin = Math.floor((Date.now()-o.createdAt)/60000);
+    const ageColor = ageMin > 20 ? '#ef4444' : ageMin > 10 ? '#f5a200' : '#00c896';
+    const nextBtn = o.status === 'new' ? '<button class="btn btn-primary" style="width:100%" onclick="updateStatus(\''+o.id+'\',\'preparing\')">👨‍🍳 Start bereiden</button>'
+                  : o.status === 'preparing' ? '<button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#10b981,#059669)" onclick="updateStatus(\''+o.id+'\',\'ready\')">🔔 Markeer klaar</button>'
+                  : '<button class="btn btn-secondary" style="width:100%" onclick="updateStatus(\''+o.id+'\',\''+(isTakeaway?'paid':'served')+'\')">✓ '+(isTakeaway?'Afgehaald':'Uitgeserveerd')+'</button>';
+    return `<div style="background:var(--card);border:2px solid ${o.status==='new'?'rgba(239,68,68,0.5)':o.status==='preparing'?'rgba(59,130,246,0.5)':'rgba(0,200,150,0.5)'};border-radius:14px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:#fff">${where}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${o.id} · <span style="color:${ageColor};font-weight:600">${ageMin}m geleden</span></div></div>
+        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:${o.status==='new'?'rgba(239,68,68,0.2)':o.status==='preparing'?'rgba(59,130,246,0.2)':'rgba(0,200,150,0.2)'};color:${o.status==='new'?'#fca5a5':o.status==='preparing'?'#93c5fd':'#6ee7b7'};text-transform:uppercase;letter-spacing:.1em">${o.status==='new'?'Nieuw':o.status==='preparing'?'Bereiden':'Klaar'}</span>
+      </div>
+      <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;margin-bottom:10px">
+        ${o.items.map(it => `<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px"><div style="font-weight:600;color:#fff">${it.qty}× ${it.emoji||''} ${escapeHtml(it.name)}</div>${it.optionsLabel?`<div style="color:var(--teal);font-size:12px;margin-top:2px;margin-left:22px">↳ ${escapeHtml(it.optionsLabel)}</div>`:''}</div>`).join('')}
+      </div>
+      ${o.note ? `<div style="background:rgba(245,162,0,0.1);border-left:3px solid var(--gold);padding:8px 12px;margin-bottom:10px;font-size:13px;color:#fbbf24">💬 ${escapeHtml(o.note)}</div>` : ''}
+      ${nextBtn}
+    </div>`;
+  }).join('');
+}
+
+// ============ STAFF MANAGEMENT ============
+function renderStaff(){
+  const list = document.getElementById('staffList');
+  if (!list) return;
+  document.getElementById('badgeStaff').style.display = staff.length ? 'inline-block' : 'none';
+  document.getElementById('badgeStaff').textContent = staff.length;
+  if (!staff.length){
+    list.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);background:var(--card);border:1px dashed var(--border);border-radius:14px"><div style="font-size:48px;margin-bottom:12px">👥</div><p>Nog geen medewerkers. Klik op <b style="color:var(--teal)">+ Nieuwe medewerker</b>.</p></div>`;
+    return;
+  }
+  list.innerHTML = staff.map(s => {
+    const perms = Array.isArray(s.permissions) ? s.permissions : (ROLE_PRESETS[s.role]||[]);
+    const permPills = perms.map(p => { const pg = ALL_PAGES.find(x=>x.id===p); return pg ? `<span style="font-size:11px;padding:3px 8px;background:rgba(0,200,150,0.1);color:var(--teal);border-radius:6px">${pg.label}</span>` : ''; }).join(' ');
+    return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--gold));display:flex;align-items:center;justify-content:center;font-size:20px">${roleEmoji(s.role)}</div>
+          <div><div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff">${escapeHtml(s.name)}</div><div style="font-size:11px;color:var(--muted);text-transform:capitalize">${s.role}${s.pin?' · PIN •••':''}</div></div>
+        </div>
+        <button class="icon-btn" onclick="openStaffEdit('${s.id}')" title="Bewerken">✎</button>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${permPills || '<span style="font-size:11px;color:var(--muted)">geen toegang</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+function openStaffEdit(id){
+  const s = id ? staff.find(x => x.id === id) : null;
+  document.getElementById('staffModalTitle').textContent = s ? 'Medewerker bewerken' : 'Nieuwe medewerker';
+  document.getElementById('staffEditId').value = s ? s.id : '';
+  document.getElementById('staffName').value = s ? s.name : '';
+  document.getElementById('staffRole').value = s ? s.role : 'waiter';
+  document.getElementById('staffPin').value = s ? (s.pin||'') : '';
+  renderStaffPerms(s);
+  document.getElementById('staffDeleteBtn').style.display = s ? '' : 'none';
+  document.getElementById('staffModal').classList.add('show');
+  // Re-render perms whenever role changes
+  document.getElementById('staffRole').onchange = () => renderStaffPerms({role:document.getElementById('staffRole').value});
+}
+
+function renderStaffPerms(s){
+  const role = s?.role || document.getElementById('staffRole').value;
+  const perms = (s && Array.isArray(s.permissions)) ? s.permissions : (ROLE_PRESETS[role]||[]);
+  document.getElementById('staffPermsList').innerHTML = ALL_PAGES
+    .filter(p => p.id !== 'staff' && p.id !== 'settings') // manage permissions inside staff/settings are manager-only
+    .map(p => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" data-perm="${p.id}" ${perms.includes(p.id)?'checked':''}> ${p.label}</label>`).join('');
+}
+
+function saveStaff(){
+  const id = document.getElementById('staffEditId').value || 's'+Date.now().toString(36);
+  const name = document.getElementById('staffName').value.trim();
+  const role = document.getElementById('staffRole').value;
+  const pin = document.getElementById('staffPin').value.trim();
+  if (!name){ toast('Naam is verplicht','warn'); return; }
+  const perms = [...document.querySelectorAll('#staffPermsList input[type=checkbox]:checked')].map(el => el.dataset.perm);
+  const record = { id, name, role, pin, permissions: perms };
+  const idx = staff.findIndex(x => x.id===id);
+  if (idx>=0) staff[idx] = record; else staff.push(record);
+  saveJSON(staffKey, staff);
+  closeModal('staffModal');
+  toast(idx>=0?'Medewerker bijgewerkt':'Medewerker toegevoegd','success');
+  renderStaff();
+  renderStaffSwitcher();
+}
+
+function deleteStaff(){
+  const id = document.getElementById('staffEditId').value;
+  if (!id) return;
+  if (!confirm('Deze medewerker verwijderen?')) return;
+  staff = staff.filter(x => x.id!==id);
+  saveJSON(staffKey, staff);
+  if (currentStaffId === id) setCurrentStaff('manager');
+  closeModal('staffModal');
+  toast('Medewerker verwijderd','warn');
+  renderStaff();
+  renderStaffSwitcher();
+  applyPermissions();
+}
+
+// ============ HELPERS ============
+function timeAgo(ts){
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s<60) return 'net nu';
+  if (s<3600) return Math.floor(s/60)+' min geleden';
+  if (s<86400) return Math.floor(s/3600)+' uur geleden';
+  return new Date(ts).toLocaleDateString('nl-NL');
+}
+function toast(msg, type='info'){
+  const t = document.createElement('div');
+  t.className = 'toast '+type;
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+function closeModal(id){ document.getElementById(id).classList.remove('show'); if(id==='tableModal') currentTable=null; }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if (e.target===m) m.classList.remove('show'); }));
+
+// ============ LIVE CHANNELS ============
+orderChannel.onmessage = (e) => {
+  if (e.data.type==='new_order'){
+    refreshAll();
+    toast(e.data.order.type === 'takeaway'
+      ? '🛍️ Nieuwe afhaal · ' + (e.data.order.customer?.name || '')
+      : '🔔 Nieuwe bestelling · Tafel '+e.data.order.table, 'info');
+    // Beep
+    try { const a = new AudioContext(); const o = a.createOscillator(); const g = a.createGain(); o.connect(g); g.connect(a.destination); o.frequency.value=880; g.gain.value=0.1; o.start(); setTimeout(()=>{o.stop();a.close()},200); } catch(e){}
+  }
+};
+resChannel.onmessage = (e) => {
+  if (e.data.type==='new_reservation'){
+    refreshAll();
+    toast('📅 Nieuwe reservering · '+e.data.reservation.name,'info');
+  }
+};
+
+// Also poll to catch localStorage events from other tabs
+window.addEventListener('storage', e => {
+  if (e.key === ordersKey || e.key === resKey || e.key === menuKey || e.key === dealsKey || e.key === staffKey) refreshAll();
+});
+
+// Refresh stats every minute to update time-ago labels
+setInterval(() => {
+  if (document.getElementById('page-orders').classList.contains('active')) renderOrders();
+  refreshStats();
+}, 30000);
+
+// ============ INIT ============
+refreshAll();
+applyPermissions();
+// Refresh kitchen view when new orders come in
+orderChannel.addEventListener('message', () => { renderKitchen(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>WebGen Gambia — Platform Hub</title>
+<meta name="description" content="WebGen Gambia platform — alle tools, portalen en generators op één plek.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c10;
+  --bg2: #0e1318;
+  --bg3: #141b23;
+  --card: #111820;
+  --border: #1e2d3d;
+  --teal: #00c896;
+  --teal2: #00a87e;
+  --gold: #f5a200;
+  --purple: #7c6ff0;
+  --coral: #e05555;
+  --text: #e8edf2;
+  --muted: #6b8099;
+  --white: #ffffff;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--teal);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 200, 150, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 200, 150, 0.5);
+  }
+}
+
+/* TOP BAR */
+.topbar {
+  background: rgba(14, 19, 24, 0.8);
+  border-bottom: 1px solid var(--border);
+  padding: 0 5%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.topbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.5px;
+  transition: var(--transition);
+}
+
+.logo:hover {
+  color: var(--teal);
+}
+
+.logo span {
+  color: var(--teal);
+}
+
+.topbar-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.tnav {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--muted);
+  transition: var(--transition);
+  border: 1px solid transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.tnav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.1), transparent 80%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tnav:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: transparent;
+}
+
+.tnav.cta {
+  background: linear-gradient(135deg, var(--teal), var(--teal2));
+  color: #000;
+  border-color: transparent;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 200, 150, 0.3);
+}
+
+.tnav.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 200, 150, 0.4);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  display: inline-block;
+  margin-right: 5px;
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 10px rgba(0, 200, 150, 0.5);
+}
+
+/* HERO */
+.hero {
+  padding: 56px 5% 44px;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+  animation: fadeIn 0.6s ease-out 0.1s both;
+}
+
+.hero-left {
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--teal);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  animation: slideInUp 0.6s ease-out 0.2s both;
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  animation: slideInUp 0.6s ease-out 0.3s both;
+}
+
+.hero-title em {
+  color: var(--teal);
+  font-style: normal;
+  animation: glow 3s ease-in-out infinite;
+}
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 460px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  animation: slideInUp 0.6s ease-out 0.4s both;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  animation: slideInUp 0.6s ease-out 0.5s both;
+}
+
+.hstat {
+  text-align: center;
+  padding: 12px 0;
+  transition: var(--transition);
+}
+
+.hstat:hover {
+  transform: translateY(-2px);
+}
+
+.hstat-n {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.hstat-l {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 280px;
+  animation: scaleIn 0.6s ease-out 0.2s both;
+}
+
+.portal-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  text-decoration: none;
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 30%) var(--mouse-y, 30%), rgba(0, 200, 150, 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.portal-btn:hover {
+  border-color: var(--teal);
+  transform: translateX(4px);
+  box-shadow: 0 0 20px rgba(0, 200, 150, 0.2);
+}
+
+.portal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.portal-btn:hover .portal-icon {
+  transform: scale(1.1);
+}
+
+.portal-info {
+  flex: 1;
+}
+
+.portal-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+
+.portal-desc {
+  font-size: 12px;
+  color: var(--muted);
+  transition: var(--transition);
+}
+
+.portal-btn:hover .portal-desc {
+  color: var(--text);
+}
+
+.portal-arrow {
+  font-size: 14px;
+  color: var(--muted);
+  transition: var(--transition);
+}
+
+.portal-btn:hover .portal-arrow {
+  color: var(--teal);
+  transform: translateX(2px);
+}
+
+/* SECTION */
+.section {
+  padding: 0 5% 52px;
+  max-width: 1280px;
+  margin: 0 auto;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--teal);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.5px;
+}
+
+.section-count {
+  font-size: 12px;
+  color: var(--muted);
+  transition: var(--transition);
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0 5% 48px;
+  opacity: 0.5;
+  transition: var(--transition);
+}
+
+/* SEARCH */
+.search-wrap {
+  margin-bottom: 24px;
+}
+
+.search-box {
+  width: 100%;
+  max-width: 480px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 16px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-box:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.1), var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.search-box::placeholder {
+  color: var(--muted);
+}
+
+.search-box::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* TOOL GRID */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.tool-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  text-decoration: none;
+  display: block;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 20% 20%, var(--glow, rgba(0, 200, 150, 0.04)) 0%, transparent 70%);
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.tool-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  opacity: 0;
+  transition: var(--transition);
+  pointer-events: none;
+}
+
+.tool-card:hover::before {
+  background: radial-gradient(ellipse 60% 60% at 20% 20%, var(--glow, rgba(0, 200, 150, 0.08)) 0%, transparent 70%);
+}
+
+.tool-card:hover {
+  border-color: var(--hover-border, rgba(0, 200, 150, 0.4));
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px var(--glow, rgba(0, 200, 150, 0.2)), var(--shadow-lg);
+}
+
+.tool-card:active {
+  transform: translateY(-1px);
+}
+
+.tc-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tc-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.tool-card:hover .tc-icon {
+  transform: scale(1.1) rotate(2deg);
+}
+
+.tc-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  transition: var(--transition);
+}
+
+.tc-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 5px;
+  transition: var(--transition);
+}
+
+.tc-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  transition: var(--transition);
+}
+
+.tool-card:hover .tc-desc {
+  color: var(--text);
+}
+
+.tc-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.tc-feat {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  transition: var(--transition);
+}
+
+.tool-card:hover .tc-feat {
+  background: rgba(0, 200, 150, 0.1);
+  color: var(--teal);
+}
+
+.tc-open {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+}
+
+.tc-open-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--teal);
+  transition: var(--transition);
+}
+
+.tc-open-arrow {
+  font-size: 14px;
+  color: var(--muted);
+  transition: var(--transition);
+}
+
+.tool-card:hover .tc-open-arrow {
+  color: var(--teal);
+  transform: translateX(2px) translateY(-2px);
+}
+
+/* PORTAL GRID */
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.portal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px;
+  text-decoration: none;
+  display: block;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 0.5s ease-out;
+  cursor: pointer;
+}
+
+.portal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 80% at 50% -10%, var(--glow) 0%, transparent 60%);
+  transition: var(--transition);
+  opacity: 0;
+}
+
+.portal-card:hover::before {
+  opacity: 1;
+}
+
+.portal-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 200, 150, 0.3);
+  box-shadow: 0 0 30px rgba(0, 200, 150, 0.15), var(--shadow-lg);
+}
+
+.pc-icon {
+  font-size: 32px;
+  margin-bottom: 14px;
+  transition: var(--transition);
+  display: inline-block;
+}
+
+.portal-card:hover .pc-icon {
+  transform: scale(1.15) rotate(-2deg);
+}
+
+.pc-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+  transition: var(--transition);
+}
+
+.pc-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 18px;
+  transition: var(--transition);
+}
+
+.portal-card:hover .pc-desc {
+  color: var(--text);
+}
+
+.pc-perks {
+  list-style: none;
+  margin-bottom: 18px;
+}
+
+.pc-perk {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.pc-perk::before {
+  content: '✓';
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.portal-card:hover .pc-perk {
+  color: var(--text);
+}
+
+.pc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: var(--transition);
+  cursor: pointer;
+  border: none;
+}
+
+.pc-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 200, 150, 0.2);
+}
+
+/* PAYMENT BANNER */
+.pay-banner {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 14px;
+  transition: var(--transition);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.pay-banner:hover {
+  border-color: var(--teal);
+  box-shadow: 0 0 20px rgba(0, 200, 150, 0.1);
+}
+
+.pay-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  transition: var(--transition);
+}
+
+.pay-methods {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pay-pill {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.pay-pill:hover {
+  transform: translateY(-2px);
+}
+
+.pay-pill.wave {
+  border-color: rgba(26, 115, 232, 0.4);
+  color: #60a5fa;
+}
+
+.pay-pill.wave:hover {
+  background: rgba(26, 115, 232, 0.1);
+  box-shadow: 0 0 15px rgba(26, 115, 232, 0.2);
+}
+
+.pay-pill.afri {
+  border-color: rgba(245, 162, 0, 0.4);
+  color: var(--gold);
+}
+
+.pay-pill.afri:hover {
+  background: rgba(245, 162, 0, 0.1);
+  box-shadow: 0 0 15px rgba(245, 162, 0, 0.2);
+}
+
+.pay-pill.qm {
+  border-color: rgba(0, 200, 150, 0.4);
+  color: var(--teal);
+}
+
+.pay-pill.qm:hover {
+  background: rgba(0, 200, 150, 0.1);
+  box-shadow: 0 0 15px rgba(0, 200, 150, 0.2);
+}
+
+.pay-pill.cash {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+.pay-pill.cash:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* FILE LIST */
+.file-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-decoration: none;
+  font-size: 12px;
+  color: var(--muted);
+  transition: var(--transition);
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.file-list-item-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.file-list-item-label {
+  transition: var(--transition);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-list-item:hover {
+  border-color: var(--teal);
+  color: var(--text);
+  background: rgba(0, 200, 150, 0.05);
+  box-shadow: 0 0 15px rgba(0, 200, 150, 0.1);
+  transform: translateX(2px);
+}
+
+.file-list-item:hover .file-list-item-icon {
+  transform: scale(1.2);
+}
+
+/* FOOTER */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 28px 5%;
+  margin-top: 48px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  transition: var(--transition);
+}
+
+.footer-logo:hover {
+  color: var(--teal);
+}
+
+.footer-logo span {
+  color: var(--teal);
+}
+
+.footer-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  transition: var(--transition);
+}
+
+.footer-link {
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: var(--transition);
+  border-bottom: 1px solid transparent;
+}
+
+.footer-link:hover {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-right {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+  transition: var(--transition);
+}
+
+.footer-badge {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  display: inline-block;
+  margin-right: 6px;
+  transition: var(--transition);
+}
+
+.footer-badge:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+  .portal-grid {
+    grid-template-columns: 1fr;
+  }
+  .tool-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .topbar-nav .tnav:not(.cta) {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .tool-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-stats {
+    width: 100%;
+  }
+  .search-box {
+    max-width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">WebGen<span>Gambia</span></div>
+    <div class="topbar-nav">
+      <a href="landing.html" class="tnav">Website</a>
+      <a href="admin.html" class="tnav">Admin</a>
+      <a href="medewerker.html" class="tnav">Medewerker</a>
+      <a href="klant.html" class="tnav cta">Klantportaal →</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div style="max-width:1280px;margin:0 auto">
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow"><span class="status-dot"></span>Platform actief · Cloudflare Pages</div>
+    <div class="hero-title">WebGen<em>Gambia</em><br>Platform Hub</div>
+    <div class="hero-sub">Alle tools, portalen en generators op één plek. Klik op een tool om te openen.</div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-n">11</div><div class="hstat-l">tools</div></div>
+      <div class="hstat"><div class="hstat-n">3</div><div class="hstat-l">portalen</div></div>
+      <div class="hstat"><div class="hstat-n">3</div><div class="hstat-l">betaalmethodes</div></div>
+      <div class="hstat"><div class="hstat-n">24u</div><div class="hstat-l">levertijd</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <a href="admin.html" class="portal-btn">
+      <div class="portal-icon" style="background:rgba(0,200,150,.12)">🔐</div>
+      <div class="portal-info"><div class="portal-name">Admin portaal</div><div class="portal-desc">Alle tools + klanten + medewerkers</div></div>
+      <div class="portal-arrow">→</div>
+    </a>
+    <a href="medewerker.html" class="portal-btn">
+      <div class="portal-icon" style="background:rgba(245,162,0,.12)">💼</div>
+      <div class="portal-info"><div class="portal-name">Medewerker portaal</div><div class="portal-desc">Klanten begeleiden en websites bouwen</div></div>
+      <div class="portal-arrow">→</div>
+    </a>
+    <a href="klant.html" class="portal-btn">
+      <div class="portal-icon" style="background:rgba(124,111,240,.12)">👤</div>
+      <div class="portal-info"><div class="portal-name">Klantportaal</div><div class="portal-desc">Abonnement en tools zelf beheren</div></div>
+      <div class="portal-arrow">→</div>
+    </a>
+    <a href="landing.html" class="portal-btn">
+      <div class="portal-icon" style="background:rgba(255,255,255,.06)">🌍</div>
+      <div class="portal-info"><div class="portal-name">Publieke website</div><div class="portal-desc">Landingspagina voor nieuwe klanten</div></div>
+      <div class="portal-arrow">→</div>
+    </a>
+  </div>
+</div>
+</div>
+
+<hr class="divider">
+
+<!-- BETAALMETHODES BANNER -->
+<div class="section">
+  <div class="pay-banner">
+    <div class="pay-label">Geaccepteerde betaalmethodes op dit platform</div>
+    <div class="pay-methods">
+      <div class="pay-pill wave">🌊 Wave</div>
+      <div class="pay-pill afri">💛 Afrimoney</div>
+      <div class="pay-pill qm">💚 QMoney</div>
+      <div class="pay-pill cash">💵 Cash</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLS -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Tools</div>
+      <div class="section-title">Alle beschikbare tools</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <input type="text" class="search-box" id="search-input" placeholder="Zoek tool..." data-debounce="300">
+      <span class="section-count" id="tool-count">11 tools</span>
+    </div>
+  </div>
+
+  <div class="tool-grid" id="tool-grid">
+
+    <a href="webgen-gambia-v3.html" class="tool-card" style="--hover-border:rgba(0,200,150,.4);--glow:rgba(0,200,150,.06)" data-tags="website generator ai template gambia">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(0,200,150,.12)">🌐</div>
+        <div class="tc-badge" style="background:rgba(0,200,150,.12);color:var(--teal)">AI powered</div>
+      </div>
+      <div class="tc-name">Website Generator</div>
+      <div class="tc-desc">Professionele website bouwen voor Gambiaanse bedrijven in 30 seconden.</div>
+      <div class="tc-features"><span class="tc-feat">10 templates</span><span class="tc-feat">Meertalig</span><span class="tc-feat">Afrimoney</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="webgen-crm.html" class="tool-card" style="--hover-border:rgba(124,111,240,.4);--glow:rgba(124,111,240,.05)" data-tags="crm klanten beheer dashboard">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(124,111,240,.12)">📋</div>
+        <div class="tc-badge" style="background:rgba(124,111,240,.12);color:var(--purple)">Full CRM</div>
+      </div>
+      <div class="tc-name">CRM Dashboard</div>
+      <div class="tc-desc">Klantbeheer, abonnementen, taken en communicatiegeschiedenis.</div>
+      <div class="tc-features"><span class="tc-feat">Klanten</span><span class="tc-feat">Facturen</span><span class="tc-feat">Analytics</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="whatsapp-catalog-generator.html" class="tool-card" style="--hover-border:rgba(37,211,102,.4);--glow:rgba(37,211,102,.05)" data-tags="whatsapp catalog producten bestellen">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(37,211,102,.12)">💬</div>
+        <div class="tc-badge" style="background:rgba(37,211,102,.12);color:#25d366">WhatsApp</div>
+      </div>
+      <div class="tc-name">WhatsApp Catalog</div>
+      <div class="tc-desc">Productcatalogus met bestelknop en automatische berichtsjablonen.</div>
+      <div class="tc-features"><span class="tc-feat">Foto's + prijzen</span><span class="tc-feat">Bestelknop</span><span class="tc-feat">Preview</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="social-media-generator.html" class="tool-card" style="--hover-border:rgba(245,162,0,.4);--glow:rgba(245,162,0,.04)" data-tags="social media facebook instagram tiktok wolof posts">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(245,162,0,.12)">📱</div>
+        <div class="tc-badge" style="background:rgba(245,162,0,.12);color:var(--gold)">AI powered</div>
+      </div>
+      <div class="tc-name">Social Media Generator</div>
+      <div class="tc-desc">AI schrijft posts voor Facebook, Instagram en TikTok in Wolof, Mandinka, Engels en Frans.</div>
+      <div class="tc-features"><span class="tc-feat">Wolof</span><span class="tc-feat">Mandinka</span><span class="tc-feat">12 templates</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="google-business-generator.html" class="tool-card" style="--hover-border:rgba(66,133,244,.4);--glow:rgba(66,133,244,.04)" data-tags="google business maps seo reviews">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(66,133,244,.12)">🗺️</div>
+        <div class="tc-badge" style="background:rgba(66,133,244,.12);color:#60a5fa">SEO</div>
+      </div>
+      <div class="tc-name">Google Business Generator</div>
+      <div class="tc-desc">Google Maps profiel optimaliseren met AI-beschrijving, Q&A en review-antwoorden.</div>
+      <div class="tc-features"><span class="tc-feat">750-char SEO</span><span class="tc-feat">Q&A</span><span class="tc-feat">Reviews</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="qr-generator.html" class="tool-card" style="--hover-border:rgba(0,200,150,.4);--glow:rgba(0,200,150,.04)" data-tags="qr code wave afrimoney whatsapp website betaling">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(0,200,150,.1)">▦</div>
+        <div class="tc-badge" style="background:rgba(0,200,150,.12);color:var(--teal)">Nieuw</div>
+      </div>
+      <div class="tc-name">QR Code Generator</div>
+      <div class="tc-desc">QR-codes voor website, WhatsApp, Wave/Afrimoney betaling, bellen en meer.</div>
+      <div class="tc-features"><span class="tc-feat">Wave QR</span><span class="tc-feat">Afrimoney QR</span><span class="tc-feat">Download PNG</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="menu-generator.html" class="tool-card" style="--hover-border:rgba(245,162,0,.4);--glow:rgba(245,162,0,.04)" data-tags="menu prijslijst restaurant winkel qr code">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(245,162,0,.1)">🍽️</div>
+        <div class="tc-badge" style="background:rgba(245,162,0,.12);color:var(--gold)">Nieuw</div>
+      </div>
+      <div class="tc-name">Menu & Prijslijst</div>
+      <div class="tc-desc">Digitaal menu met categorieën, prijzen in GMD en QR-code voor restaurants en winkels.</div>
+      <div class="tc-features"><span class="tc-feat">Live preview</span><span class="tc-feat">QR-code</span><span class="tc-feat">Download HTML</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="flyer-generator.html" class="tool-card" style="--hover-border:rgba(224,85,85,.4);--glow:rgba(224,85,85,.04)" data-tags="flyer event tobraa feest promotie whatsapp facebook">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(224,85,85,.1)">🎉</div>
+        <div class="tc-badge" style="background:rgba(224,85,85,.12);color:var(--coral)">Nieuw</div>
+      </div>
+      <div class="tc-name">Flyer Generator</div>
+      <div class="tc-desc">Professionele event flyers voor tobraa's, promoties en feesten. Klaar voor WhatsApp en Facebook.</div>
+      <div class="tc-features"><span class="tc-feat">6 thema's</span><span class="tc-feat">Download PNG</span><span class="tc-feat">WhatsApp deel</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="visitekaartje-generator.html" class="tool-card" style="--hover-border:rgba(124,111,240,.4);--glow:rgba(124,111,240,.04)" data-tags="visitekaartje business card qr vcard contact">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(124,111,240,.1)">🪪</div>
+        <div class="tc-badge" style="background:rgba(124,111,240,.12);color:var(--purple)">Nieuw</div>
+      </div>
+      <div class="tc-name">Visitekaartje Generator</div>
+      <div class="tc-desc">Digitaal visitekaartje met QR-code. Klant scant → contact direct opgeslagen in telefoon.</div>
+      <div class="tc-features"><span class="tc-feat">4 templates</span><span class="tc-feat">vCard QR</span><span class="tc-feat">Download PNG</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="contract-generator.html" class="tool-card" style="--hover-border:rgba(245,162,0,.4);--glow:rgba(245,162,0,.04)" data-tags="contract overeenkomst klant akkoord pdf engels nederlands">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(245,162,0,.1)">📄</div>
+        <div class="tc-badge" style="background:rgba(245,162,0,.12);color:var(--gold)">Nieuw</div>
+      </div>
+      <div class="tc-name">Contract Generator</div>
+      <div class="tc-desc">Professionele klantovereenkomsten in Engels of Nederlands. Invullen → printen als PDF.</div>
+      <div class="tc-features"><span class="tc-feat">EN / NL</span><span class="tc-feat">Print PDF</span><span class="tc-feat">Handtekening</span></div>
+      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+    <a href="admin.html" class="tool-card" style="--hover-border:rgba(0,200,150,.4);--glow:rgba(0,200,150,.04)" data-tags="invoice factuur gmd betaling afrimoney wave qmoney">
+      <div class="tc-top">
+        <div class="tc-icon" style="background:rgba(0,200,150,.1)">🧾</div>
+        <div class="tc-badge" style="background:rgba(0,200,150,.12);color:var(--teal)">In Admin</div>
+      </div>
+      <div class="tc-name">Invoice Generator</div>
+      <div class="tc-desc">GMD facturen met Wave, Afrimoney of QMoney betaallink. Direct sturen via WhatsApp.</div>
+      <div class="tc-features"><span class="tc-feat">Wave</span><span class="tc-feat">Afrimoney</span><span class="tc-feat">WhatsApp sturen</span></div>
+      <div class="tc-open"><span class="tc-open-label">Via Admin</span><span class="tc-open-arrow">↗</span></div>
+    </a>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PORTALEN -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Portalen</div>
+      <div class="section-title">3 rollen, 3 portalen</div>
+    </div>
+  </div>
+  <div class="portal-grid">
+
+    <a href="portal.html#admin" class="portal-card" style="--glow:rgba(0,200,150,.08);border-color:rgba(0,200,150,.15)">
+      <div class="pc-icon">🔐</div>
+      <div class="pc-title">Admin portaal</div>
+      <div class="pc-desc">Volledig beheer van het platform. Alle tools, klanten, medewerkers en instellingen.</div>
+      <ul class="pc-perks">
+        <li class="pc-perk">Alle 11 tools direct toegankelijk</li>
+        <li class="pc-perk">Klanten- en abonnementenbeheer</li>
+        <li class="pc-perk">Medewerkers en commissies</li>
+        <li class="pc-perk">API en systeem instellingen</li>
+      </ul>
+      <div class="pc-btn" style="background:rgba(0,200,150,.1);color:var(--teal)">Inloggen → <span style="font-size:11px;color:var(--muted);margin-left:4px">admin / kok2025</span></div>
+    </a>
+
+    <a href="portal.html#medewerker" class="portal-card" style="--glow:rgba(245,162,0,.06);border-color:rgba(245,162,0,.15)">
+      <div class="pc-icon">💼</div>
+      <div class="pc-title">Medewerker portaal</div>
+      <div class="pc-desc">Voor agenten en medewerkers. Klanten onboarden, websites bouwen en bijhouden.</div>
+      <ul class="pc-perks">
+        <li class="pc-perk">Eigen klantenportefeuille</li>
+        <li class="pc-perk">Stap-voor-stap onboarding wizard</li>
+        <li class="pc-perk">Commissie en taken overzicht</li>
+        <li class="pc-perk">Toegang tot alle tools</li>
+      </ul>
+      <div class="pc-btn" style="background:rgba(245,162,0,.1);color:var(--gold)">Inloggen → <span style="font-size:11px;color:var(--muted);margin-left:4px">lamin / 1234</span></div>
+    </a>
+
+    <a href="portal.html#klant" class="portal-card" style="--glow:rgba(124,111,240,.06);border-color:rgba(124,111,240,.15)">
+      <div class="pc-icon">👤</div>
+      <div class="pc-title">Klantportaal</div>
+      <div class="pc-desc">Voor geregistreerde klanten. Website bekijken, tools beheren en abonnement aanpassen.</div>
+      <ul class="pc-perks">
+        <li class="pc-perk">Eigen website live bekijken</li>
+        <li class="pc-perk">Actieve tools beheren</li>
+        <li class="pc-perk">Pakket upgraden of downgraden</li>
+        <li class="pc-perk">Losse tools bijkopen</li>
+      </ul>
+      <div class="pc-btn" style="background:rgba(124,111,240,.1);color:var(--purple)">Inloggen → <span style="font-size:11px;color:var(--muted);margin-left:4px">WG-DEMO1</span></div>
+    </a>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- QUICK LINKS -->
+<div class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Snel navigeren</div>
+      <div class="section-title">Alle bestanden op dit platform</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px" id="file-list">
+    <!-- JS rendered -->
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">WebGen<span>Gambia</span></div>
+      <div class="footer-sub">by KOK Enterprises · Banjul, The Gambia</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <span class="footer-badge">Cloudflare Pages</span>
+        <span class="footer-badge">Workers AI</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="landing.html" class="footer-link">Publieke website</a>
+      <a href="admin.html" class="footer-link">Admin</a>
+      <a href="medewerker.html" class="footer-link">Medewerker</a>
+      <a href="klant.html" class="footer-link">Klantportaal</a>
+    </div>
+    <div class="footer-right">
+      <div style="font-size:11px;color:var(--muted)" id="ft-time"></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">v2.0 · 11 tools</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Configuration
+const DEBOUNCE_DELAY = 300;
+
+// All files on the platform
+const ALL_FILES = [
+  {name:'landing.html',label:'Publieke website',icon:'🌍'},
+  {name:'admin.html',label:'Admin portaal',icon:'🔐'},
+  {name:'medewerker.html',label:'Medewerker portaal',icon:'💼'},
+  {name:'klant.html',label:'Klantportaal',icon:'👤'},
+  {name:'webgen-gambia-v3.html',label:'Website Generator',icon:'🌐'},
+  {name:'webgen-crm.html',label:'CRM Dashboard',icon:'📋'},
+  {name:'whatsapp-catalog-generator.html',label:'WhatsApp Catalog',icon:'💬'},
+  {name:'social-media-generator.html',label:'Social Media',icon:'📱'},
+  {name:'google-business-generator.html',label:'Google Business',icon:'🗺️'},
+  {name:'qr-generator.html',label:'QR Generator',icon:'▦'},
+  {name:'menu-generator.html',label:'Menu & Prijslijst',icon:'🍽️'},
+  {name:'flyer-generator.html',label:'Flyer Generator',icon:'🎉'},
+  {name:'visitekaartje-generator.html',label:'Visitekaartje',icon:'🪪'},
+  {name:'contract-generator.html',label:'Contract Generator',icon:'📄'},
+  {name:'index.html',label:'Platform Hub (deze pagina)',icon:'🏠'},
+];
+
+// Render file list
+function renderFileList() {
+  const fileList = document.getElementById('file-list');
+  fileList.innerHTML = '';
+
+  ALL_FILES.forEach(f => {
+    const a = document.createElement('a');
+    a.href = f.name;
+    a.className = 'file-list-item';
+    a.innerHTML = `<span class="file-list-item-icon">${f.icon}</span><span class="file-list-item-label">${f.label}</span>`;
+    fileList.appendChild(a);
+  });
+}
+
+// Intersection Observer for scroll-triggered animations
+function setupScrollAnimations() {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.animation = 'fadeIn 0.6s ease-out forwards';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.tool-card, .portal-card').forEach(el => {
+    observer.observe(el);
+  });
+}
+
+// Debounced search with keyboard support
+let searchTimeout;
+function setupSearch() {
+  const searchInput = document.getElementById('search-input');
+
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      filterTools(e.target.value);
+    }, DEBOUNCE_DELAY);
+  });
+
+  // Keyboard navigation - Escape to clear
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      searchInput.value = '';
+      filterTools('');
+      e.preventDefault();
+    }
+  });
+}
+
+// Filter tools with smooth transitions
+function filterTools(q) {
+  const cards = document.querySelectorAll('#tool-grid .tool-card');
+  let count = 0;
+
+  cards.forEach(card => {
+    const tags = card.dataset.tags || '';
+    const name = card.querySelector('.tc-name').textContent.toLowerCase();
+    const desc = card.querySelector('.tc-desc').textContent.toLowerCase();
+    const match = !q || name.includes(q.toLowerCase()) || desc.includes(q.toLowerCase()) || tags.includes(q.toLowerCase());
+
+    if (match) {
+      card.style.display = '';
+      card.style.animation = 'fadeIn 0.3s ease-out';
+      count++;
+    } else {
+      card.style.opacity = '0';
+      card.style.pointerEvents = 'none';
+      setTimeout(() => {
+        if (card.style.opacity === '0') {
+          card.style.display = 'none';
+          card.style.pointerEvents = '';
+        }
+      }, 200);
+    }
+  });
+
+  document.getElementById('tool-count').textContent = count + ' tools';
+}
+
+// Clock in footer
+function tick() {
+  const now = new Date();
+  document.getElementById('ft-time').textContent = now.toLocaleDateString('nl-NL', {weekday:'short',day:'numeric',month:'short'}) + ' · ' + now.toLocaleTimeString('nl-NL', {hour:'2-digit',minute:'2-digit'});
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  renderFileList();
+  setupSearch();
+  setupScrollAnimations();
+  tick();
+  setInterval(tick, 30000);
+});
+</script>
+</body>
+</html>

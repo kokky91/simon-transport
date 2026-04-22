@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff — WebGen Gambia</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://webgen-gambia.workers.dev">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+<style>
+:root{
+  --bg:#080c10;
+  --bg2:#0e1318;
+  --bg3:#141b23;
+  --card:#111820;
+  --border:#1e2d3d;
+  --teal:#00c896;
+  --teal2:#00a87e;
+  --gold:#f5a200;
+  --red:#e05555;
+  --text:#e8edf2;
+  --muted:#6b8099;
+  --white:#ffffff;
+  --transition-fast:0.25s cubic-bezier(0.4,0,0.2,1);
+  --shadow-sm:0 2px 8px rgba(0,0,0,0.15);
+  --shadow-md:0 8px 24px rgba(0,0,0,0.25);
+  --shadow-lg:0 16px 40px rgba(0,0,0,0.35);
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:14px;
+  --radius-xl:20px
+}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;display:flex;flex-direction:column;min-height:100vh;animation:fadeIn 0.5s ease-out}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* Login Screen */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--bg) 0%,var(--bg3) 100%);display:flex;align-items:center;justify-content:center;z-index:999;animation:fadeIn 0.4s ease-out}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:40px;width:360px;text-align:center;animation:scaleIn 0.5s ease-out;box-shadow:var(--shadow-lg);backdrop-filter:blur(10px)}
+.login-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:4px}
+.login-logo span{color:var(--teal)}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.login-box input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;color:var(--text);font-size:14px;margin-bottom:12px;outline:none;transition:border-color var(--transition-fast), box-shadow var(--transition-fast);font-family:'DM Sans',sans-serif}
+.login-box input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,150,0.1)}
+.demo-creds{margin-top:16px;font-size:12px;color:var(--muted);cursor:pointer;transition:color var(--transition-fast)}
+.demo-creds:hover{color:var(--teal)}
+.demo-creds span{color:var(--text);font-weight:500}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--teal),var(--teal2));color:#000;border:none;border-radius:var(--radius-md);padding:13px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition-fast);box-shadow:var(--shadow-md)}
+.login-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.login-btn:active{transform:translateY(0)}
+
+/* Toast Notifications */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:10px;max-width:320px;pointer-events:none}
+.toast{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow-lg);animation:slideDown 0.3s ease-out;pointer-events:auto;display:flex;align-items:center;gap:12px;font-size:13px}
+.toast.success{border-left:3px solid var(--teal)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.warning{border-left:3px solid var(--gold)}
+.toast.info{border-left:3px solid var(--teal)}
+.toast-icon{font-size:16px}
+.toast-message{flex:1}
+.toast-close{cursor:pointer;color:var(--muted);transition:color var(--transition-fast)}
+.toast-close:hover{color:var(--text)}
+
+/* Modal Dialog */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:900;animation:fadeIn 0.3s ease-out}
+#modal-overlay.active{display:flex;align-items:center;justify-content:center}
+.modal-dialog{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;max-width:400px;animation:scaleIn 0.3s ease-out;box-shadow:var(--shadow-lg)}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--white);margin-bottom:12px}
+.modal-text{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-buttons{display:flex;gap:10px;justify-content:flex-end}
+.modal-btn{border:none;border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition-fast)}
+.modal-btn.primary{background:var(--teal);color:#000}
+.modal-btn.primary:hover{background:var(--teal2);transform:translateY(-1px)}
+.modal-btn.secondary{background:var(--bg2);color:var(--text);border:1px solid var(--border)}
+.modal-btn.secondary:hover{border-color:var(--teal);color:var(--teal)}
+
+/* Sidebar */
+.sidebar{position:fixed;left:0;top:34px;bottom:0;width:210px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;z-index:50;transition:all var(--transition-fast)}
+.sidebar-logo{padding:0 18px 18px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.sidebar-logo a{font-size:11px;color:var(--muted);text-decoration:none;display:block;margin-bottom:8px;transition:color var(--transition-fast)}
+.sidebar-logo a:hover{color:var(--text)}
+.sidebar-logo .name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--white)}
+.sidebar-logo .name span{color:var(--teal)}
+.sidebar-logo .role{font-size:11px;color:var(--gold);margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;color:var(--muted);cursor:pointer;transition:all var(--transition-fast);font-size:13px;font-weight:500;border-left:2px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.03);border-left-color:var(--teal)}
+.nav-item.active{color:var(--teal);border-left-color:var(--teal);background:rgba(0,200,150,.06)}
+.nav-item .ico{font-size:15px;width:18px;text-align:center}
+.nav-section{padding:10px 18px 6px;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:6px}
+.sidebar-footer{margin-top:auto;padding:14px 18px;border-top:1px solid var(--border)}
+.avatar{width:32px;height:32px;border-radius:50%;background:rgba(245,162,0,.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gold);flex-shrink:0}
+.logout-btn{margin-top:10px;font-size:12px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color var(--transition-fast);width:100%;text-align:left}
+.logout-btn:hover{color:var(--red)}
+
+/* Main Content */
+.main{margin-left:210px;flex:1;padding:26px;padding-top:56px;min-height:100vh;animation:slideDown 0.4s ease-out;content-visibility:auto;contain-intrinsic-size:auto 500px}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:20px}
+.page-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)}
+.page-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.screen{display:none;animation:slideDown 0.3s ease-out}.screen.active{display:block}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:all var(--transition-fast);animation:scaleIn 0.4s ease-out}
+.stat-card:hover{border-color:var(--teal);transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.stat-card .val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--white)}
+.stat-card .lbl{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:14px;animation:slideDown 0.4s ease-out}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white);margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* Tables */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:500;color:var(--muted);text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);letter-spacing:.04em;text-transform:uppercase}
+td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;color:var(--text)}
+tr:last-child td{border-bottom:none}
+
+/* Pills/Badges */
+.pill{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;display:inline-block;transition:all var(--transition-fast)}
+.p-act{background:rgba(0,200,150,.12);color:var(--teal)}
+.p-act:hover{background:rgba(0,200,150,.2)}
+.p-pend{background:rgba(245,162,0,.12);color:var(--gold)}
+.p-pend:hover{background:rgba(245,162,0,.2)}
+.p-exp{background:rgba(224,85,85,.12);color:var(--red)}
+.p-exp:hover{background:rgba(224,85,85,.2)}
+
+/* Buttons */
+.btn-teal{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#000;border:none;border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition-fast);box-shadow:var(--shadow-sm)}
+.btn-teal:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.btn-teal:active{transform:translateY(0)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;cursor:pointer;transition:all var(--transition-fast);font-family:'DM Sans',sans-serif}
+.btn-ghost:hover{color:var(--text);border-color:var(--text);background:rgba(255,255,255,.02)}
+
+/* Forms */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.form-group label{font-size:12px;color:var(--muted);font-weight:500}
+.form-group input,.form-group select,.form-group textarea{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text);font-size:13px;outline:none;transition:border-color var(--transition-fast), box-shadow var(--transition-fast);font-family:'DM Sans',sans-serif}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,150,0.1)}
+.form-group select option{background:var(--bg2)}
+.form-error{display:none;font-size:11px;color:var(--red);margin-top:4px}
+.form-error.active{display:block}
+.form-group.error input,.form-group.error select{border-color:var(--red)}
+
+/* Tool Cards */
+.tool-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;cursor:pointer;transition:all var(--transition-fast);animation:scaleIn 0.4s ease-out}
+.tc:hover{border-color:var(--teal);background:rgba(0,200,150,.04);transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.tc .ico{font-size:22px;margin-bottom:10px;transition:transform var(--transition-fast)}
+.tc:hover .ico{transform:scale(1.15)}
+.tc h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white);margin-bottom:5px}
+.tc p{font-size:12px;color:var(--muted);line-height:1.4}
+
+/* iFrame Wrapper */
+.iframe-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-md);animation:slideDown 0.4s ease-out}
+.iframe-bar{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.2)}
+.iframe-bar span{font-size:12px;color:var(--muted)}
+iframe.tf{width:100%;height:680px;border:none}
+
+/* Checklists */
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;color:var(--text);transition:all var(--transition-fast)}
+.checklist li:hover{color:var(--white)}
+.checklist li:last-child{border-bottom:none}
+.cb{width:16px;height:16px;border:1px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--transition-fast);font-size:10px}
+.cb:hover{border-color:var(--teal);background:rgba(0,200,150,.1)}
+.cb.done{background:var(--teal);border-color:var(--teal);color:#000;animation:scaleIn 0.3s ease-out}
+.step-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:rgba(0,200,150,.1);color:var(--teal);margin-left:auto;animation:pulse 2s infinite}
+
+/* Package Options */
+.pak-opt{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all var(--transition-fast);animation:scaleIn 0.4s ease-out}
+.pak-opt:hover{border-color:var(--teal);background:rgba(0,200,150,.04);transform:translateY(-2px)}
+.pak-opt.selected{border-color:var(--teal);background:rgba(0,200,150,.06);box-shadow:0 0 0 3px rgba(0,200,150,0.1)}
+
+/* Portal Nav */
+.portal-nav{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--border);padding:6px 20px 6px 230px;font-size:12px;position:fixed;top:0;left:0;right:0;z-index:45}
+.portal-nav-links{display:flex;gap:4px;align-items:center}
+.portal-nav-links a{color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:6px;transition:all var(--transition-fast);font-weight:500;font-size:11px}
+.portal-nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.portal-nav-links a.pn-active{color:var(--teal);background:rgba(0,200,150,0.08)}
+.portal-nav-brand{font-family:'Syne',sans-serif;font-size:12px;color:var(--muted);font-weight:600}
+.portal-nav-brand span{color:var(--teal)}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:49;backdrop-filter:blur(2px)}
+.sidebar-overlay.active{display:block}
+.hamburger-mw{display:none;position:fixed;top:46px;left:10px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:18px;cursor:pointer;padding:8px 10px;z-index:101;border-radius:var(--radius-sm);transition:all var(--transition-fast)}
+.hamburger-mw:hover{border-color:var(--teal);color:var(--teal)}
+
+/* Responsive */
+@media(max-width:1024px){
+  .sidebar{width:180px}
+  .main{margin-left:180px}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .tool-cards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-210px;z-index:100;transition:left 0.3s ease}
+  .sidebar.active{left:0}
+  .main{margin-left:0}
+  .stats-row{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .tool-cards{grid-template-columns:1fr}
+  .topbar{flex-direction:column}
+  .hamburger-mw{display:block}
+  .portal-nav{padding:6px 12px;padding-left:12px}
+}
+
+@media(max-width:480px){
+  .main{padding:12px 8px!important}
+  .stat-card{padding:14px!important}
+  .stat-grid{grid-template-columns:1fr 1fr!important}
+  .modal-content{width:95vw!important;max-height:90vh;margin:5vh auto}
+  .btn,.btn-teal,.btn-ghost,.btn-danger,.sidebar a{min-height:44px;min-width:44px}
+  .tab-btn,.step-btn{padding:10px 14px;font-size:12px}
+  table{font-size:12px}
+  table th,table td{padding:8px 6px}
+}
+.offline-banner{position:fixed;top:34px;left:0;right:0;background:linear-gradient(135deg,#ff4757,#ff6b81);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;z-index:9999;transform:translateY(-100%);transition:transform 0.3s ease;display:flex;align-items:center;justify-content:center;gap:8px}
+.offline-banner.show{transform:translateY(0)}
+.offline-banner button{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600}
+.offline-banner button:hover{background:rgba(255,255,255,0.3)}
+.loading-overlay{position:fixed;inset:0;background:rgba(8,12,16,0.7);display:flex;align-items:center;justify-content:center;z-index:9998;display:none}
+.loading-overlay.show{display:flex}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(0,200,150,0.2);border-top-color:#00c896;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.retry-btn{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.3);color:#00c896;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;margin-top:8px;transition:all 0.2s}
+.retry-btn:hover{background:rgba(0,200,150,0.2);transform:translateY(-1px)}
+
+</style>
+</head>
+<body>
+
+<div class="offline-banner" id="offline-banner">
+  ⚠️ No internet connection
+  <button onclick="location.reload()">Retry</button>
+</div>
+<div class="loading-overlay" id="loading-overlay"><div class="loading-spinner"></div></div>
+
+<div id="toast-container"></div>
+
+<div id="modal-overlay">
+  <div class="modal-dialog">
+    <div class="modal-title" id="modal-title">Confirm</div>
+    <div class="modal-text" id="modal-text">Are you sure?</div>
+    <div class="modal-buttons">
+      <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" id="modal-confirm" onclick="executeModalAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">WebGen<span>Gambia</span></div>
+    <div class="login-sub">Staff / Agent Portal</div>
+    <input type="text" id="lu" placeholder="Name or code">
+    <input type="password" id="lp" placeholder="PIN code">
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="demo-creds" onclick="fillDemoCredentials()">Demo: <span>lamin</span> / <span>1234</span></div>
+  </div>
+</div>
+
+<div id="app" style="display:none;flex:1">
+  <div class="portal-nav">
+    <div class="portal-nav-brand">Web<span>Gen</span> Gambia</div>
+    <div class="portal-nav-links">
+      <a href="index.html">🏠 Hub</a>
+      <a href="admin.html">📊 Admin</a>
+      <a href="medewerker.html" class="pn-active">👤 Staff</a>
+      <a href="klant.html">🧑‍💼 Client</a>
+      <a href="landing.html">🌐 Website</a>
+    </div>
+  </div>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <button class="hamburger-mw" onclick="toggleSidebar()">☰</button>
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="name">WebGen<span>Gambia</span></div>
+      <div class="role">Staff portal</div>
+    </div>
+    <div class="nav-section">Dashboard</div>
+    <div class="nav-item active" onclick="sw('overzicht',this)"><span class="ico">📊</span>My Dashboard</div>
+    <div class="nav-item" onclick="sw('klanten',this)"><span class="ico">👥</span>My Clients</div>
+    <div class="nav-item" onclick="sw('onboarding',this)"><span class="ico">✅</span>Onboard Client</div>
+    <div class="nav-section">Use Tools</div>
+    <div class="nav-item" onclick="sw('t-webgen',this)"><span class="ico">🌐</span>Website Generator</div>
+    <div class="nav-item" onclick="sw('t-whatsapp',this)"><span class="ico">💬</span>WhatsApp Catalog</div>
+    <div class="nav-item" onclick="sw('t-social',this)"><span class="ico">📱</span>Social Media</div>
+    <div class="nav-item" onclick="sw('t-google',this)"><span class="ico">🗺️</span>Google Business</div>
+    <div class="nav-item" onclick="sw('t-invoice',this)"><span class="ico">🧾</span>Create Invoice</div>
+    <div class="nav-item" onclick="sw('t-qr',this)"><span class="ico">▦</span>QR Generator</div>
+    <div class="nav-item" onclick="sw('t-menu',this)"><span class="ico">🍽️</span>Menu / Price List</div>
+    <div class="nav-item" onclick="sw('t-contract',this)"><span class="ico">📄</span>Contract</div>
+    <div class="nav-item" onclick="sw('t-flyer',this)"><span class="ico">🎉</span>Flyer</div>
+    <div class="nav-item" onclick="sw('t-visite',this)"><span class="ico">🪪</span>Business Card</div>
+    <div class="sidebar-footer">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="avatar" id="av">LB</div>
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text)" id="uname">Lamin Bah</div>
+          <div style="font-size:11px;color:var(--muted)">Agent · 34 clients</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- OVERZICHT -->
+    <div class="screen active" id="screen-overzicht">
+      <div class="topbar">
+        <div><div class="page-title">Good morning, <span id="greeting-name">Lamin</span> 👋</div><div class="page-sub">Your performance this month</div></div>
+        <div><button class="btn-teal" onclick="sw('onboarding',document.querySelectorAll('.nav-item')[2])">+ Add New Client</button></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="val">34</div><div class="lbl">Total Clients</div></div>
+        <div class="stat-card"><div class="val">7</div><div class="lbl">New This Month</div></div>
+        <div class="stat-card"><div class="val" style="color:var(--teal)">GMD 3.500</div><div class="lbl">Commission This Month</div></div>
+        <div class="stat-card"><div class="val">3</div><div class="lbl">Pending Tasks</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">My Recent Clients</div>
+          <table>
+            <tr><th>Client</th><th>Plan</th><th>Active Tools</th><th>Status</th></tr>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-title">Pending Tasks</div>
+          <ul class="checklist">
+            <li><div class="cb" onclick="toggleCb(this)"></div>Finish website for Paradise Guesthouse<span class="step-badge">Today</span></li>
+            <li><div class="cb" onclick="toggleCb(this)"></div>Update WhatsApp catalog for Mariama Salon<span class="step-badge">Tomorrow</span></li>
+            <li><div class="cb" onclick="toggleCb(this)"></div>Send invoice to Kairaba Hotel<span class="step-badge">Friday</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Access Tools</div>
+        <div class="tool-cards">
+          <div class="tc" onclick="sw('t-webgen',document.querySelectorAll('.nav-item')[3])"><div class="ico">🌐</div><h4>Website Generator</h4><p>Build AI website for a client</p></div>
+          <div class="tc" onclick="sw('t-whatsapp',document.querySelectorAll('.nav-item')[4])"><div class="ico">💬</div><h4>WhatsApp Catalog</h4><p>Create product catalog</p></div>
+          <div class="tc" onclick="sw('t-social',document.querySelectorAll('.nav-item')[5])"><div class="ico">📱</div><h4>Social Media</h4><p>Write posts in Wolof and English</p></div>
+          <div class="tc" onclick="sw('t-google',document.querySelectorAll('.nav-item')[6])"><div class="ico">🗺️</div><h4>Google Business</h4><p>Set up Google Maps profile</p></div>
+          <div class="tc" onclick="sw('t-invoice',document.querySelectorAll('.nav-item')[7])"><div class="ico">🧾</div><h4>Create Invoice</h4><p>GMD invoice with payment link</p></div>
+          <div class="tc" onclick="sw('onboarding',document.querySelectorAll('.nav-item')[2])"><div class="ico">✅</div><h4>Onboard Client</h4><p>Register new client step by step</p></div>
+          <div class="tc" onclick="sw('t-qr',document.querySelectorAll('.nav-item')[8])"><div class="ico">▦</div><h4>QR Generator</h4><p>Website, WhatsApp or Wave pay QR</p></div>
+          <div class="tc" onclick="sw('t-menu',document.querySelectorAll('.nav-item')[9])"><div class="ico">🍽️</div><h4>Menu / Price List</h4><p>Digital menu with QR code</p></div>
+          <div class="tc" onclick="sw('t-contract',document.querySelectorAll('.nav-item')[10])"><div class="ico">📄</div><h4>Contract Generator</h4><p>Client agreement in EN/NL</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="screen" id="screen-klanten">
+      <div class="topbar"><div><div class="page-title">My Clients</div><div class="page-sub">Overview of your client portfolio</div></div></div>
+      <div class="card">
+        <table>
+          <tr><th>Client</th><th>Plan</th><th>Active Tools</th><th>Status</th><th>Action</th></tr>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="screen" id="screen-onboarding">
+      <div class="topbar"><div><div class="page-title">Onboard Client</div><div class="page-sub">Register new client step by step and build website</div></div></div>
+
+      <div class="card">
+        <div class="card-title">Step 1 — Client Information</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>Business Name</label><input id="ob-name" placeholder="Fatou's Fashion"></div>
+          <div class="form-group"><label>Industry</label><select id="ob-sector"><option>Retail / Shop</option><option>Restaurant / Food</option><option>Hotel / Accommodation</option><option>Transport</option><option>Salon / Beauty</option><option>Agriculture / Farm</option><option>Services</option><option>Other</option></select></div>
+          <div class="form-group"><label>Contact Person</label><input id="ob-contact" placeholder="Owner name"></div>
+          <div class="form-group"><label>Phone / WhatsApp</label><input id="ob-phone" placeholder="+220 3XX XXXX"></div>
+          <div class="form-group"><label>Email (optional)</label><input id="ob-email" placeholder="email@example.gm"></div>
+          <div class="form-group"><label>City / Location</label><select id="ob-location"><option>Banjul</option><option>Serrekunda</option><option>Bakau</option><option>Kololi</option><option>Brikama</option><option>Farafenni</option><option>Other</option></select></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Step 2 — Choose Plan</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
+          <div class="pak-opt" onclick="selectPak(this,'starter')">
+            <div style="font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px">STARTER</div>
+            <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white)">GMD 2.500</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Website only</div>
+          </div>
+          <div class="pak-opt" onclick="selectPak(this,'standard')">
+            <div style="font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px">STANDARD</div>
+            <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white)">GMD 5.000</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Website + WhatsApp</div>
+          </div>
+          <div class="pak-opt" onclick="selectPak(this,'premium')">
+            <div style="font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px">PREMIUM</div>
+            <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white)">GMD 8.500</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Everything included</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>Payment Method</label><select id="ob-payment"><option>Afrimoney</option><option>QMoney</option><option>Wave</option><option>Cash</option></select></div>
+          <div class="form-group"><label>Deposit Received (GMD)</label><input id="ob-deposit" type="number" placeholder="0"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Step 3 — Create Client Access</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>Client login code</label><input placeholder="Auto-generate" id="ob-code" readonly></div>
+          <div class="form-group"><label></label><button class="btn-ghost" onclick="genOnboardingCode()" style="margin-top:22px">Generate Code</button></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">Client uses this code to login to the client portal (klant.html)</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Step 4 — Build Website</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Open Website Generator and create a website for this client.</p>
+        <button class="btn-teal" onclick="sw('t-webgen',document.querySelectorAll('.nav-item')[3])">→ Open Website Generator</button>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn-teal" onclick="submitOnboarding()">Register &amp; Save Client</button>
+        <button class="btn-ghost" onclick="resetOnboardingForm()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- TOOL SCREENS -->
+    <div class="screen" id="screen-t-webgen">
+      <div class="topbar"><div><div class="page-title">Website Generator</div><div class="page-sub">Build a website for your client with AI</div></div><a href="webgen-gambia-v3.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About Website Generator</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Website Generator helps you quickly and easily build a professional website for your client. With AI-driven suggestions, clients can customize their website in minutes.</p>
+        <p style="font-size:12px;color:var(--muted)">In <strong>klant.html</strong>, clients can edit and customize their own website. You help them with the initial setup.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="webgen-gambia-v3.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open Website Generator</a>
+          <button class="btn-ghost" onclick="selectClientAndOpenTool('webgen')">Open for Selected Client</button>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-whatsapp">
+      <div class="topbar"><div><div class="page-title">WhatsApp Catalog</div></div><a href="whatsapp-catalog-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About WhatsApp Catalog</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">With WhatsApp Catalog, clients can showcase their products and services directly in WhatsApp. This increases conversions and gives clients a professional impression.</p>
+        <p style="font-size:12px;color:var(--muted)"><strong>9 clients</strong> use this tool. Perfect upsell for retail and restaurants.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="whatsapp-catalog-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open WhatsApp Catalog</a>
+          <button class="btn-ghost" onclick="selectClientAndOpenTool('whatsapp')">Open for Selected Client</button>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-social">
+      <div class="topbar"><div><div class="page-title">Social Media Generator</div></div><a href="social-media-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About Social Media Generator</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Automatically generate social media posts in English and Wolof. Perfect for clients who want to be active on multiple platforms.</p>
+        <p style="font-size:12px;color:var(--muted)"><strong>5 clients</strong> use this tool. Save content creation time.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="social-media-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open Social Media Tool</a>
+          <button class="btn-ghost" onclick="selectClientAndOpenTool('social')">Open for Selected Client</button>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-google">
+      <div class="topbar"><div><div class="page-title">Google Business Generator</div></div><a href="google-business-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About Google Business Generator</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Get your client on Google Maps so local customers can find them. This is essential for restaurants, shops and service providers.</p>
+        <p style="font-size:12px;color:var(--muted)"><strong>12 clients</strong> are already visible on Google Maps.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="google-business-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open Google Business Tool</a>
+          <button class="btn-ghost" onclick="selectClientAndOpenTool('google')">Open for Selected Client</button>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-invoice">
+      <div class="topbar"><div><div class="page-title">Create Invoice</div><div class="page-sub">GMD invoice with Afrimoney payment link</div></div></div>
+      <div class="card" style="max-width:640px">
+        <div class="card-title">New Invoice</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>Client</label><select id="inv-client"><option value="">— Select Client —</option></select></div>
+          <div class="form-group"><label>Service</label><select id="inv-service"><option>Standard Plan — GMD 5.000</option><option>Starter — GMD 2.500</option><option>Premium — GMD 8.500</option><option>WhatsApp Catalog — GMD 1.000</option></select></div>
+          <div class="form-group"><label>Payment Method</label><select id="inv-payment"><option>Afrimoney</option><option>QMoney</option><option>Wave</option><option>Cash</option></select></div>
+          <div class="form-group"><label>Due Date</label><input id="inv-duedate" type="date"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
+          <button class="btn-teal" onclick="generateInvoice()">Generate Invoice</button>
+          <button class="btn-ghost" onclick="sendInvoiceViaWhatsApp()">Send via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-t-qr">
+      <div class="topbar"><div><div class="page-title">QR Generator</div></div><a href="qr-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About QR Generator</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Create QR codes that link to your clients' websites, WhatsApp, or payment pages. Useful for flyers, menus and packaging.</p>
+        <p style="font-size:12px;color:var(--muted)"><strong>8 clients</strong> use QR codes in their marketing.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="qr-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open QR Generator</a>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-menu">
+      <div class="topbar"><div><div class="page-title">Menu & Price List</div></div><a href="menu-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About Menu & Price List</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Create a digital menu with photos and prices. Perfect for restaurants, cafes and takeaways. Customers can scan the menu with QR code.</p>
+        <p style="font-size:12px;color:var(--muted)"><strong>7 clients</strong> in the food industry use this.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="menu-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open Menu Generator</a>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-contract">
+      <div class="topbar"><div><div class="page-title">Contract Generator</div></div><a href="contract-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About Contract Generator</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Generate professional client agreements in English and Dutch. Protect yourself legally and set clear terms.</p>
+        <p style="font-size:12px;color:var(--muted)">All contracts are saved and can be downloaded or reviewed later.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="contract-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open Contract Generator</a>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-flyer">
+      <div class="topbar"><div><div class="page-title">Flyer Generator</div></div><a href="flyer-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About Flyer Generator</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Create professional flyers with AI design. Clients can download, print or share digitally on WhatsApp and social media.</p>
+        <p style="font-size:12px;color:var(--muted)">Template-based design for quick results.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="flyer-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open Flyer Generator</a>
+        </div>
+      </div>
+    </div>
+    <div class="screen" id="screen-t-visite">
+      <div class="topbar"><div><div class="page-title">Business Card Generator</div></div><a href="visitekaartje-generator.html" target="_blank" class="btn-ghost">Full Screen ↗</a></div>
+      <div class="card">
+        <div class="card-title">About Business Card Generator</div>
+        <p style="font-size:13px;color:var(--text);margin-bottom:12px">Design digital or physical business cards. Clients can share their contact information and use their own style.</p>
+        <p style="font-size:12px;color:var(--muted)">Perfect for professionals and entrepreneurs.</p>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <a href="visitekaartje-generator.html" target="_blank" class="btn-teal" style="text-decoration:none;display:inline-block">Open Business Card Generator</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const STAFF={lamin:'1234',isatou:'5678',modou:'9012'};
+const NAMES={lamin:'Lamin Bah',isatou:'Isatou Demba',modou:'Modou Sowe'};
+
+const API_BASE='https://webgen-gambia.diederikkok123.workers.dev';
+let authToken=localStorage.getItem('webgen-mdw-token')||null;
+let currentStaff=null;
+let CLIENTS=[];
+
+async function apiCall(method,endpoint,body=null){
+  const options={method,headers:{'Content-Type':'application/json'}};
+  if(authToken)options.headers['Authorization']=`Bearer ${authToken}`;
+  if(body)options.body=JSON.stringify(body);
+  try{
+    const res=await fetch(API_BASE+endpoint,options);
+    if(!res.ok)throw new Error(`API error: ${res.status}`);
+    return await res.json();
+  }catch(e){
+    console.warn('API call failed:',e);
+    return null;
+  }
+}
+
+function loadClientsFromStorage(){
+  const stored=localStorage.getItem('webgen-clients');
+  CLIENTS=stored?JSON.parse(stored):[];
+}
+
+function saveClientsToStorage(){
+  localStorage.setItem('webgen-clients',JSON.stringify(CLIENTS));
+}
+
+function generateClientCode(){
+  return 'WG-'+Math.random().toString(36).substr(2,6).toUpperCase();
+}
+
+function getClientStats(){
+  const total=CLIENTS.length;
+  const now=new Date();
+  const thisMonth=CLIENTS.filter(c=>{
+    const cd=new Date(c.created||0);
+    return cd.getMonth()===now.getMonth()&&cd.getFullYear()===now.getFullYear();
+  }).length;
+  const active=CLIENTS.filter(c=>c.status==='active').length;
+  const pending=CLIENTS.filter(c=>c.status==='pending').length;
+  return {total,thisMonth,active,pending};
+}
+
+function renderDashboard(){
+  const stats=getClientStats();
+  document.querySelectorAll('.stat-card .val')[0].textContent=stats.total;
+  document.querySelectorAll('.stat-card .val')[1].textContent=stats.thisMonth;
+  document.querySelectorAll('.stat-card .val')[3].textContent=stats.pending;
+
+  const tbody=document.querySelector('#screen-overzicht table tbody');
+  if(tbody){
+    tbody.innerHTML='';
+    const recent=CLIENTS.slice(-3).reverse();
+    recent.forEach(c=>{
+      const tools=c.tools?c.tools.join(', '):'None';
+      const statusBadge=c.status==='active'?'<span class="pill p-act">Active</span>':'<span class="pill p-pend">Pending</span>';
+      tbody.innerHTML+=`<tr><td>${c.name}<br><span style="color:var(--muted);font-size:11px">${c.location||'Unknown'}</span></td><td>${c.package||'—'}</td><td>${tools}</td><td>${statusBadge}</td></tr>`;
+    });
+  }
+}
+
+function renderClientsScreen(){
+  const tbody=document.querySelector('#screen-klanten table tbody');
+  if(!tbody)return;
+  tbody.innerHTML='';
+  CLIENTS.forEach(c=>{
+    const tools=c.tools?c.tools.join(', '):'None';
+    const statusBadge=c.status==='active'?'<span class="pill p-act">Active</span>':'<span class="pill p-pend">Pending</span>';
+    tbody.innerHTML+=`<tr><td><strong style="color:var(--white)">${c.name}</strong><br><span style="color:var(--muted);font-size:11px">${c.location||'Unknown'}</span></td><td>${c.package||'—'}</td><td>${tools}</td><td>${statusBadge}</td><td><button class="btn-ghost" onclick="openClient('${c.code}')">Open</button></td></tr>`;
+  });
+  if(CLIENTS.length===0){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px">No clients yet. Start by onboarding!</td></tr>';
+  }
+}
+
+function openClient(code){
+  localStorage.setItem('webgen-selected-client',code);
+  window.location.href='klant.html';
+}
+
+function renderInvoiceClients(){
+  const select=document.querySelector('#screen-t-invoice .form-group select');
+  if(!select)return;
+  select.innerHTML='<option value="">— Select Client —</option>';
+  CLIENTS.forEach(c=>{
+    const opt=document.createElement('option');
+    opt.value=c.code;
+    opt.textContent=c.name;
+    select.appendChild(opt);
+  });
+}
+
+async function autoRestoreSession(){
+  const token=localStorage.getItem('webgen-mdw-token');
+  const staff=localStorage.getItem('webgen-current-staff');
+  if(token&&staff){
+    authToken=token;
+    currentStaff=staff;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    const n=NAMES[staff]||staff;
+    document.getElementById('uname').textContent=n;
+    document.getElementById('greeting-name').textContent=n.split(' ')[0];
+    document.getElementById('av').textContent=n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    loadClientsFromStorage();
+    renderDashboard();
+    renderClientsScreen();
+    renderInvoiceClients();
+  }
+}
+
+document.addEventListener('DOMContentLoaded',autoRestoreSession);
+
+function showToast(message,type='info',duration=3000){
+  const container=document.getElementById('toast-container');
+  const toast=document.createElement('div');
+  toast.className=`toast ${type}`;
+  const icons={success:'✓',error:'✕',warning:'⚠',info:'ℹ'};
+  toast.innerHTML=`
+    <span class="toast-icon">${icons[type]}</span>
+    <span class="toast-message">${message}</span>
+    <span class="toast-close" onclick="this.parentElement.remove()">×</span>
+  `;
+  container.appendChild(toast);
+  if(duration>0)setTimeout(()=>toast.remove(),duration);
+}
+
+function showModal(title,message,onConfirm){
+  const overlay=document.getElementById('modal-overlay');
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-text').textContent=message;
+  window.currentModalAction=onConfirm;
+  overlay.classList.add('active');
+  document.getElementById('modal-confirm').focus();
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('active');
+  window.currentModalAction=null;
+}
+
+function executeModalAction(){
+  if(window.currentModalAction)window.currentModalAction();
+  closeModal();
+}
+
+function doLogin(){
+  const u=document.getElementById('lu').value.trim().toLowerCase();
+  const p=document.getElementById('lp').value;
+  if(!u||!p){
+    showToast('Enter username and PIN','error');
+    return;
+  }
+  if(STAFF[u]&&STAFF[u]===p){
+    currentStaff=u;
+    authToken='token-'+Math.random().toString(36).substr(2,9);
+    localStorage.setItem('webgen-mdw-token',authToken);
+    localStorage.setItem('webgen-current-staff',u);
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    const n=NAMES[u]||u;
+    document.getElementById('uname').textContent=n;
+    document.getElementById('greeting-name').textContent=n.split(' ')[0];
+    document.getElementById('av').textContent=n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    loadClientsFromStorage();
+    renderDashboard();
+    renderClientsScreen();
+    renderInvoiceClients();
+    showToast(`Welcome back, ${n.split(' ')[0]}!`,'success');
+  } else {
+    showToast('Invalid credentials','error');
+  }
+}
+
+function fillDemoCredentials(){
+  document.getElementById('lu').value='lamin';
+  document.getElementById('lp').value='1234';
+  document.getElementById('lu').focus();
+  showToast('Demo credentials filled','info',2000);
+}
+
+document.getElementById('lp').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();doLogin()}
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeModal();
+  }
+});
+
+function toggleSidebar(){
+  const sb=document.querySelector('.sidebar');
+  const ov=document.getElementById('sidebar-overlay');
+  sb.classList.toggle('active');
+  ov.classList.toggle('active');
+}
+
+function closeSidebar(){
+  document.querySelector('.sidebar').classList.remove('active');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+function doLogout(){
+  showModal('Sign Out','Are you sure you want to sign out?',()=>{
+    localStorage.removeItem('webgen-mdw-token');
+    localStorage.removeItem('webgen-current-staff');
+    authToken=null;
+    currentStaff=null;
+    showToast('You have signed out','info');
+    setTimeout(()=>{ window.location.href = 'portal.html'; }, 400);
+  });
+}
+
+function sw(id,el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const sc=document.getElementById('screen-'+id);
+  if(sc)sc.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  closeSidebar();
+}
+
+function toggleCb(el){
+  el.classList.toggle('done');
+  el.textContent=el.classList.contains('done')?'✓':'';
+}
+
+function genOnboardingCode(){
+  const code=generateClientCode();
+  document.getElementById('ob-code').value=code;
+  showToast('Code generated: '+code,'success');
+}
+
+function selectPak(el,pak){
+  document.querySelectorAll('.pak-opt').forEach(p=>{
+    p.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.setAttribute('data-selected',pak);
+}
+
+function submitOnboarding(){
+  const name=document.getElementById('ob-name').value.trim();
+  const sector=document.getElementById('ob-sector').value;
+  const contact=document.getElementById('ob-contact').value.trim();
+  const phone=document.getElementById('ob-phone').value.trim();
+  const email=document.getElementById('ob-email').value.trim();
+  const location=document.getElementById('ob-location').value;
+  const code=document.getElementById('ob-code').value.trim();
+  const selectedPak=document.querySelector('.pak-opt.selected');
+  const pakName=selectedPak?selectedPak.getAttribute('data-selected'):'standard';
+  const payment=document.getElementById('ob-payment').value;
+  const deposit=document.getElementById('ob-deposit').value||0;
+
+  if(!name||!contact||!phone||!code){
+    showToast('Fill in all required fields','error');
+    return;
+  }
+
+  const newClient={
+    code:code,
+    name:name,
+    sector:sector,
+    contact:contact,
+    phone:phone,
+    email:email||null,
+    location:location,
+    package:pakName,
+    payment:payment,
+    deposit:parseInt(deposit),
+    status:'pending',
+    tools:[],
+    created:new Date().toISOString(),
+    owner:currentStaff||'unknown'
+  };
+
+  CLIENTS.push(newClient);
+  saveClientsToStorage();
+  renderDashboard();
+  renderClientsScreen();
+  renderInvoiceClients();
+  resetOnboardingForm();
+  showToast(`Client ${name} successfully onboarded!`,'success');
+  sw('klanten',document.querySelectorAll('.nav-item')[1]);
+}
+
+function resetOnboardingForm(){
+  document.getElementById('ob-name').value='';
+  document.getElementById('ob-sector').value='Retail / Winkel';
+  document.getElementById('ob-contact').value='';
+  document.getElementById('ob-phone').value='';
+  document.getElementById('ob-email').value='';
+  document.getElementById('ob-location').value='Banjul';
+  document.getElementById('ob-code').value='';
+  document.getElementById('ob-payment').value='Afrimoney';
+  document.getElementById('ob-deposit').value='0';
+  document.querySelectorAll('.pak-opt').forEach(p=>p.classList.remove('selected'));
+}
+
+function generateInvoice(){
+  const clientCode=document.getElementById('inv-client').value;
+  const service=document.getElementById('inv-service').value;
+  const payment=document.getElementById('inv-payment').value;
+  const dueDate=document.getElementById('inv-duedate').value;
+
+  if(!clientCode||!service||!dueDate){
+    showToast('Fill in all fields','error');
+    return;
+  }
+
+  const client=CLIENTS.find(c=>c.code===clientCode);
+  if(!client){
+    showToast('Client not found','error');
+    return;
+  }
+
+  const amount=service.match(/GMD ([\d.]+)/)?.[1]||'0';
+  const invoiceNum='INV-'+Date.now().toString(36).toUpperCase();
+
+  const invoice={
+    id:invoiceNum,
+    client:client.name,
+    clientCode:clientCode,
+    service:service,
+    amount:amount,
+    payment:payment,
+    dueDate:dueDate,
+    status:'pending',
+    created:new Date().toISOString()
+  };
+
+  let invoices=JSON.parse(localStorage.getItem('webgen-invoices')||'[]');
+  invoices.push(invoice);
+  localStorage.setItem('webgen-invoices',JSON.stringify(invoices));
+
+  showToast(`Invoice ${invoiceNum} generated for ${client.name}!`,'success');
+  setTimeout(()=>{
+    document.getElementById('inv-client').value='';
+    document.getElementById('inv-service').value='Standard plan — GMD 5.000';
+    document.getElementById('inv-payment').value='Afrimoney';
+    document.getElementById('inv-duedate').value='';
+  },500);
+}
+
+function sendInvoiceViaWhatsApp(){
+  const clientCode=document.getElementById('inv-client').value;
+  if(!clientCode){
+    showToast('Select a client first','error');
+    return;
+  }
+  const client=CLIENTS.find(c=>c.code===clientCode);
+  if(!client){
+    showToast('Client not found','error');
+    return;
+  }
+  const msg=`Hello ${client.contact}, your invoice is ready. Click here to pay: https://webgen-gambia.workers.dev/pay/...`;
+  const whatsappUrl=`https://wa.me/${client.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`;
+  window.open(whatsappUrl,'_blank');
+  showToast('WhatsApp opened','success',2000);
+}
+
+function selectClientAndOpenTool(tool){
+  const clientCode=prompt('Enter client code (or leave blank to skip):');
+  if(!clientCode)return;
+  const client=CLIENTS.find(c=>c.code===clientCode);
+  if(!client){
+    showToast('Client not found','error');
+    return;
+  }
+  localStorage.setItem('webgen-selected-client',clientCode);
+  showToast('Client selected. Tool will open for this client.','success',2000);
+}
+
+// Offline detection
+function updateOnlineStatus() {
+  const banner = document.getElementById('offline-banner');
+  if (banner) {
+    if (!navigator.onLine) {
+      banner.classList.add('show');
+    } else {
+      banner.classList.remove('show');
+    }
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+// Loading overlay helpers
+function showLoading() {
+  const el = document.getElementById('loading-overlay');
+  if (el) el.classList.add('show');
+}
+function hideLoading() {
+  const el = document.getElementById('loading-overlay');
+  if (el) el.classList.remove('show');
+}
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{})}</script>
+<

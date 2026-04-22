@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Menu — verplaatst</title>
+<meta name="robots" content="noindex">
+<script>
+// Deze pagina is vervangen door bestel.html (klantzijde) + kassa.html Menu-tab (restaurant-zijde).
+// Stuur bezoekers door op basis van een eventuele ?r=<restaurantId> of ?t=<tafel>.
+(function(){
+  const qp = new URLSearchParams(location.search);
+  const r = qp.get('r') || localStorage.getItem('wg_restaurant_id') || 'demo';
+  const t = qp.get('t') || '';
+  const target = 'bestel.html?r=' + encodeURIComponent(r) + (t ? '&t=' + encodeURIComponent(t) : '');
+  location.replace(target);
+})();
+</script>
+</head>
+<body style="font-family:system-ui,sans-serif;background:#0e1318;color:#e8edf2;padding:40px;text-align:center">
+  <p>Deze menu-pagina is verhuisd. Je wordt doorgestuurd naar de bestelpagina…</p>
+  <p><a href="bestel.html" style="color:#00c896">Klik hier als dat niet automatisch gebeurt</a></p>
+</body>
+</html>

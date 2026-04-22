@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portaal — WebGen Gambia</title>
+<meta name="description" content="Inlogportaal voor WebGen Gambia — Admin, Medewerkers en Klanten.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;
+  --bg2:#0e1318;
+  --bg3:#141b23;
+  --card:#111820;
+  --card-hover:#16202a;
+  --border:#1e2d3d;
+  --border-light:#2a3d52;
+  --teal:#00c896;
+  --teal2:#00a87e;
+  --teal-light:#00e6a8;
+  --gold:#f5a200;
+  --gold-light:#ffbe33;
+  --red:#ff5a6e;
+  --blue:#4ab3ff;
+  --text:#e8edf2;
+  --muted:#6b8099;
+  --white:#ffffff;
+  --shadow-md: 0 8px 24px rgba(0, 200, 150, 0.15);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.4);
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Animated background glow */
+body::before{
+  content:'';
+  position:fixed;
+  top:-20%;
+  left:-10%;
+  width:60%;
+  height:60%;
+  background:radial-gradient(circle, rgba(0,200,150,0.15) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+  animation:float1 18s ease-in-out infinite;
+}
+body::after{
+  content:'';
+  position:fixed;
+  bottom:-20%;
+  right:-10%;
+  width:60%;
+  height:60%;
+  background:radial-gradient(circle, rgba(245,162,0,0.08) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:0;
+  animation:float2 22s ease-in-out infinite;
+}
+@keyframes float1{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(30px,40px)}
+}
+@keyframes float2{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(-40px,-30px)}
+}
+
+h1,h2,h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-0.02em}
+
+/* HEADER */
+.header{
+  position:relative;
+  z-index:10;
+  padding:24px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(8px);
+  background:rgba(8,12,16,0.6);
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:var(--text);
+}
+.logo-mark{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--teal),var(--teal2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:20px;
+  color:#000;
+  box-shadow:0 4px 16px rgba(0,200,150,0.4);
+}
+.logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:20px}
+.logo-text span{color:var(--teal)}
+.back-link{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+  font-weight:500;
+  transition:var(--transition);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.back-link:hover{color:var(--teal)}
+
+/* HERO */
+.hero{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:64px 24px 32px;
+  max-width:900px;
+  margin:0 auto;
+}
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(0,200,150,0.1);
+  border:1px solid rgba(0,200,150,0.3);
+  color:var(--teal);
+  padding:8px 16px;
+  border-radius:100px;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:24px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+.hero-badge::before{
+  content:'';
+  width:8px;
+  height:8px;
+  background:var(--teal);
+  border-radius:50%;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.5;transform:scale(1.3)}
+}
+.hero h1{
+  font-size:clamp(32px,5vw,52px);
+  line-height:1.1;
+  margin-bottom:16px;
+}
+.hero h1 span{
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal-light) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero p{
+  color:var(--muted);
+  font-size:17px;
+  max-width:640px;
+  margin:0 auto;
+}
+
+/* PORTAL GRID */
+.portal-grid{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:24px;
+  max-width:1200px;
+  margin:0 auto;
+  padding:32px 24px 64px;
+}
+
+/* PORTAL CARD */
+.portal-card{
+  position:relative;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:32px;
+  transition:var(--transition);
+  overflow:hidden;
+}
+.portal-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:4px;
+  background:var(--role-color, var(--teal));
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform 0.4s ease;
+}
+.portal-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--role-color, var(--teal));
+  background:var(--card-hover);
+  box-shadow:0 20px 48px rgba(0,0,0,0.4),0 0 0 1px var(--role-color, var(--teal));
+}
+.portal-card:hover::before{transform:scaleX(1)}
+
+.portal-card.admin{--role-color:var(--gold)}
+.portal-card.medewerker{--role-color:var(--blue)}
+.portal-card.klant{--role-color:var(--teal)}
+
+.role-icon{
+  width:64px;
+  height:64px;
+  border-radius:16px;
+  background:color-mix(in srgb, var(--role-color) 15%, transparent);
+  border:1px solid color-mix(in srgb, var(--role-color) 30%, transparent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:20px;
+  transition:var(--transition);
+}
+.portal-card:hover .role-icon{
+  transform:scale(1.05) rotate(-4deg);
+  background:color-mix(in srgb, var(--role-color) 25%, transparent);
+}
+.role-icon svg{
+  width:32px;
+  height:32px;
+  color:var(--role-color);
+}
+
+.role-tag{
+  display:inline-block;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--role-color);
+  background:color-mix(in srgb, var(--role-color) 12%, transparent);
+  padding:4px 10px;
+  border-radius:6px;
+  margin-bottom:12px;
+}
+.portal-card h2{
+  font-size:26px;
+  margin-bottom:8px;
+}
+.role-desc{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:20px;
+  min-height:42px;
+}
+.role-users{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:24px;
+}
+.role-users span{
+  font-size:12px;
+  padding:4px 10px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:100px;
+  color:var(--text);
+}
+
+/* FORM */
+.login-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.form-group{position:relative}
+.form-group label{
+  display:block;
+  font-size:12px;
+  font-weight:600;
+  color:var(--muted);
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+}
+.form-input{
+  width:100%;
+  padding:12px 14px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-family:inherit;
+  font-size:14px;
+  transition:var(--transition);
+}
+.form-input::placeholder{color:#4a5d73}
+.form-input:focus{
+  outline:none;
+  border-color:var(--role-color, var(--teal));
+  background:var(--bg3);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--role-color) 15%, transparent);
+}
+
+.form-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+  margin:4px 0 4px;
+}
+.remember{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  cursor:pointer;
+  user-select:none;
+}
+.remember input{
+  width:16px;
+  height:16px;
+  accent-color:var(--role-color, var(--teal));
+  cursor:pointer;
+}
+.forgot{
+  color:var(--role-color, var(--teal));
+  text-decoration:none;
+  font-weight:500;
+}
+.forgot:hover{text-decoration:underline}
+
+.btn-login{
+  width:100%;
+  padding:13px;
+  background:var(--role-color, var(--teal));
+  color:#000;
+  border:none;
+  border-radius:10px;
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:var(--transition);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:4px;
+}
+.btn-login:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 24px color-mix(in srgb, var(--role-color) 40%, transparent);
+  filter:brightness(1.1);
+}
+.btn-login:active{transform:translateY(0)}
+.btn-login svg{width:16px;height:16px;transition:var(--transition)}
+.btn-login:hover svg{transform:translateX(4px)}
+
+.error-msg{
+  background:rgba(255,90,110,0.1);
+  border:1px solid rgba(255,90,110,0.3);
+  color:var(--red);
+  font-size:13px;
+  padding:10px 12px;
+  border-radius:8px;
+  display:none;
+}
+.error-msg.show{display:block;animation:shake 0.4s}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+
+/* FOOTER NOTE */
+.footer-note{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:24px;
+  color:var(--muted);
+  font-size:13px;
+  border-top:1px solid var(--border);
+  margin-top:32px;
+}
+.footer-note a{color:var(--teal);text-decoration:none}
+.footer-note a:hover{text-decoration:underline}
+
+/* RESPONSIVE */
+@media (max-width:640px){
+  .header{padding:16px 20px}
+  .logo-text{font-size:17px}
+  .hero{padding:40px 20px 20px}
+  .portal-grid{padding:20px 16px 40px;gap:16px}
+  .portal-card{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="landing.html" class="logo">
+    <div class="logo-mark">W</div>
+    <div class="logo-text">WebGen <span>Gambia</span></div>
+  </a>
+  <a href="landing.html" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Terug naar site
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-badge">Beveiligd portaal</div>
+  <h1>Welkom bij het <span>WebGen portaal</span></h1>
+  <p>Log in met jouw rol om toegang te krijgen tot de juiste omgeving. Admins beheren financiën, medewerkers helpen klanten en restaurants beheren hun menu en bestellingen.</p>
+</section>
+
+<main class="portal-grid">
+
+  <!-- ADMIN CARD -->
+  <div class="portal-card admin" id="admin" data-role="admin">
+    <div class="role-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    </div>
+    <span class="role-tag">Financieel</span>
+    <h2>Admin</h2>
+    <p class="role-desc">Volledige controle over financiën, omzet, facturatie en rapportages.</p>
+    <div class="role-users">
+      <span>Boekhouding</span>
+      <span>Rapporten</span>
+      <span>Facturen</span>
+    </div>
+    <form class="login-form" onsubmit="return loginRole(event,'admin')">
+      <div class="form-group">
+        <label for="admin-email">E-mail</label>
+        <input type="email" id="admin-email" class="form-input" placeholder="admin@webgen.gm" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="admin-pass">Wachtwoord</label>
+        <input type="password" id="admin-pass" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <div class="form-row">
+        <label class="remember"><input type="checkbox"> Onthoud mij</label>
+        <a href="#" class="forgot" onclick="forgot(event,'admin')">Wachtwoord vergeten?</a>
+      </div>
+      <div class="error-msg" id="err-admin">Ongeldige inloggegevens. Probeer opnieuw.</div>
+      <button type="submit" class="btn-login">
+        Ga naar Admin portaal
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <!-- MEDEWERKER CARD -->
+  <div class="portal-card medewerker" id="medewerker" data-role="medewerker">
+    <div class="role-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    </div>
+    <span class="role-tag">Support & Sales</span>
+    <h2>Medewerker</h2>
+    <p class="role-desc">Klantenservice, sellers en accountmanagers — beheer deals en ondersteun klanten.</p>
+    <div class="role-users">
+      <span>Klantenservice</span>
+      <span>Sellers</span>
+      <span>Support</span>
+    </div>
+    <form class="login-form" onsubmit="return loginRole(event,'medewerker')">
+      <div class="form-group">
+        <label for="mw-email">E-mail</label>
+        <input type="email" id="mw-email" class="form-input" placeholder="naam@webgen.gm" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="mw-pass">Wachtwoord</label>
+        <input type="password" id="mw-pass" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <div class="form-row">
+        <label class="remember"><input type="checkbox"> Onthoud mij</label>
+        <a href="#" class="forgot" onclick="forgot(event,'medewerker')">Wachtwoord vergeten?</a>
+      </div>
+      <div class="error-msg" id="err-medewerker">Ongeldige inloggegevens. Probeer opnieuw.</div>
+      <button type="submit" class="btn-login">
+        Ga naar Medewerker portaal
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <!-- KLANT CARD -->
+  <div class="portal-card klant" id="klant" data-role="klant">
+    <div class="role-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 11l9-8 9 8"/>
+        <path d="M5 10v10a1 1 0 0 0 1 1h3v-6h6v6h3a1 1 0 0 0 1-1V10"/>
+        <path d="M7 14h2M15 14h2"/>
+      </svg>
+    </div>
+    <span class="role-tag">Restaurant</span>
+    <h2>Klant</h2>
+    <p class="role-desc">Voor restaurant-eigenaren — beheer je menu, bestellingen, QR-codes en facturen.</p>
+    <div class="role-users">
+      <span>Restaurants</span>
+      <span>Menu</span>
+      <span>Bestellingen</span>
+    </div>
+    <form class="login-form" onsubmit="return loginRole(event,'klant')">
+      <div class="form-group">
+        <label for="kl-email">E-mail</label>
+        <input type="email" id="kl-email" class="form-input" placeholder="jouwrestaurant@email.com" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="kl-pass">Wachtwoord</label>
+        <input type="password" id="kl-pass" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <div class="form-row">
+        <label class="remember"><input type="checkbox"> Onthoud mij</label>
+        <a href="#" class="forgot" onclick="forgot(event,'klant')">Wachtwoord vergeten?</a>
+      </div>
+      <div class="error-msg" id="err-klant">Ongeldige inloggegevens. Probeer opnieuw.</div>
+      <button type="submit" class="btn-login">
+        Ga naar Klant portaal
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+</main>
+
+<footer class="footer-note">
+  Nog geen account? <a href="landing.html#contact">Neem contact op</a> &nbsp;•&nbsp;
+  Hulp nodig? <a href="https://wa.me/2203000000" target="_blank" rel="noopener">WhatsApp support</a>
+  <br>
+  &copy; 2026 WebGen Gambia — Alle rechten voorbehouden.
+</footer>
+
+<script>
+const ROLE_TARGETS = {
+  admin: 'admin.html',
+  medewerker: 'medewerker.html',
+  klant: 'klant.html'
+};
+
+function loginRole(e, role){
+  e.preventDefault();
+  const form = e.target;
+  const err = document.getElementById('err-' + role);
+  err.classList.remove('show');
+
+  const btn = form.querySelector('.btn-login');
+  const original = btn.innerHTML;
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite"></span> Bezig met inloggen...';
+  btn.disabled = true;
+
+  // Save selected role locally (demo)
+  try { localStorage.setItem('webgen_role', role); } catch(e){}
+
+  setTimeout(() => {
+    const target = ROLE_TARGETS[role];
+    if (target) {
+      window.location.href = target;
+    } else {
+      btn.innerHTML = original;
+      btn.disabled = false;
+      err.classList.add('show');
+    }
+  }, 700);
+
+  return false;
+}
+
+function forgot(e, role){
+  e.preventDefault();
+  alert('Wachtwoord herstellen voor ' + role + ' — neem contact op met de administrator.');
+}
+
+// small keyframe for spinner
+const style = document.createElement('style');
+style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(style);
+
+// Auto-focus matching card when navigating via #admin / #medewerker / #klant
+window.addEventListener('DOMContentLoaded', () => {
+  const role = (location.hash || '').replace('#','');
+  if (['admin','medewerker','klant'].includes(role)) {
+    const card = document.getElementById(role);
+    if (card) {
+      card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.style.boxShadow = '0 20px 48px rgba(0,0,0,0.4), 0 0 0 2px var(--role-color)';
+      const firstInput = card.querySelector('input[type="email"]');
+      if (firstInput) setTimeout(() => firstInput.focus(), 400);
+    }
+  }
+});
+</script>
+
+</body>
+</html>

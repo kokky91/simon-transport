@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Visitekaartje Generator — WebGen Gambia</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#080c10;--bg2:#0e1318;--card:#111820;--border:#1e2d3d;
+  --teal:#00c896;--teal2:#00a87e;--gold:#f5a200;--text:#e8edf2;
+  --muted:#6b8099;--white:#fff;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+  --shadow:0 4px 12px rgba(0,0,0,0.3);
+  --radius:14px;
+  --radius-sm:10px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;animation:fadeIn 0.5s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg2);border-radius:10px}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:10px;transition:background var(--transition)}
+::-webkit-scrollbar-thumb:hover{background:var(--teal2)}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 5%}
+.hdr{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--white)}.logo span{color:var(--teal)}
+.back{font-size:13px;color:var(--muted);text-decoration:none;transition:color var(--transition)}.back:hover{color:var(--teal);transform:translateX(-2px)}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 5%}
+.page-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;animation:scaleIn 0.5s ease-out}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.layout{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;animation:scaleIn 0.4s ease-out;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.card:hover{box-shadow:0 8px 16px rgba(0,0,0,0.2)}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white);margin-bottom:14px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:4px}
+.form-group input,.form-group select{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-size:13px;outline:none;transition:all var(--transition);font-family:'DM Sans',sans-serif}
+.form-group input:focus,.form-group select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,150,0.15)}
+.form-group select option{background:var(--bg2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-teal{background:linear-gradient(135deg, #00c896, #00a87e);color:#000;border:none;border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition);box-shadow:0 2px 8px rgba(0,200,150,0.2)}
+.btn-teal:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,200,150,0.3)}
+.btn-teal:active{transform:translateY(0)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text);transform:translateY(-1px)}
+.style-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.swatch{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all var(--transition)}
+.swatch:hover{transform:scale(1.15)}
+.swatch.active{border-color:var(--teal);transform:scale(1.2)}
+.tmpl-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tmpl-tab{font-size:12px;font-weight:500;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--bg2);transition:all var(--transition)}
+.tmpl-tab:hover{color:var(--text);transform:translateY(-1px)}
+.tmpl-tab.active{border-color:var(--teal);color:var(--teal);background:rgba(0,200,150,.06)}
+/* CARD PREVIEW */
+.card-preview-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:28px;display:flex;flex-direction:column;align-items:center;gap:20px;transition:all var(--transition)}
+.card-preview-wrap:hover{box-shadow:0 4px 12px rgba(0,200,150,0.1)}
+#bcard{width:380px;height:220px;border-radius:var(--radius);position:relative;overflow:hidden;display:flex;align-items:center;padding:24px;gap:20px;font-family:'DM Sans',sans-serif;animation:scaleIn 0.4s ease-out}
+.bc-left{flex:1;display:flex;flex-direction:column;justify-content:space-between;height:100%}
+.bc-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;line-height:1.2;margin-bottom:3px}
+.bc-title{font-size:11px;font-weight:500;opacity:.7;margin-bottom:12px;letter-spacing:.05em;text-transform:uppercase;transition:all var(--transition)}
+.bc-contacts{display:flex;flex-direction:column;gap:4px}
+.bc-contact{font-size:11px;display:flex;align-items:center;gap:5px;opacity:.85;transition:all var(--transition)}
+.bc-contact:hover{opacity:1;transform:translateX(2px)}
+.bc-right{display:flex;flex-direction:column;align-items:center;gap:8px}
+.bc-logo{width:56px;height:56px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;transition:all var(--transition)}
+.bc-logo:hover{transform:scale(1.05)}
+.bc-qr{background:white;padding:5px;border-radius:6px}
+.bc-company{font-size:10px;font-weight:600;letter-spacing:.06em;text-align:center;opacity:.8}
+/* BACK CARD */
+#bcard-back{width:380px;height:220px;border-radius:var(--radius);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:8px;font-family:'DM Sans',sans-serif;animation:scaleIn 0.4s ease-out}
+.side-tabs{display:flex;gap:8px;margin-bottom:14px}
+.side-tab{font-size:12px;font-weight:500;padding:6px 16px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--bg2);transition:all var(--transition)}
+.side-tab:hover{transform:translateY(-1px)}
+.side-tab.active{border-color:var(--teal);color:var(--teal);background:rgba(0,200,150,.06)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--teal);color:#000;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:9999;animation:slideUp 0.3s ease-out;box-shadow:var(--shadow)}
+@keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.error{background:#e05555;color:var(--white)}
+</style>
+</head>
+<body>
+<header><div class="hdr"><div class="logo">WebGen<span>Gambia</span></div><div style="display:flex;gap:10px;align-items:center"><a href="portal.html" class="back" style="background:#00c896;color:#000;font-weight:700">Inloggen →</a><a href="landing.html" class="back">← Terug</a></div></div></header>
+<div class="wrap">
+  <div class="page-title">Visitekaartje Generator</div>
+  <div class="page-sub">Maak een professioneel digitaal visitekaartje met QR-code — downloaden en delen via WhatsApp</div>
+  <div class="layout">
+    <div>
+      <div class="card">
+        <div class="card-title">Template stijl</div>
+        <div class="tmpl-tabs">
+          <div class="tmpl-tab active" onclick="setTemplate('dark',this)">Dark Pro</div>
+          <div class="tmpl-tab" onclick="setTemplate('light',this)">Clean White</div>
+          <div class="tmpl-tab" onclick="setTemplate('teal',this)">Teal</div>
+          <div class="tmpl-tab" onclick="setTemplate('gold',this)">Gold</div>
+        </div>
+        <div class="form-group"><label>Accent kleur</label><div class="style-swatches">
+          <div class="swatch active" style="background:#00c896" onclick="setAccent('#00c896',this)"></div>
+          <div class="swatch" style="background:#f5a200" onclick="setAccent('#f5a200',this)"></div>
+          <div class="swatch" style="background:#60a5fa" onclick="setAccent('#60a5fa',this)"></div>
+          <div class="swatch" style="background:#a78bfa" onclick="setAccent('#a78bfa',this)"></div>
+          <div class="swatch" style="background:#f472b6" onclick="setAccent('#f472b6',this)"></div>
+          <div class="swatch" style="background:#fb923c" onclick="setAccent('#fb923c',this)"></div>
+        </div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Jouw gegevens</div>
+        <div class="row2">
+          <div class="form-group"><label>Voornaam</label><input id="bc-fn" placeholder="Fatou" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+          <div class="form-group"><label>Achternaam</label><input id="bc-ln" placeholder="Jallow" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+        </div>
+        <div class="form-group"><label>Functie / Titel</label><input id="bc-role" placeholder="Eigenaar / CEO" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+        <div class="form-group"><label>Bedrijfsnaam</label><input id="bc-co" placeholder="Fatou's Fashion" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+        <div class="form-group"><label>Telefoon / WhatsApp</label><input id="bc-tel" placeholder="+220 3XX XXXX" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+        <div class="form-group"><label>Email (optioneel)</label><input id="bc-email" placeholder="fatou@fashion.gm" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+        <div class="form-group"><label>Website (optioneel)</label><input id="bc-web" placeholder="fatous-fashion.pages.dev" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+        <div class="form-group"><label>Stad</label><select id="bc-city" onchange="updateCard()">
+          <option>Banjul</option><option>Serrekunda</option><option>Bakau</option><option>Kololi</option><option>Brikama</option>
+        </select></div>
+        <div class="form-group"><label>Initialen / Logo tekst (max 2 letters)</label><input id="bc-init" placeholder="FJ" maxlength="2" oninput="updateCard()" onkeypress="handleEnter(event,updateCard)"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-teal" onclick="downloadCard()">↓ Download PNG</button>
+        <button class="btn-ghost" onclick="shareWA()">💬 WhatsApp delen</button>
+        <button class="btn-ghost" onclick="downloadVCard()">📇 vCard opslaan</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card-preview-wrap">
+        <div class="side-tabs">
+          <div class="side-tab active" onclick="showSide('front',this)">Voorkant</div>
+          <div class="side-tab" onclick="showSide('back',this)">Achterkant</div>
+        </div>
+        <div id="side-front">
+          <div id="bcard"></div>
+        </div>
+        <div id="side-back" style="display:none">
+          <div id="bcard-back"></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted)">380 × 220px · Standaard visitekaartje formaat</div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-title">QR — contactgegevens scannen</div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div id="bc-qr-big" style="background:white;padding:10px;border-radius:var(--radius-sm)"></div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--white);margin-bottom:4px">Scan = direct opslaan</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px">Klant scant QR met telefoon → contactgegevens worden direct opgeslagen</div>
+            <button class="btn-teal" onclick="downloadQR()" style="font-size:12px;padding:7px 14px">↓ Download QR</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showToast(msg, isError=false){
+  const toast=document.createElement('div');
+  toast.className='toast'+(isError?' error':'');
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+function handleEnter(e, callback){
+  if(e.key==='Enter'){callback();}
+}
+
+const TEMPLATES={
+  dark:{bg:'#111820',text:'#e8edf2',sub:'#6b8099',logoBg:'rgba(255,255,255,.08)'},
+  light:{bg:'#ffffff',text:'#111827',sub:'#6b7280',logoBg:'rgba(0,0,0,.06)'},
+  teal:{bg:'#003d2e',text:'#e8edf2',sub:'#a7f3d0',logoBg:'rgba(0,200,150,.15)'},
+  gold:{bg:'#1c1200',text:'#fef3c7',sub:'#d97706',logoBg:'rgba(245,162,0,.15)'},
+};
+let currentTpl='dark';
+let currentAccent='#00c896';
+
+function setTemplate(t,el){
+  currentTpl=t;
+  document.querySelectorAll('.tmpl-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  updateCard();
+}
+function setAccent(c,el){
+  currentAccent=c;
+  document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  updateCard();
+}
+function showSide(s,el){
+  document.querySelectorAll('.side-tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('side-front').style.display=s==='front'?'block':'none';
+  document.getElementById('side-back').style.display=s==='back'?'block':'none';
+}
+
+function getData(){
+  return {
+    fn:document.getElementById('bc-fn').value||'Voornaam',
+    ln:document.getElementById('bc-ln').value||'Achternaam',
+    role:document.getElementById('bc-role').value||'Eigenaar',
+    co:document.getElementById('bc-co').value||'Bedrijfsnaam',
+    tel:document.getElementById('bc-tel').value||'+220 3XX XXXX',
+    email:document.getElementById('bc-email').value||'',
+    web:document.getElementById('bc-web').value||'',
+    city:document.getElementById('bc-city').value||'Gambia',
+    init:document.getElementById('bc-init').value||'FJ',
+  };
+}
+
+function updateCard(){
+  const d=getData();
+  const tpl=TEMPLATES[currentTpl];
+  const card=document.getElementById('bcard');
+  card.style.background=tpl.bg;
+
+  // generate mini QR in card
+  const miniQrId='mini-qr-'+Date.now();
+  card.innerHTML=`
+    <div class="bc-left">
+      <div>
+        <div class="bc-name" style="color:${tpl.text}">${d.fn} ${d.ln}</div>
+        <div class="bc-title" style="color:${currentAccent}">${d.role} · ${d.co}</div>
+      </div>
+      <div class="bc-contacts">
+        <div class="bc-contact" style="color:${tpl.text}"><span style="color:${currentAccent}">📞</span>${d.tel}</div>
+        ${d.email?`<div class="bc-contact" style="color:${tpl.text}"><span style="color:${currentAccent}">✉</span>${d.email}</div>`:''}
+        ${d.web?`<div class="bc-contact" style="color:${tpl.text}"><span style="color:${currentAccent}">🌐</span>${d.web}</div>`:''}
+        <div class="bc-contact" style="color:${tpl.sub}"><span>📍</span>${d.city}, Gambia</div>
+      </div>
+    </div>
+    <div class="bc-right">
+      <div class="bc-logo" style="background:${tpl.logoBg};color:${currentAccent}">${d.init.toUpperCase().slice(0,2)}</div>
+      <div class="bc-qr" id="${miniQrId}"></div>
+      <div class="bc-company" style="color:${tpl.sub};font-size:9px">${d.co}</div>
+    </div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:${currentAccent}"></div>`;
+
+  // mini QR
+  try{
+    const vcard=buildVCard(d);
+    new QRCode(document.getElementById(miniQrId),{text:vcard,width:56,height:56,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+  }catch(e){}
+
+  // back card
+  const back=document.getElementById('bcard-back');
+  back.style.background=currentAccent;
+  back.innerHTML=`
+    <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#000;letter-spacing:-1px">${d.init.toUpperCase().slice(0,2)}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#000">${d.co}</div>
+    <div style="font-size:12px;color:rgba(0,0,0,.6);margin-top:4px">${d.city}, The Gambia</div>
+    <div style="margin-top:12px;font-size:11px;color:rgba(0,0,0,.5)">WebGen Gambia</div>`;
+
+  // big QR
+  const bigQr=document.getElementById('bc-qr-big');
+  bigQr.innerHTML='';
+  try{
+    new QRCode(bigQr,{text:buildVCard(d),width:110,height:110,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+  }catch(e){}
+}
+
+function buildVCard(d){
+  return `BEGIN:VCARD\nVERSION:3.0\nFN:${d.fn} ${d.ln}\nORG:${d.co}\nTITLE:${d.role}\nTEL:${d.tel}\n${d.email?'EMAIL:'+d.email+'\n':''}${d.web?'URL:'+d.web+'\n':''}ADR:;;${d.city};;The Gambia\nEND:VCARD`;
+}
+
+function downloadCard(){
+  html2canvas(document.getElementById('bcard'),{scale:3,backgroundColor:null}).then(c=>{
+    const a=document.createElement('a');a.download='visitekaartje.png';a.href=c.toDataURL();a.click();
+    showToast('Visitekaartje gedownload');
+  }).catch(err=>{
+    showToast('Fout bij downloaden van visitekaartje', true);
+  });
+}
+function downloadQR(){
+  const c=document.getElementById('bc-qr-big').querySelector('canvas');
+  if(!c){
+    showToast('Genereer eerst een QR-code', true);
+    return;
+  }
+  const a=document.createElement('a');a.download='contact-qr.png';a.href=c.toDataURL();a.click();
+  showToast('QR-code gedownload');
+}
+function downloadVCard(){
+  const d=getData();
+  const blob=new Blob([buildVCard(d)],{type:'text/vcard'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=d.fn+'-'+d.ln+'.vcf';a.click();
+  showToast('vCard opgeslagen');
+}
+function shareWA(){
+  const d=getData();
+  const msg=encodeURIComponent(`Visitekaartje van ${d.fn} ${d.ln}\n${d.role} · ${d.co}\n📞 ${d.tel}\n${d.web?'🌐 '+d.web:''}`);
+  window.open(`https://wa.me/?text=${msg}`,'_blank');
+  showToast('WhatsApp geopend');
+}
+
+updateCard();
+</script>
+</body>
+</html>

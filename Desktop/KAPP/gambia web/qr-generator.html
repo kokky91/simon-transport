@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>QR Code Generator — WebGen Gambia</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#080c10;--bg2:#0e1318;--card:#111820;--border:#1e2d3d;
+  --teal:#00c896;--teal2:#00a87e;--gold:#f5a200;--text:#e8edf2;
+  --muted:#6b8099;--white:#fff;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+  --shadow:0 4px 12px rgba(0,0,0,0.3);
+  --radius:14px;
+  --radius-sm:10px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;animation:fadeIn 0.5s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg2);border-radius:10px}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:10px;transition:background var(--transition)}
+::-webkit-scrollbar-thumb:hover{background:var(--teal2)}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 5%}
+.hdr{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--white)}
+.logo span{color:var(--teal)}
+.back{font-size:13px;color:var(--muted);text-decoration:none;transition:color var(--transition)}
+.back:hover{color:var(--teal);transform:translateX(-2px)}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 5%}
+.page-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;animation:scaleIn 0.5s ease-out}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.layout{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;animation:scaleIn 0.4s ease-out;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.card:hover{box-shadow:0 8px 16px rgba(0,0,0,0.2)}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white);margin-bottom:16px}
+.type-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.type-tab{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;cursor:pointer;transition:all var(--transition)}
+.type-tab:hover{border-color:var(--teal);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,200,150,0.1)}
+.type-tab.active{border-color:var(--teal);background:rgba(0,200,150,.08)}
+.type-tab .ico{font-size:20px;margin-bottom:5px}
+.type-tab .lbl{font-size:11px;font-weight:500;color:var(--muted)}
+.type-tab.active .lbl{color:var(--teal)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text);font-size:13px;outline:none;transition:all var(--transition);font-family:'DM Sans',sans-serif}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,150,0.15)}
+.form-group select option{background:var(--bg2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-teal{background:linear-gradient(135deg, #00c896, #00a87e);color:#000;border:none;border-radius:var(--radius-sm);padding:11px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;transition:all var(--transition);box-shadow:0 2px 8px rgba(0,200,150,0.2)}
+.btn-teal:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,200,150,0.3)}
+.btn-teal:active{transform:translateY(0)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;transition:all var(--transition);margin-top:8px}
+.btn-ghost:hover{color:var(--text);border-color:var(--text);transform:translateY(-1px)}
+.qr-preview{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;background:var(--bg2);border-radius:var(--radius-sm);margin-bottom:16px;padding:20px;transition:all var(--transition)}
+.qr-preview:hover{box-shadow:0 4px 12px rgba(0,200,150,0.1)}
+#qr-output{background:white;padding:14px;border-radius:10px;display:none;animation:scaleIn 0.3s ease-out}
+.qr-placeholder{text-align:center;color:var(--muted)}
+.qr-placeholder .ico{font-size:40px;margin-bottom:10px}
+.qr-placeholder p{font-size:13px}
+.color-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.color-opt{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all var(--transition)}
+.color-opt:hover{transform:scale(1.15)}
+.color-opt.active{border-color:var(--teal);transform:scale(1.2)}
+.section-panel{display:none}
+.section-panel.active{display:block;animation:fadeIn 0.3s ease-out}
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.preset{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;cursor:pointer;transition:all var(--transition);font-size:12px;font-weight:500;color:var(--muted);text-align:center}
+.preset:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,200,150,0.1)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--teal);color:#000;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:9999;animation:slideUp 0.3s ease-out;box-shadow:var(--shadow)}
+@keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.error{background:#e05555;color:var(--white)}
+</style>
+</head>
+<body>
+<header><div class="hdr"><div class="logo">WebGen<span>Gambia</span></div><div style="display:flex;gap:10px;align-items:center"><a href="portal.html" class="back" style="background:#00c896;color:#000;font-weight:700">Inloggen →</a><a href="landing.html" class="back">← Terug</a></div></div></header>
+<div class="wrap">
+  <div class="page-title">QR Code Generator</div>
+  <div class="page-sub">Maak QR-codes voor websites, WhatsApp, betalingen, menu's en meer</div>
+  <div class="layout">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Type QR-code</div>
+        <div class="type-tabs">
+          <div class="type-tab active" onclick="setType('website',this)"><div class="ico">🌐</div><div class="lbl">Website</div></div>
+          <div class="type-tab" onclick="setType('whatsapp',this)"><div class="ico">💬</div><div class="lbl">WhatsApp</div></div>
+          <div class="type-tab" onclick="setType('wave',this)"><div class="ico">🌊</div><div class="lbl">Wave</div></div>
+          <div class="type-tab" onclick="setType('afrimoney',this)"><div class="ico">💰</div><div class="lbl">Afrimoney</div></div>
+          <div class="type-tab" onclick="setType('telefoon',this)"><div class="ico">📞</div><div class="lbl">Bellen</div></div>
+          <div class="type-tab" onclick="setType('email',this)"><div class="ico">📧</div><div class="lbl">Email</div></div>
+          <div class="type-tab" onclick="setType('tekst',this)"><div class="ico">📝</div><div class="lbl">Vrije tekst</div></div>
+        </div>
+
+        <!-- WEBSITE -->
+        <div class="section-panel active" id="panel-website">
+          <div class="form-group"><label>Website URL</label><input id="in-website" placeholder="https://jouw-bedrijf.pages.dev" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+          <div class="preset-grid">
+            <div class="preset" onclick="fillPreset('website','https://jouw-bedrijf.pages.dev')">Jouw website</div>
+            <div class="preset" onclick="fillPreset('website','https://webgen-gambia.pages.dev')">WebGen platform</div>
+          </div>
+        </div>
+        <!-- WHATSAPP -->
+        <div class="section-panel" id="panel-whatsapp">
+          <div class="form-group"><label>Telefoonnummer (met landcode)</label><input id="in-wa-num" placeholder="+220 3XX XXXX" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+          <div class="form-group"><label>Vooraf ingevuld bericht (optioneel)</label><textarea id="in-wa-msg" rows="2" placeholder="Hallo, ik wil graag meer info..." oninput="preview()"></textarea></div>
+        </div>
+        <!-- WAVE -->
+        <div class="section-panel" id="panel-wave">
+          <div class="form-group"><label>Wave nummer</label><input id="in-wave-num" placeholder="+220 3XX XXXX" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+          <div class="form-group"><label>Naam ontvanger</label><input id="in-wave-name" placeholder="Fatou's Fashion" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+          <div class="form-group"><label>Bedrag (GMD) — optioneel</label><input id="in-wave-amt" type="number" placeholder="500" oninput="preview()"></div>
+        </div>
+        <!-- AFRIMONEY -->
+        <div class="section-panel" id="panel-afrimoney">
+          <div class="form-group"><label>Afrimoney nummer</label><input id="in-afri-num" placeholder="+220 3XX XXXX" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+          <div class="form-group"><label>Naam ontvanger</label><input id="in-afri-name" placeholder="Fatou's Fashion" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+          <div class="form-group"><label>Bedrag (GMD) — optioneel</label><input id="in-afri-amt" type="number" placeholder="500" oninput="preview()"></div>
+        </div>
+        <!-- TELEFOON -->
+        <div class="section-panel" id="panel-telefoon">
+          <div class="form-group"><label>Telefoonnummer</label><input id="in-tel" placeholder="+220 3XX XXXX" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+        </div>
+        <!-- EMAIL -->
+        <div class="section-panel" id="panel-email">
+          <div class="form-group"><label>Email adres</label><input id="in-email" placeholder="info@bedrijf.gm" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+          <div class="form-group"><label>Onderwerp (optioneel)</label><input id="in-email-sub" placeholder="Aanvraag informatie" oninput="preview()" onkeypress="handleEnter(event,preview)"></div>
+        </div>
+        <!-- TEKST -->
+        <div class="section-panel" id="panel-tekst">
+          <div class="form-group"><label>Tekst of URL</label><textarea id="in-tekst" rows="3" placeholder="Voer tekst in..." oninput="preview()"></textarea></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Stijl instellen</div>
+        <div class="form-group">
+          <label>Grootte</label>
+          <select id="qr-size" onchange="preview()">
+            <option value="180">Klein (180px)</option>
+            <option value="240" selected>Normaal (240px)</option>
+            <option value="300">Groot (300px)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Foutcorrectie</label>
+          <select id="qr-err" onchange="preview()">
+            <option value="L">Laag — kleiner bestand</option>
+            <option value="M" selected>Gemiddeld — aanbevolen</option>
+            <option value="H">Hoog — voor logo overlay</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Kleur</label>
+          <div class="color-row">
+            <div class="color-opt active" style="background:#000000" onclick="setColor('#000000',this)" title="Zwart"></div>
+            <div class="color-opt" style="background:#00c896" onclick="setColor('#00c896',this)" title="Teal"></div>
+            <div class="color-opt" style="background:#1a3a2a" onclick="setColor('#1a3a2a',this)" title="Donker groen"></div>
+            <div class="color-opt" style="background:#1e40af" onclick="setColor('#1e40af',this)" title="Blauw"></div>
+            <div class="color-opt" style="background:#7c3aed" onclick="setColor('#7c3aed',this)" title="Paars"></div>
+            <div class="color-opt" style="background:#b45309" onclick="setColor('#b45309',this)" title="Goud"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">Preview</div>
+        <div class="qr-preview">
+          <div id="qr-output"></div>
+          <div class="qr-placeholder" id="qr-placeholder">
+            <div class="ico">▦</div>
+            <p>Vul gegevens in<br>QR-code verschijnt hier</p>
+          </div>
+        </div>
+        <div id="qr-label" style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:14px;display:none"></div>
+        <button class="btn-teal" id="btn-download" onclick="downloadQR()" style="display:none">↓ Download PNG</button>
+        <button class="btn-ghost" onclick="preview()">↻ Vernieuwen</button>
+        <div style="margin-top:14px;font-size:12px;color:var(--muted);line-height:1.6">
+          💡 Print op visitekaartje, sticker, menu of banner voor makkelijke toegang
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-title">Snel aanmaken voor klant</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="preset" onclick="setType('website',document.querySelectorAll('.type-tab')[0]);fillPreset('website','https://fatous-fashion.pages.dev');preview()" style="text-align:left;padding:10px 12px">🌐 Website QR — Fatou's Fashion</div>
+          <div class="preset" onclick="setType('whatsapp',document.querySelectorAll('.type-tab')[1]);document.getElementById('in-wa-num').value='+2203001234';preview()" style="text-align:left;padding:10px 12px">💬 WhatsApp QR — Direct bestellen</div>
+          <div class="preset" onclick="setType('afrimoney',document.querySelectorAll('.type-tab')[3]);document.getElementById('in-afri-name').value='Betaal ons';preview()" style="text-align:left;padding:10px 12px">💰 Afrimoney betaal-QR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showToast(msg, isError=false){
+  const toast=document.createElement('div');
+  toast.className='toast'+(isError?' error':'');
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+function handleEnter(e, callback){
+  if(e.key==='Enter'){callback();}
+}
+
+let currentType='website';
+let qrColor='#000000';
+let qrInst=null;
+
+function setType(type,el){
+  currentType=type;
+  document.querySelectorAll('.type-tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.section-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+type).classList.add('active');
+  clearQR();
+}
+
+function setColor(c,el){
+  qrColor=c;
+  document.querySelectorAll('.color-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+  preview();
+}
+
+function fillPreset(type,val){
+  document.getElementById('in-'+type).value=val;
+  preview();
+}
+
+function buildData(){
+  switch(currentType){
+    case 'website':
+      const url=document.getElementById('in-website').value.trim();
+      return url||null;
+    case 'whatsapp':
+      const wn=document.getElementById('in-wa-num').value.trim().replace(/\s/g,'');
+      const wm=document.getElementById('in-wa-msg').value.trim();
+      if(!wn){showToast('Vul een telefoonnummer in', true);return null;}
+      const num=wn.replace('+','');
+      return wm?`https://wa.me/${num}?text=${encodeURIComponent(wm)}`:`https://wa.me/${num}`;
+    case 'wave':
+      const wvn=document.getElementById('in-wave-num').value.trim().replace(/\s/g,'');
+      const wvname=document.getElementById('in-wave-name').value.trim();
+      const wvamt=document.getElementById('in-wave-amt').value.trim();
+      if(!wvn){showToast('Vul een Wave nummer in', true);return null;}
+      return `wave://pay?to=${encodeURIComponent(wvn)}&name=${encodeURIComponent(wvname)}&amount=${wvamt}`;
+    case 'afrimoney':
+      const an=document.getElementById('in-afri-name').value.trim();
+      const anum=document.getElementById('in-afri-num').value.trim();
+      const amt=document.getElementById('in-afri-amt').value.trim();
+      if(!anum){showToast('Vul een Afrimoney nummer in', true);return null;}
+      return `afrimoney://pay?to=${encodeURIComponent(anum)}&name=${encodeURIComponent(an)}&amount=${amt}`;
+    case 'telefoon':
+      const tel=document.getElementById('in-tel').value.trim().replace(/\s/g,'');
+      return tel?`tel:${tel}`:null;
+    case 'email':
+      const em=document.getElementById('in-email').value.trim();
+      const sub=document.getElementById('in-email-sub').value.trim();
+      if(!em){showToast('Vul een email adres in', true);return null;}
+      return sub?`mailto:${em}?subject=${encodeURIComponent(sub)}`:`mailto:${em}`;
+    case 'tekst':
+      const txt=document.getElementById('in-tekst').value.trim();
+      return txt||null;
+    default: return null;
+  }
+}
+
+function getLabel(){
+  const labels={website:'Website QR-code',whatsapp:'WhatsApp QR-code',afrimoney:'Afrimoney betaal QR-code',telefoon:'Bel QR-code',email:'Email QR-code',tekst:'Tekst QR-code'};
+  return labels[currentType]||'QR-code';
+}
+
+function preview(){
+  const data=buildData();
+  const out=document.getElementById('qr-output');
+  const ph=document.getElementById('qr-placeholder');
+  const label=document.getElementById('qr-label');
+  const dlBtn=document.getElementById('btn-download');
+
+  if(!data){clearQR();return}
+
+  const size=parseInt(document.getElementById('qr-size').value);
+  const err=document.getElementById('qr-err').value;
+
+  out.innerHTML='';
+  try{
+    qrInst=new QRCode(out,{
+      text:data,width:size,height:size,
+      colorDark:qrColor,colorLight:'#ffffff',
+      correctLevel:QRCode.CorrectLevel[err]
+    });
+    out.style.display='block';
+    ph.style.display='none';
+    label.textContent=getLabel();
+    label.style.display='block';
+    dlBtn.style.display='block';
+  } catch(e){
+    clearQR();
+    showToast('Fout bij het genereren van QR-code', true);
+  }
+}
+
+function clearQR(){
+  const out=document.getElementById('qr-output');
+  out.innerHTML='';out.style.display='none';
+  document.getElementById('qr-placeholder').style.display='flex';
+  document.getElementById('qr-label').style.display='none';
+  document.getElementById('btn-download').style.display='none';
+}
+
+function downloadQR(){
+  const canvas=document.getElementById('qr-output').querySelector('canvas');
+  if(!canvas){
+    showToast('Genereer eerst een QR-code', true);
+    return;
+  }
+  const link=document.createElement('a');
+  link.download='qr-webgen-gambia.png';
+  link.href=canvas.toDataURL('image/png');
+  link.click();
+  showToast('QR-code gedownload');
+}
+</script>
+</body>
+</html>

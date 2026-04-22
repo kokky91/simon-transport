@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Contract Generator — WebGen Gambia</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--bg2:#0e1318;--card:#111820;--border:#1e2d3d;
+  --teal:#00c896;--teal2:#00a87e;--gold:#f5a200;--text:#e8edf2;
+  --muted:#6b8099;--white:#fff;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+  --shadow:0 4px 12px rgba(0,0,0,0.3);
+  --radius:14px;
+  --radius-sm:10px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;animation:fadeIn 0.5s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg2);border-radius:10px}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:10px;transition:background var(--transition)}
+::-webkit-scrollbar-thumb:hover{background:var(--teal2)}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 5%}
+.hdr{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--white)}.logo span{color:var(--teal)}
+.back{font-size:13px;color:var(--muted);text-decoration:none;transition:color var(--transition)}.back:hover{color:var(--teal);transform:translateX(-2px)}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 5%}
+.page-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;animation:scaleIn 0.5s ease-out}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:22px;align-items:start}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;animation:scaleIn 0.4s ease-out;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.card:hover{box-shadow:0 8px 16px rgba(0,0,0,0.2)}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white);margin-bottom:14px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-size:13px;outline:none;transition:all var(--transition);font-family:'DM Sans',sans-serif}
+.form-group input:focus,.form-group select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,150,0.15)}
+.form-group select option{background:var(--bg2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-teal{background:linear-gradient(135deg, #00c896, #00a87e);color:#000;border:none;border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition);box-shadow:0 2px 8px rgba(0,200,150,0.2)}
+.btn-teal:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,200,150,0.3)}
+.btn-teal:active{transform:translateY(0)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text);transform:translateY(-1px)}
+.lang-tabs{display:flex;gap:8px;margin-bottom:14px}
+.ltab{font-size:12px;font-weight:500;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--bg2);transition:all var(--transition)}
+.ltab:hover{transform:translateY(-1px)}
+.ltab.active{border-color:var(--teal);color:var(--teal);background:rgba(0,200,150,.06)}
+/* CONTRACT PREVIEW */
+.contract-doc{background:#fff;border-radius:var(--radius);padding:40px;font-family:'DM Sans',sans-serif;color:#111;font-size:13px;line-height:1.7;max-height:700px;overflow-y:auto;animation:scaleIn 0.4s ease-out;box-shadow:var(--shadow)}
+.doc-header{text-align:center;border-bottom:2px solid #111;padding-bottom:16px;margin-bottom:24px}
+.doc-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#111;margin-bottom:4px}
+.doc-title{font-size:16px;font-weight:600;color:#111;margin-bottom:4px}
+.doc-num{font-size:12px;color:#666}
+.doc-section{margin-bottom:18px;transition:all var(--transition)}
+.doc-h{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#111;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.doc-p{font-size:13px;color:#333;line-height:1.7;margin-bottom:6px;transition:all var(--transition)}
+.doc-p:hover{color:#111}
+.parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;background:#f9f9f9;border-radius:var(--radius-sm);padding:14px;margin-bottom:18px;transition:all var(--transition)}
+.parties-grid:hover{background:#f5f5f5;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.party-label{font-size:10px;font-weight:600;color:#888;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.party-name{font-weight:600;color:#111;font-size:14px;margin-bottom:2px}
+.party-detail{font-size:12px;color:#666;transition:color var(--transition)}
+.party-detail:hover{color:#333}
+.services-table{width:100%;border-collapse:collapse;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.05);border-radius:var(--radius-sm);overflow:hidden}
+.services-table th{font-size:11px;font-weight:600;color:#666;text-align:left;padding:7px;border-bottom:1px solid #ddd;letter-spacing:.04em;text-transform:uppercase;background:#f9f9f9}
+.services-table td{font-size:13px;color:#333;padding:7px;border-bottom:1px solid #f0f0f0;transition:all var(--transition)}
+.services-table tr:hover td{background:#f9f9f9}
+.sig-section{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:30px;padding-top:20px;border-top:1px solid #ddd;animation:fadeIn 0.5s ease-out}
+.sig-line{border-bottom:1px solid #111;height:40px;margin-bottom:6px;transition:all var(--transition)}
+.sig-line:hover{border-bottom:2px solid #111}
+.sig-label{font-size:11px;color:#888}
+.clause{font-size:12px;color:#555;padding:8px 12px;background:#f9f9f9;border-left:3px solid var(--teal);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-bottom:8px;transition:all var(--transition)}
+.clause:hover{background:#f5f5f5;border-left-color:var(--teal2)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--teal);color:#000;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:9999;animation:slideUp 0.3s ease-out;box-shadow:var(--shadow)}
+@keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.error{background:#e05555;color:var(--white)}
+</style>
+</head>
+<body>
+<header><div class="hdr"><div class="logo">WebGen<span>Gambia</span></div><div style="display:flex;gap:10px;align-items:center"><a href="portal.html" class="back" style="background:#00c896;color:#000;font-weight:700">Inloggen →</a><a href="landing.html" class="back">← Terug</a></div></div></header>
+<div class="wrap">
+  <div class="page-title">Contract Generator</div>
+  <div class="page-sub">Professionele klantovereenkomst voor webdiensten — in Engels en Nederlands</div>
+  <div class="layout">
+    <div>
+      <div class="card">
+        <div class="card-title">Taal</div>
+        <div class="lang-tabs">
+          <div class="ltab active" onclick="setLang('en',this)">English</div>
+          <div class="ltab" onclick="setLang('nl',this)">Nederlands</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Dienstverlener (WebGen)</div>
+        <div class="form-group"><label>Bedrijfsnaam</label><input id="prov-co" value="KOK Enterprises" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        <div class="form-group"><label>Adres</label><input id="prov-addr" value="Banjul, The Gambia" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        <div class="form-group"><label>Telefoon</label><input id="prov-tel" value="+220 3XX XXXX" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        <div class="form-group"><label>Email</label><input id="prov-email" value="info@webgen-gambia.com" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Klant</div>
+        <div class="form-group"><label>Naam klant / bedrijf</label><input id="cl-name" placeholder="Fatou's Fashion" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        <div class="form-group"><label>Contactpersoon</label><input id="cl-contact" placeholder="Fatou Jallow" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        <div class="form-group"><label>Telefoon</label><input id="cl-tel" placeholder="+220 3XX XXXX" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        <div class="form-group"><label>Adres</label><input id="cl-addr" placeholder="Serrekunda, Gambia" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Diensten & Betaling</div>
+        <div class="form-group"><label>Pakket</label><select id="pakket" onchange="updateDoc()">
+          <option value="Starter">Starter — GMD 2.500</option>
+          <option value="Standard">Standard — GMD 5.000</option>
+          <option value="Premium">Premium — GMD 8.500</option>
+          <option value="Custom">Maatwerk</option>
+        </select></div>
+        <div class="form-group"><label>Extra diensten (optioneel)</label><input id="extra" placeholder="WhatsApp Catalog, Social Media..." oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        <div class="row2">
+          <div class="form-group"><label>Totaal bedrag (GMD)</label><input id="total-amt" placeholder="5000" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+          <div class="form-group"><label>Aanbetaling (GMD)</label><input id="deposit" placeholder="2500" oninput="updateDoc()" onkeypress="handleEnter(event,updateDoc)"></div>
+        </div>
+        <div class="row2">
+          <div class="form-group"><label>Betaalmethode</label><select id="pay-method" onchange="updateDoc()"><option>Afrimoney</option><option>QMoney</option><option>Wave</option><option>Cash</option><option>Termijnbetaling</option></select></div>
+          <div class="form-group"><label>Leverdatum</label><input type="date" id="delivery-date" oninput="updateDoc()"></div>
+        </div>
+        <div class="form-group"><label>Contractdatum</label><input type="date" id="contract-date" oninput="updateDoc()"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-teal" onclick="printDoc()">🖨 Printen / PDF opslaan</button>
+        <button class="btn-ghost" onclick="downloadHTML()">↓ Download HTML</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card-title" style="margin-bottom:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white)">Contract preview</div>
+      <div class="contract-doc" id="contract-doc">
+        <!-- JS rendered -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showToast(msg, isError=false){
+  const toast=document.createElement('div');
+  toast.className='toast'+(isError?' error':'');
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+function handleEnter(e, callback){
+  if(e.key==='Enter'){callback();}
+}
+
+let lang='en';
+function setLang(l,el){lang=l;document.querySelectorAll('.ltab').forEach(x=>x.classList.remove('active'));el.classList.add('active');updateDoc()}
+
+const T={
+  en:{
+    title:'Web Services Agreement',contract:'Contract No.',parties:'Parties',provider:'Service Provider',client:'Client',services:'Services Included',payment:'Payment Terms',terms:'Terms & Conditions',delivery:'Delivery',support:'Support',ownership:'Ownership',sig:'Signatures',sigprov:'Service Provider Signature',sigcl:'Client Signature',date:'Date',name:'Name',
+    t1:'The Service Provider agrees to design and deliver a professional website and selected digital services as listed in this agreement.',
+    t2:'The client shall provide all required content (text, photos, business information) within 3 working days of signing this agreement.',
+    t3:'The Service Provider will deliver the completed website within 24 hours of receiving all required content and the agreed deposit payment.',
+    t4:'A deposit of 50% of the total amount is due before work commences. The remaining balance is due upon delivery.',
+    t5:'All digital materials, website content, and custom graphics created under this agreement become the property of the Client upon full payment.',
+    t6:'The Service Provider provides WhatsApp support for 30 days after delivery for bug fixes and minor content adjustments.',
+    t7:'This agreement is governed by the laws of The Gambia.',
+  },
+  nl:{
+    title:'Webdiensten Overeenkomst',contract:'Contract Nr.',parties:'Partijen',provider:'Dienstverlener',client:'Klant',services:'Inbegrepen Diensten',payment:'Betalingsvoorwaarden',terms:'Voorwaarden',delivery:'Oplevering',support:'Ondersteuning',ownership:'Eigendom',sig:'Handtekeningen',sigprov:'Handtekening Dienstverlener',sigcl:'Handtekening Klant',date:'Datum',name:'Naam',
+    t1:'De dienstverlener stemt ermee in een professionele website en geselecteerde digitale diensten te ontwerpen en te leveren zoals vermeld in deze overeenkomst.',
+    t2:'De klant levert alle benodigde inhoud (tekst, foto\'s, bedrijfsinformatie) binnen 3 werkdagen na ondertekening.',
+    t3:'De dienstverlener levert de voltooide website binnen 24 uur na ontvangst van alle benodigde inhoud en de aanbetaling.',
+    t4:'Een aanbetaling van 50% van het totale bedrag is verschuldigd voordat het werk begint. Het resterende saldo is verschuldigd bij oplevering.',
+    t5:'Alle digitale materialen worden eigendom van de klant na volledige betaling.',
+    t6:'De dienstverlener biedt 30 dagen WhatsApp ondersteuning na oplevering voor bugfixes en kleine aanpassingen.',
+    t7:'Deze overeenkomst wordt beheerst door de wetten van The Gambia.',
+  }
+};
+
+function fDate(d){if(!d)return'___________';const[y,m,day]=d.split('-');return `${parseInt(day)}/${parseInt(m)}/${y}`}
+
+function updateDoc(){
+  const t=T[lang];
+  const provCo=document.getElementById('prov-co').value||'KOK Enterprises';
+  const provAddr=document.getElementById('prov-addr').value||'Banjul, The Gambia';
+  const provTel=document.getElementById('prov-tel').value||'+220 3XX XXXX';
+  const provEmail=document.getElementById('prov-email').value||'info@webgen-gambia.com';
+  const clName=document.getElementById('cl-name').value||'___________';
+  const clContact=document.getElementById('cl-contact').value||'___________';
+  const clTel=document.getElementById('cl-tel').value||'___________';
+  const clAddr=document.getElementById('cl-addr').value||'___________';
+  const pakket=document.getElementById('pakket').value;
+  const extra=document.getElementById('extra').value;
+  const total=document.getElementById('total-amt').value||'___';
+  const deposit=document.getElementById('deposit').value||'___';
+  const pay=document.getElementById('pay-method').value;
+  const delDate=fDate(document.getElementById('delivery-date').value);
+  const conDate=fDate(document.getElementById('contract-date').value);
+  const contNum='WG-'+Date.now().toString().slice(-6);
+
+  document.getElementById('contract-doc').innerHTML=`
+    <div class="doc-header">
+      <div class="doc-logo">WebGen Gambia</div>
+      <div class="doc-title">${t.title}</div>
+      <div class="doc-num">${t.contract} ${contNum} &nbsp;·&nbsp; ${conDate}</div>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h">${t.parties}</div>
+      <div class="parties-grid">
+        <div><div class="party-label">${t.provider}</div><div class="party-name">${provCo}</div><div class="party-detail">${provAddr}</div><div class="party-detail">${provTel}</div><div class="party-detail">${provEmail}</div></div>
+        <div><div class="party-label">${t.client}</div><div class="party-name">${clName}</div><div class="party-detail">${clContact}</div><div class="party-detail">${clTel}</div><div class="party-detail">${clAddr}</div></div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h">${t.services}</div>
+      <table class="services-table">
+        <tr><th>Dienst / Service</th><th>Pakket / Package</th><th>Bedrag / Amount (GMD)</th></tr>
+        <tr><td>${pakket} Website Package</td><td>${pakket}</td><td>${total}</td></tr>
+        ${extra?`<tr><td>Extra: ${extra}</td><td>—</td><td>—</td></tr>`:''}
+        <tr><td colspan="2" style="font-weight:600">Totaal / Total</td><td style="font-weight:600">GMD ${total}</td></tr>
+      </table>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h">${t.payment}</div>
+      <div class="clause">Aanbetaling / Deposit: GMD ${deposit} — ${pay}</div>
+      <div class="clause">Restant / Balance: GMD ${total-deposit||'___'} — bij oplevering / upon delivery</div>
+      <div class="doc-p">${t.t4}</div>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h">${t.delivery}</div>
+      <div class="clause">Leverdatum / Delivery date: ${delDate}</div>
+      <div class="doc-p">${t.t3}</div>
+      <div class="doc-p">${t.t2}</div>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h">${t.support}</div>
+      <div class="doc-p">${t.t6}</div>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h">${t.ownership}</div>
+      <div class="doc-p">${t.t5}</div>
+    </div>
+
+    <div class="doc-section">
+      <div class="doc-h">${t.terms}</div>
+      <div class="doc-p">${t.t1}</div>
+      <div class="doc-p">${t.t7}</div>
+    </div>
+
+    <div class="sig-section">
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-label">${t.sigprov} — ${provCo}</div>
+        <div class="sig-label">${t.date}: ___________</div>
+      </div>
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-label">${t.sigcl} — ${clName}</div>
+        <div class="sig-label">${t.date}: ___________</div>
+      </div>
+    </div>`;
+}
+
+function printDoc(){
+  window.print();
+  showToast('Print dialog geopend');
+}
+function downloadHTML(){
+  const html=document.getElementById('contract-doc').innerHTML;
+  const full=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Contract WebGen Gambia</title><style>body{font-family:sans-serif;max-width:760px;margin:40px auto;padding:40px;color:#111;font-size:13px;line-height:1.7}.parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;background:#f9f9f9;padding:14px;border-radius:8px;margin-bottom:18px}.sig-section{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:30px;padding-top:20px;border-top:1px solid #ddd}.sig-line{border-bottom:1px solid #111;height:40px;margin-bottom:6px}.clause{padding:8px 12px;background:#f9f9f9;border-left:3px solid #00c896;margin-bottom:8px}.services-table{width:100%;border-collapse:collapse}th,td{padding:7px;border-bottom:1px solid #eee;text-align:left}@media print{body{margin:20px}}</style></head><body>${html}</body></html>`;
+  const blob=new Blob([full],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='contract-webgen-gambia.html';a.click();
+  showToast('Contract gedownload');
+}
+
+document.getElementById('contract-date').valueAsDate=new Date();
+const del=new Date();del.setDate(del.getDate()+3);
+document.getElementById('delivery-date').valueAsDate=del;
+updateDoc();
+</script>
+</body>
+</html>

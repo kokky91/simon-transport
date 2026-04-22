@@ -1,0 +1,16 @@
+{
+  "name": "WebGen Gambia",
+  "short_name": "WebGen",
+  "description": "Professional websites, tools & content management for Gambian businesses",
+  "start_url": "/landing.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080c10",
+  "theme_color": "#00c896",
+  "orientation": "any",
+  "categories": ["business", "productivity"],
+  "lang": "en",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

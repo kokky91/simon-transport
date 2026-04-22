@@ -1,0 +1,2451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGen Gambia Pro - AI Website Builder for Gambian Businesses</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00c896">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;600&family=Lato:wght@400;600&family=Poppins:wght@400;500;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #080c10;
+            --bg2: #0e1318;
+            --card: #111820;
+            --border: #1e2d3d;
+            --teal: #00c896;
+            --teal2: #00a87e;
+            --gold: #f5a200;
+            --text: #e8edf2;
+            --muted: #6b8099;
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--teal);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--teal2);
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .left-panel {
+            width: 440px;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: var(--bg2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-bar {
+            padding: 12px 16px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .top-bar label {
+            color: var(--muted);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .top-bar input,
+        .top-bar select {
+            flex: 1;
+            padding: 6px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .top-bar input:focus,
+        .top-bar select:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 2px rgba(0, 200, 150, 0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #888;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: var(--teal);
+        }
+
+        .status-dot.loading {
+            background: var(--gold);
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            padding: 10px 12px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .tab {
+            padding: 7px 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+            flex: 1;
+            text-align: center;
+            min-width: 0;
+            font-family: 'Syne', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .tab.active {
+            background: var(--teal);
+            color: var(--bg);
+            border-color: var(--teal);
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 10px 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.1);
+            background: var(--bg);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .section-header {
+            margin-top: 20px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--teal);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Syne', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--purple) 100%);
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 14px;
+            padding: 14px;
+            animation: shimmer 2s infinite;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 200, 150, 0.3);
+        }
+
+        @keyframes shimmer {
+            0%, 100% { box-shadow: 0 0 0 rgba(0, 200, 150, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 200, 150, 0.4); }
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg2);
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .toggle.on {
+            background: var(--teal);
+            border-color: var(--teal);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.25s ease;
+        }
+
+        .toggle.on::after {
+            left: 22px;
+        }
+
+        .section-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: move;
+            transition: all 0.2s ease;
+        }
+
+        .section-item.dragging {
+            opacity: 0.4;
+            background: var(--bg);
+        }
+
+        .section-item.drag-over {
+            border-top: 3px solid #00c896;
+            padding-top: 10px;
+        }
+
+        .section-item .drag-handle {
+            color: var(--muted);
+            cursor: grab;
+            flex-shrink: 0;
+        }
+
+        .section-item .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .section-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .color-swatch {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.25s ease;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.05);
+        }
+
+        .color-swatch.selected {
+            border-color: var(--text);
+            box-shadow: 0 0 12px rgba(0, 200, 150, 0.4);
+        }
+
+        .font-preview {
+            padding: 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .font-preview:hover {
+            border-color: var(--teal);
+        }
+
+        .font-preview.selected {
+            border-color: var(--teal);
+            background: rgba(0, 200, 150, 0.1);
+        }
+
+        .font-preview-text {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .font-preview-label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .browser-chrome {
+            height: 60px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+        }
+
+        .chrome-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chrome-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .chrome-dot.red { background: #ef4444; }
+        .chrome-dot.yellow { background: var(--gold); }
+        .chrome-dot.green { background: var(--teal); }
+
+        .url-bar {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .device-toggle {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .device-btn {
+            padding: 6px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.25s ease;
+        }
+
+        .device-btn.active {
+            background: var(--teal);
+            color: var(--bg);
+            border-color: var(--teal);
+        }
+
+        .preview-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: auto;
+            background: var(--bg);
+        }
+
+        .preview-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            background: white;
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .export-bar {
+            height: 50px;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 0 16px;
+        }
+
+        .export-btn {
+            padding: 8px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--teal);
+            color: var(--bg);
+            border-color: var(--teal);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 13px;
+            animation: slideIn 0.25s ease;
+            max-width: 300px;
+        }
+
+        .toast.success {
+            border-color: var(--teal);
+            background: rgba(0, 200, 150, 0.1);
+            color: var(--teal);
+        }
+
+        .toast.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--card);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            border: 1px solid var(--border);
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--teal);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--teal);
+            cursor: pointer;
+            border: none;
+        }
+
+        .service-item,
+        .testimonial-item,
+        .faq-item {
+            padding: 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .item-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-remove {
+            padding: 6px 10px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.25s ease;
+        }
+
+        .btn-remove:hover {
+            background: #dc2626;
+        }
+
+        .btn-regenerate {
+            padding: 8px 12px;
+            background: var(--purple);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.25s ease;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .btn-regenerate:hover {
+            background: #7c3aed;
+        }
+
+        .mockup-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .mockup {
+            aspect-ratio: 4/5;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+            background: var(--card);
+        }
+
+        .mockup:hover {
+            border-color: var(--teal);
+        }
+
+        .mockup.selected {
+            border-color: var(--teal);
+            box-shadow: 0 0 12px rgba(0, 200, 150, 0.4);
+        }
+
+        .mockup-label {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .mockup-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .mockup-line {
+            height: 2px;
+            background: var(--teal);
+            border-radius: 1px;
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--teal);
+            cursor: pointer;
+        }
+
+        @media (max-width: 1200px) {
+            .left-panel {
+                width: 380px;
+            }
+        }
+
+        /* STYLE TAB V2 */
+        .style-section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin: 20px 0 10px;
+        }
+        .style-section-label:first-child { margin-top: 0; }
+
+        .template-grid-v2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+        .tpl-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tpl-card:hover { border-color: rgba(0,200,150,0.4); }
+        .tpl-card.selected { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(0,200,150,0.15); }
+        .tpl-pill {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .tpl-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+        .tpl-bar {
+            height: 5px;
+            border-radius: 2px;
+        }
+        .tpl-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+        .tpl-desc { font-size: 10px; color: var(--muted); }
+
+        /* Color Palette */
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .palette-item {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 6px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .palette-item:hover { border-color: rgba(0,200,150,0.3); }
+        .palette-item.selected { border-color: var(--teal); }
+        .palette-colors {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 4px;
+        }
+        .palette-swatch {
+            flex: 1;
+            height: 24px;
+            border-radius: 3px;
+        }
+        .palette-label { font-size: 9px; color: var(--muted); }
+
+        /* Font Pairing */
+        .font-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .font-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .font-card:hover { border-color: rgba(0,200,150,0.3); background: var(--bg); }
+        .font-card.selected { border-color: var(--teal); background: rgba(0,200,150,0.04); }
+        .font-card-label { font-size: 9px; color: var(--teal); font-weight: 600; margin-bottom: 4px; }
+        .font-card-preview { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 3px; line-height: 1.2; }
+        .font-card-desc { font-size: 9px; color: var(--muted); line-height: 1.4; }
+
+        /* Layout Grid */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .layout-card {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+        }
+        .layout-card:hover { border-color: rgba(0,200,150,0.3); }
+        .layout-card.selected { border-color: var(--teal); }
+        .layout-icon { font-size: 28px; margin-bottom: 6px; display: block; color: var(--muted); }
+        .layout-card.selected .layout-icon { color: var(--teal); }
+        .layout-label { font-size: 10px; color: var(--muted); }
+        .layout-card.selected .layout-label { color: var(--teal); }
+
+        /* Pill Group */
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .style-pill {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .style-pill:hover { border-color: rgba(0,200,150,0.3); color: var(--text); }
+        .style-pill.selected { background: var(--teal); border-color: var(--teal); color: var(--bg); }
+
+        /* Style Select */
+        .style-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: border-color 0.25s ease;
+        }
+        .style-select:focus { border-color: var(--teal); outline: none; }
+    </style>
+</head>
+<body>
+    <a href="portal.html" style="position:fixed;top:16px;right:16px;z-index:9999;background:#00c896;color:#000;padding:10px 18px;border-radius:10px;font-weight:700;text-decoration:none;font-family:system-ui,sans-serif;font-size:14px;box-shadow:0 4px 16px rgba(0,200,150,0.4);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">Inloggen →</a>
+    <div class="container">
+        <!-- LEFT PANEL -->
+        <div class="left-panel">
+            <!-- Top Bar with Ollama Config -->
+            <div class="top-bar">
+                <label>Ollama:</label>
+                <input type="text" id="ollamaUrl" placeholder="http://localhost:11434" value="http://localhost:11434">
+                <select id="modelSelect">
+                    <option value="">Loading models...</option>
+                </select>
+                <div class="status-dot disconnected" id="statusDot"></div>
+            </div>
+
+            <!-- API toggle -->
+            <div style="padding: 8px 16px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid var(--border); font-size: 12px;">
+                <label style="flex: 1; margin: 0;">Use Anthropic API</label>
+                <div class="toggle" id="apiToggle" onclick="toggleAPI()"></div>
+            </div>
+
+            <div id="anthropicKeyContainer" style="padding: 8px 16px; border-bottom: 1px solid var(--border); display: none;">
+                <div class="form-group" style="margin-bottom:8px">
+                    <label style="font-size:10px">API Key</label>
+                    <input type="password" id="anthropicKey" placeholder="sk-ant-..." style="width: 100%; padding: 7px 10px; font-size:11px; border-radius: 4px; border: 1px solid var(--border); background: var(--card); color: var(--text);">
+                </div>
+                <div class="form-group" style="margin-bottom:8px">
+                    <label style="font-size:10px">Worker URL</label>
+                    <input type="text" id="workerUrl" placeholder="webgen-gambia.workers.dev" style="font-size:11px;padding:7px 10px;width:100%;border-radius:4px;border:1px solid var(--border);background:var(--card);color:var(--text)">
+                </div>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="tab-bar">
+                <button class="tab active" data-tab="business" onclick="switchTab('business')">🏢 Business</button>
+                <button class="tab" data-tab="photos" onclick="switchTab('photos')">📸 Photos</button>
+                <button class="tab" data-tab="sections" onclick="switchTab('sections')">📑 Sections</button>
+                <button class="tab" data-tab="content" onclick="switchTab('content')">✏️ Content</button>
+                <button class="tab" data-tab="style" onclick="switchTab('style')">🎨 Style</button>
+            </div>
+
+            <!-- Tab Contents -->
+            <div class="tab-content active" id="business-tab">
+                <div class="form-group">
+                    <label>Business Sector *</label>
+                    <select id="sector" onchange="updateFormDefaults()">
+                        <option value="">Select a sector...</option>
+                        <option value="restaurant">Restaurant</option>
+                        <option value="hotel">Hotel/Guesthouse</option>
+                        <option value="fashion">Fashion/Boutique</option>
+                        <option value="salon">Salon/Barbershop</option>
+                        <option value="transport">Transport</option>
+                        <option value="retail">Retail/Shop</option>
+                        <option value="services">Professional Services</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="education">Education</option>
+                        <option value="realestate">Real Estate</option>
+                        <option value="tech">Tech/IT</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Business Name *</label>
+                    <input type="text" id="businessName" placeholder="My Business" oninput="updatePreview()">
+                </div>
+
+                <div class="form-group">
+                    <label>Tagline</label>
+                    <input type="text" id="tagline" placeholder="Fresh food, Gambian soul" oninput="updatePreview()">
+                </div>
+
+                <div class="form-group">
+                    <label>About Us / Mission</label>
+                    <textarea id="aboutText" placeholder="Who are you? Founded when? What makes you unique?" oninput="updatePreview()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>USPs (comma-separated)</label>
+                    <input type="text" id="usps" placeholder="100% local, 24/7 available, Authentic taste" oninput="updatePreview()">
+                </div>
+
+                <div class="section-header">Contact & Location</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="phone" placeholder="+220 XXXX XXXX" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp Number</label>
+                        <input type="tel" id="whatsapp" placeholder="+220 XXXX XXXX" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" placeholder="info@business.gm" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Domain</label>
+                        <input type="text" id="domain" placeholder="business.gm" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" id="address" placeholder="Street address" oninput="updatePreview()">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>City</label>
+                        <select id="city" onchange="updatePreview()">
+                            <option value="">Select city...</option>
+                            <option value="Banjul">Banjul</option>
+                            <option value="Serekunda">Serekunda</option>
+                            <option value="Bakau">Bakau</option>
+                            <option value="Fajara">Fajara</option>
+                            <option value="Kololi">Kololi</option>
+                            <option value="Kotu">Kotu</option>
+                            <option value="Brikama">Brikama</option>
+                            <option value="Lamin">Lamin</option>
+                            <option value="Gunjur">Gunjur</option>
+                            <option value="Basse">Basse</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Opening Hours</label>
+                        <input type="text" id="hours" placeholder="9am - 10pm daily" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="section-header">Social Media</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Facebook</label>
+                        <input type="text" id="facebook" placeholder="facebook.com/business" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>Instagram</label>
+                        <input type="text" id="instagram" placeholder="@business_gambia" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>TikTok</label>
+                        <input type="text" id="tiktok" placeholder="@business_gambia" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label>LinkedIn</label>
+                        <input type="text" id="linkedin" placeholder="company/business" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateWithAI()">
+                    <span id="generateText">+ Generate Website</span>
+                    <span id="generateSpinner" style="display: none;" class="spinner"></span>
+                </button>
+            </div>
+
+            <div class="tab-content" id="photos-tab">
+                <div class="form-group">
+                    <label>Hero Image (URL)</label>
+                    <input type="text" id="heroUrl" placeholder="https://picsum.photos/1200/600" oninput="updatePreview()">
+                </div>
+
+                <div class="form-group">
+                    <label>Logo (URL)</label>
+                    <input type="text" id="logoUrl" placeholder="https://picsum.photos/200/200" oninput="updatePreview()">
+                </div>
+
+                <div class="section-header">Gallery Images</div>
+                <div id="galleryInputs"></div>
+
+                <div class="section-header">Team Photos</div>
+                <div id="teamInputs"></div>
+            </div>
+
+            <div class="tab-content" id="sections-tab">
+                <div style="margin-bottom: 12px; padding: 12px; background: var(--card); border-radius: 6px; font-size: 12px; color: var(--muted);">
+                    <span id="sectionCount">8 of 12</span> sections active
+                </div>
+                <div id="sectionsList"></div>
+            </div>
+
+            <div class="tab-content" id="content-tab">
+                <div id="contentFields"></div>
+            </div>
+
+            <div class="tab-content" id="style-tab">
+                <!-- TEMPLATE CARDS -->
+                <div class="style-section-label">TEMPLATE</div>
+                <div class="template-grid-v2" id="templateGridV2"></div>
+
+                <!-- COLOR PALETTE -->
+                <div class="style-section-label">COLOR PALETTE</div>
+                <div class="palette-grid" id="paletteGrid"></div>
+
+                <!-- FONT PAIRING -->
+                <div class="style-section-label">FONT PAIRING</div>
+                <div class="font-grid" id="fontGrid"></div>
+
+                <!-- LAYOUT STYLE -->
+                <div class="style-section-label">LAYOUT STYLE</div>
+                <div class="layout-grid" id="layoutGrid"></div>
+
+                <!-- SCROLL ANIMATION -->
+                <div class="style-section-label">SCROLL ANIMATION</div>
+                <div class="pill-group" id="animationPills"></div>
+
+                <!-- BORDER RADIUS -->
+                <div class="style-section-label">BORDER RADIUS</div>
+                <select id="borderRadiusSelect" class="style-select" onchange="updatePreview()">
+                    <option value="0">Sharp (0px) — modern edge</option>
+                    <option value="4">Subtle (4px) — slight rounding</option>
+                    <option value="8" selected>Soft (8px) — professional</option>
+                    <option value="12">Rounded (12px) — friendly</option>
+                    <option value="20">Pill (20px) — playful</option>
+                </select>
+
+                <!-- WEBSITE LANGUAGE -->
+                <div class="style-section-label">WEBSITE LANGUAGE</div>
+                <div class="pill-group" id="langPills"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+            <!-- Browser Chrome -->
+            <div class="browser-chrome">
+                <div class="chrome-dots">
+                    <div class="chrome-dot red"></div>
+                    <div class="chrome-dot yellow"></div>
+                    <div class="chrome-dot green"></div>
+                </div>
+                <div class="url-bar">
+                    <span id="urlDisplay">yourbusiness.web.gm</span>
+                </div>
+                <div class="device-toggle">
+                    <button class="device-btn active" onclick="setDevice('desktop')">Desktop</button>
+                    <button class="device-btn" onclick="setDevice('tablet')">Tablet</button>
+                    <button class="device-btn" onclick="setDevice('mobile')">Mobile</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-left:12px;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.08em;text-transform:uppercase">
+                    <span>Light</span>
+                    <div class="toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark preview"></div>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="preview-area">
+                <div class="preview-container">
+                    <iframe class="preview-iframe" id="previewIframe" srcdoc="<html><body style='background:#0e1318;color:#6b8099;font-family:DM Sans,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px'><div style='width:48px;height:48px;border:2px solid #1e2d3d;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px'>📄</div><div style='font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:#e8edf2'>Ready to build</div><div style='font-size:13px;text-align:center;max-width:240px'>Pick a template, fill in the tabs, click Generate</div></body></html>"></iframe>
+                </div>
+            </div>
+
+            <!-- Export Bar -->
+            <div class="export-bar">
+                <button class="export-btn" onclick="downloadHTML()">📥 Download HTML</button>
+                <button class="export-btn" onclick="copyHTML()">📋 Copy HTML</button>
+                <button class="export-btn" onclick="openInTab()">🔗 Open in Tab</button>
+                <span id="wg-save-status" title="Autosave status" style="margin-left:auto;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;background:rgba(107,127,149,0.15);color:#94a3b8;white-space:nowrap">Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let state = {
+            formData: {},
+            deviceWidth: '100%',
+            currentTemplate: 0,
+            currentPalette: 0,
+            currentFont: 0,
+            currentLayout: 'wide',
+            currentAnimation: 'fade',
+            currentHero: 'classic',
+            currentLang: 'en',
+            currentBorderRadius: 8,
+            isLight: false,
+            useAnthropic: false,
+            selectedSections: new Set(),
+            sectionOrder: []
+        };
+
+        // ═══════════ REMOTE PERSISTENCE ═══════════
+        const API_BASE = 'https://webgen-gambia.diederikkok123.workers.dev';
+        let authToken = localStorage.getItem('webgen-klant-token') || null;
+        let clientCode = null;    // resolved via /api/auth/verify
+        let lastServerUpdatedAt = null;
+        let remoteSaveTimer = null;
+        let remoteSaveInFlight = false;
+
+        function setSaveStatus(mode, detail) {
+            const el = document.getElementById('wg-save-status');
+            if (!el) return;
+            const map = {
+                'offline':  { bg: 'rgba(107,127,149,0.15)', color: '#94a3b8', text: detail || 'Local only — sign in to save online' },
+                'idle':     { bg: 'rgba(16,185,129,0.15)',  color: '#10b981', text: detail || 'Saved' },
+                'saving':   { bg: 'rgba(59,130,246,0.15)',  color: '#3b82f6', text: detail || 'Saving…' },
+                'error':    { bg: 'rgba(239,68,68,0.15)',   color: '#ef4444', text: detail || 'Save failed — will retry' }
+            };
+            const m = map[mode] || map.idle;
+            el.style.background = m.bg;
+            el.style.color = m.color;
+            el.textContent = m.text;
+        }
+
+        async function resolveAuth() {
+            if (!authToken) return false;
+            try {
+                const r = await fetch(`${API_BASE}/api/auth/verify`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+                    body: '{}'
+                });
+                if (!r.ok) { authToken = null; localStorage.removeItem('webgen-klant-token'); return false; }
+                const data = await r.json();
+                if (data && data.valid && data.clientCode) {
+                    clientCode = data.clientCode;
+                    return true;
+                }
+            } catch (e) { /* offline, fall back to local */ }
+            return false;
+        }
+
+        async function loadStateRemote() {
+            if (!clientCode || !authToken) return false;
+            try {
+                setSaveStatus('saving', 'Loading…');
+                const r = await fetch(`${API_BASE}/api/website/${clientCode}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!r.ok) { setSaveStatus('error'); return false; }
+                const data = await r.json();
+                if (data && typeof data === 'object') {
+                    lastServerUpdatedAt = data.updatedAt || null;
+                    const { updatedAt, updatedBy, ...remoteState } = data;
+                    if (Object.keys(remoteState).length > 0) {
+                        state = { ...state, ...remoteState };
+                        // selectedSections: Set doesn't serialize, reconstruct empty
+                        if (!state.selectedSections || !(state.selectedSections instanceof Set)) {
+                            state.selectedSections = new Set();
+                        }
+                    }
+                    setSaveStatus('idle', lastServerUpdatedAt ? 'Loaded from cloud' : 'Ready');
+                    return true;
+                }
+                setSaveStatus('idle', 'Ready');
+            } catch (e) {
+                console.warn('loadStateRemote failed', e);
+                setSaveStatus('error', 'Offline — loaded local copy');
+            }
+            return false;
+        }
+
+        async function saveStateRemote() {
+            if (!clientCode || !authToken) return;
+            if (remoteSaveInFlight) { // queue another save after the current one
+                setTimeout(saveStateRemote, 600);
+                return;
+            }
+            remoteSaveInFlight = true;
+            setSaveStatus('saving');
+            try {
+                // Strip Set (non-serializable) before sending
+                const payload = { ...state };
+                if (payload.selectedSections instanceof Set) payload.selectedSections = Array.from(payload.selectedSections);
+                const r = await fetch(`${API_BASE}/api/website/${clientCode}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (r.ok) {
+                    const data = await r.json();
+                    lastServerUpdatedAt = data.updatedAt || new Date().toISOString();
+                    setSaveStatus('idle', 'Saved ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }));
+                } else {
+                    setSaveStatus('error');
+                }
+            } catch (e) {
+                console.warn('saveStateRemote failed', e);
+                setSaveStatus('error');
+            } finally {
+                remoteSaveInFlight = false;
+            }
+        }
+
+        function scheduleRemoteSave() {
+            if (!clientCode || !authToken) return;
+            if (remoteSaveTimer) clearTimeout(remoteSaveTimer);
+            remoteSaveTimer = setTimeout(saveStateRemote, 1500);
+        }
+
+        // Hydrate form inputs from state.formData so updatePreview/collectFormData
+        // don't overwrite restored cloud data with empty-input defaults.
+        function hydrateInputsFromState() {
+            if (!state || !state.formData) return;
+            Object.entries(state.formData).forEach(([key, value]) => {
+                if (value === undefined || value === null) return;
+                const el = document.getElementById(key);
+                if (!el) return;
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = !!value;
+                } else {
+                    el.value = value;
+                }
+            });
+        }
+
+        function loadState() {
+            const saved = sessionStorage.getItem('webgenState');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Merge, preserving current-session defaults for any missing keys
+                    state = { ...state, ...parsed };
+                    if (!(state.selectedSections instanceof Set)) {
+                        state.selectedSections = new Set(Array.isArray(parsed.selectedSections) ? parsed.selectedSections : []);
+                    }
+                } catch (e) {
+                    console.log('No saved state');
+                }
+            }
+        }
+
+        function saveState() {
+            sessionStorage.setItem('webgenState', JSON.stringify(state));
+            scheduleRemoteSave();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function toggleAPI() {
+            state.useAnthropic = !state.useAnthropic;
+            document.getElementById('apiToggle').classList.toggle('on');
+            document.getElementById('anthropicKeyContainer').style.display = state.useAnthropic ? 'block' : 'none';
+            saveState();
+        }
+
+        function setDevice(device) {
+            document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const container = document.querySelector('.preview-container');
+            if (device === 'desktop') {
+                state.deviceWidth = '100%';
+            } else if (device === 'tablet') {
+                state.deviceWidth = '768px';
+            } else if (device === 'mobile') {
+                state.deviceWidth = '390px';
+            }
+
+            container.style.width = state.deviceWidth;
+            container.style.margin = device !== 'desktop' ? '0 auto' : '0';
+        }
+
+        function updateFormDefaults() {
+            const sector = document.getElementById('sector').value;
+            const defaults = {
+                restaurant: {
+                    businessName: 'Gambian Flavours Restaurant',
+                    tagline: 'Authentic Gambian Cuisine',
+                    aboutText: 'Traditional recipes passed down through generations, using fresh local ingredients. We pride ourselves on serving authentic Gambian dishes prepared with love and the finest locally-sourced ingredients.',
+                    usps: '100% local ingredients, Traditional recipes, Fresh daily preparation',
+                    phone: '+220 3201234',
+                    whatsapp: '+220 7654321',
+                    email: 'info@gambianflavours.gm',
+                    domain: 'gambianflavours.gm',
+                    address: 'Independence Avenue',
+                    city: 'Serekunda',
+                    hours: '10am - 11pm daily',
+                    facebook: 'facebook.com/gambianflavours',
+                    instagram: '@gambianflavours'
+                },
+                hotel: {
+                    businessName: 'Paradise Beach Guesthouse',
+                    tagline: 'Your beachfront paradise in Gambia',
+                    aboutText: 'Stunning beachfront accommodation with authentic Gambian hospitality. Our guesthouse offers comfortable rooms, excellent service, and unforgettable experiences exploring the beautiful River Gambia.',
+                    usps: 'Ocean views, Wi-Fi, Restaurant on-site, Bird watching tours',
+                    phone: '+220 3306789',
+                    whatsapp: '+220 7987654',
+                    email: 'reservations@paradisebeach.gm',
+                    domain: 'paradisebeach.gm',
+                    address: 'Kotu Beach Road',
+                    city: 'Kololi',
+                    hours: '24/7',
+                    facebook: 'facebook.com/paradisebeachgambia',
+                    instagram: '@paradisebeachgambia'
+                },
+                fashion: {
+                    businessName: 'African Threads Boutique',
+                    tagline: 'Celebrate African Style & Culture',
+                    aboutText: 'Unique fashion pieces inspired by traditional Gambian and African designs. We create bespoke garments using authentic African prints and traditional techniques, celebrating our rich cultural heritage.',
+                    usps: 'Handmade items, African prints, Custom tailoring, Fair trade',
+                    phone: '+220 2201111',
+                    whatsapp: '+220 7332211',
+                    email: 'info@africanthreads.gm',
+                    domain: 'africanthreads.gm',
+                    address: 'Manjai Street',
+                    city: 'Bakau',
+                    hours: '9am - 8pm daily',
+                    facebook: 'facebook.com/africanthreads',
+                    instagram: '@africanthreads'
+                },
+                salon: {
+                    businessName: 'Beauty & Style Salon',
+                    tagline: 'Your beauty, our passion',
+                    aboutText: 'Premium hair and beauty services in a relaxing, welcoming environment. Our experienced stylists are dedicated to helping you look and feel your best with the latest trends and timeless classics.',
+                    usps: 'Professional stylists, Modern techniques, Relaxing atmosphere',
+                    phone: '+220 2221234',
+                    whatsapp: '+220 7564432',
+                    email: 'bookings@beautystyle.gm',
+                    domain: 'beautystyle.gm',
+                    address: 'Pipeline Road',
+                    city: 'Serekunda',
+                    hours: '8am - 9pm daily',
+                    facebook: 'facebook.com/beautystyle',
+                    instagram: '@beautystyle'
+                },
+                healthcare: {
+                    businessName: 'Wellness Medical Centre',
+                    tagline: 'Your health is our priority',
+                    aboutText: 'Comprehensive healthcare services with experienced doctors and modern medical facilities. We provide quality medical care for all your health needs in a professional and caring environment.',
+                    usps: 'Experienced doctors, Modern equipment, 24/7 emergency care',
+                    phone: '+220 3334444',
+                    whatsapp: '+220 7123456',
+                    email: 'contact@wellnessmedical.gm',
+                    domain: 'wellnessmedical.gm',
+                    address: 'Hospital Road',
+                    city: 'Banjul',
+                    hours: '24/7 emergency',
+                    facebook: 'facebook.com/wellnessmedical',
+                    instagram: '@wellnessmedical'
+                }
+            };
+
+            const sectorDefaults = defaults[sector];
+            if (sectorDefaults) {
+                Object.keys(sectorDefaults).forEach(key => {
+                    const elem = document.getElementById(key);
+                    if (elem) elem.value = sectorDefaults[key];
+                });
+                updatePreview();
+            }
+        }
+
+        function collectFormData() {
+            const data = {
+                businessName: document.getElementById('businessName').value || 'My Business',
+                tagline: document.getElementById('tagline').value || 'Premium Service',
+                aboutText: document.getElementById('aboutText').value || 'Welcome to our business',
+                usps: document.getElementById('usps').value || 'Quality, Reliability, Trust',
+                phone: document.getElementById('phone').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                email: document.getElementById('email').value,
+                domain: document.getElementById('domain').value || 'business.gm',
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                hours: document.getElementById('hours').value || 'Open daily',
+                facebook: document.getElementById('facebook').value,
+                instagram: document.getElementById('instagram').value,
+                tiktok: document.getElementById('tiktok').value,
+                linkedin: document.getElementById('linkedin').value,
+                heroUrl: document.getElementById('heroUrl').value || 'https://picsum.photos/1200/600?random=1',
+                heroHeadline: document.getElementById('heroHeadline')?.value || document.getElementById('businessName')?.value || 'Welcome',
+                heroSubtitle: document.getElementById('heroSubtitle')?.value || document.getElementById('tagline')?.value || 'Experience excellence',
+                ctaText: document.getElementById('ctaText')?.value || 'Contact Us',
+                footerTagline: document.getElementById('footerTagline')?.value || 'Made with love in Gambia'
+            };
+
+            data.services = [];
+            document.querySelectorAll('.service-item').forEach((item, idx) => {
+                const name = item.querySelector(`#service${idx}Name`)?.value;
+                const desc = item.querySelector(`#service${idx}Desc`)?.value;
+                if (name) data.services.push({ name, description: desc || '' });
+            });
+
+            data.testimonials = [];
+            document.querySelectorAll('.testimonial-item').forEach((item, idx) => {
+                const quote = item.querySelector(`#testimonial${idx}Quote`)?.value;
+                const author = item.querySelector(`#testimonial${idx}Author`)?.value;
+                const business = item.querySelector(`#testimonial${idx}Business`)?.value;
+                if (quote) data.testimonials.push({ quote, author: author || 'Customer', business: business || '' });
+            });
+
+            data.faq = [];
+            document.querySelectorAll('.faq-item').forEach((item, idx) => {
+                const question = item.querySelector(`#faq${idx}Question`)?.value;
+                const answer = item.querySelector(`#faq${idx}Answer`)?.value;
+                if (question) data.faq.push({ question, answer: answer || '' });
+            });
+
+            data.gallery = [];
+            for (let i = 0; i < 6; i++) {
+                const url = document.getElementById(`gallery${i}`)?.value;
+                if (url) data.gallery.push(url);
+            }
+
+            data.team = [];
+            for (let i = 0; i < 3; i++) {
+                const photo = document.getElementById(`team${i}Photo`)?.value;
+                const name = document.getElementById(`team${i}Name`)?.value;
+                const role = document.getElementById(`team${i}Role`)?.value;
+                if (name) data.team.push({ photo: photo || 'https://picsum.photos/300/300', name, role: role || 'Team Member' });
+            }
+
+            // Pull menu created via the kassa (restaurant CRM) — shared storage key `wg_menu_<restaurantId>`
+            data.menuCategories = [];
+            try {
+                const rid = (data.domain || data.businessName || 'demo').toString().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'demo';
+                const saved = JSON.parse(localStorage.getItem('wg_menu_' + rid) || localStorage.getItem('wg_menu_demo') || 'null');
+                if (saved && Array.isArray(saved.items)) {
+                    const byCat = new Map();
+                    saved.items.forEach(it => {
+                        if (!it || !it.name) return;
+                        const cat = it.cat || 'Menu';
+                        if (!byCat.has(cat)) byCat.set(cat, []);
+                        byCat.get(cat).push({ name: it.name, desc: it.desc || '', price: (saved.currency || 'GMD') + ' ' + (it.price ?? '') });
+                    });
+                    data.menuCategories = [...byCat.entries()].map(([name, items]) => ({ name, items }));
+                }
+            } catch (e) { /* no saved menu */ }
+
+            state.formData = data;
+            saveState();
+            return data;
+        }
+
+        function generatePreviewHTML() {
+            const data = collectFormData();
+            const selectedSections = Array.from(document.querySelectorAll('.section-toggle:checked')).map(cb => cb.dataset.section);
+
+            const isLight = !!state.isLight;
+            const bgColor = isLight ? '#ffffff' : '#111';
+            const textColor = isLight ? '#1a1a1a' : '#e8edf2';
+            const secondaryColor = isLight ? '#f5f5f5' : '#1e1e1e';
+
+            const palette = (typeof PALETTES !== 'undefined' && PALETTES[state.currentPalette]) ? PALETTES[state.currentPalette] : { colors: ['#00c896','#00a87e'] };
+            const primary = palette.colors[0] || '#00c896';
+            const accent = palette.colors[1] || palette.colors[0] || '#00a87e';
+            const primaryRgb = hexToRgb(primary);
+            const primaryAlpha = (a) => `rgba(${primaryRgb.r},${primaryRgb.g},${primaryRgb.b},${a})`;
+
+            const font = (typeof FONTS !== 'undefined' && FONTS[state.currentFont]) ? FONTS[state.currentFont] : { heading: 'Syne', body: 'DM Sans' };
+            const headingFont = `'${font.heading}', sans-serif`;
+            const bodyFont = `'${font.body}', sans-serif`;
+            const fontsForUrl = encodeURIComponent([font.heading, font.body].filter((v, i, a) => a.indexOf(v) === i).join('|'));
+
+            const radius = Number.isFinite(+state.currentBorderRadius) ? +state.currentBorderRadius : 8;
+            const layoutMax = ({ 'wide': '1200px', 'narrow': '960px', 'centered': '820px', 'split': '1280px', 'sidebar': '1200px', 'fullscreen': '100%' })[state.currentLayout] || '1200px';
+
+            let html = `<!DOCTYPE html>
+<html lang="${state.currentLang || 'en'}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.businessName}</title>
+    <link href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(font.heading).replace(/%20/g,'+')}:wght@400;600;700;800&family=${encodeURIComponent(font.body).replace(/%20/g,'+')}:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: ${primary}; --accent: ${accent}; --primary-15: ${primaryAlpha(0.15)}; --primary-05: ${primaryAlpha(0.05)}; --radius: ${radius}px; --radius-lg: ${radius * 1.5}px; --radius-pill: ${Math.max(radius * 3, 20)}px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: ${bodyFont}; background: ${bgColor}; color: ${textColor}; line-height: 1.6; }
+        header { position: sticky; top: 0; background: ${bgColor}; border-bottom: 1px solid rgba(${isLight?'0,0,0':'255,255,255'},0.08); padding: 20px 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,${isLight?'0.05':'0.25'}); }
+        .container { max-width: ${layoutMax}; margin: 0 auto; padding: 0 20px; }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); font-family: ${headingFont}; }
+        nav ul { display: flex; list-style: none; gap: 30px; margin-left: auto; margin-right: 20px; }
+        nav a { color: ${textColor}; text-decoration: none; transition: color 0.3s; font-weight: 500; }
+        nav a:hover { color: var(--primary); }
+        .whatsapp-btn { background: #25d366; color: white; padding: 10px 20px; border-radius: var(--radius-pill); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; transition: all 0.3s; }
+        .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+        .hero { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: white; padding: 100px 20px; text-align: center; background-image: linear-gradient(135deg, ${primaryAlpha(0.75)} 0%, rgba(0,0,0,0.55) 100%), url('${data.heroUrl}'); background-size: cover; background-position: center; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; font-weight: 800; font-family: ${headingFont}; line-height: 1.1; }
+        .hero p { font-size: 20px; margin-bottom: 30px; opacity: 0.95; max-width: 680px; margin-left: auto; margin-right: auto; }
+        .hero-cta { background: white; color: var(--primary); padding: 14px 32px; border-radius: var(--radius-pill); text-decoration: none; display: inline-block; font-weight: 700; transition: all 0.3s; border: none; cursor: pointer; font-size: 16px; }
+        .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        section { padding: 80px 20px; }
+        section h2 { font-size: 36px; margin-bottom: 40px; text-align: center; font-family: ${headingFont}; }
+        .usps { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 30px 0; }
+        .usp-badge { background: var(--primary); color: white; padding: 10px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 14px; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .service-card { background: ${secondaryColor}; padding: 30px; border-radius: var(--radius-lg); text-align: center; transition: all 0.3s; }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,${isLight?'0.08':'0.4'}); }
+        .service-card h3 { color: var(--primary); margin-bottom: 15px; font-size: 20px; font-family: ${headingFont}; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .gallery-item { border-radius: var(--radius-lg); overflow: hidden; }
+        .gallery-item img { width: 100%; height: 300px; object-fit: cover; display: block; }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .testimonial-card { background: ${secondaryColor}; padding: 25px; border-radius: var(--radius-lg); border-left: 4px solid var(--primary); }
+        .testimonial-quote { font-style: italic; margin-bottom: 15px; font-size: 16px; }
+        .testimonial-author { font-weight: 700; color: var(--primary); }
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .team-member { text-align: center; }
+        .team-member img { width: 200px; height: 200px; border-radius: 50%; margin-bottom: 15px; object-fit: cover; }
+        .team-member h3 { font-family: ${headingFont}; }
+        .faq-item { margin-bottom: 20px; }
+        .faq-question { background: ${secondaryColor}; padding: 20px; border-radius: var(--radius); cursor: pointer; font-weight: 700; display: flex; justify-content: space-between; align-items: center; font-family: ${headingFont}; }
+        .faq-answer { background: var(--primary-05); padding: 20px; border-radius: 0 0 var(--radius) var(--radius); display: none; }
+        .faq-item.active .faq-answer { display: block; }
+        .contact-section { background: ${secondaryColor}; padding: 40px; border-radius: var(--radius-lg); text-align: center; }
+        .contact-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin: 30px 0; }
+        .contact-item h3 { color: var(--primary); margin-bottom: 10px; font-family: ${headingFont}; }
+        footer { background: ${isLight ? '#f0f0f0' : '#000'}; color: ${textColor}; padding: 30px 20px; text-align: center; border-top: 1px solid rgba(${isLight?'0,0,0':'255,255,255'},0.08); }
+        footer h3 { font-family: ${headingFont}; color: var(--primary); }
+        .float-whatsapp { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; z-index: 1000; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4); }
+        .float-whatsapp:hover { transform: scale(1.1); }
+        ${animationCSS(state.currentAnimation)}
+        ${themeCSS(TEMPLATES_V2[state.currentTemplate]?.id, isLight, primary, accent)}
+        @media (max-width: 768px) { nav ul { gap: 15px; display: none; } .hero h1 { font-size: 32px; } .hero p { font-size: 16px; } section { padding: 40px 20px; } section h2 { font-size: 28px; } }
+    </style>
+</head>
+<body>`;
+
+            // Loop through sections in current order
+            for (const section of sections) {
+                if (!selectedSections.includes(section.id)) continue;
+
+                switch(section.id) {
+                    case 'nav':
+                        const _rid = (data.domain || data.businessName || 'restaurant').toString().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'restaurant';
+                        const _reserveLink = selectedSections.includes('reserve') ? `<li><a href="reserveer.html?r=${_rid}" style="background:var(--primary,#00c896);color:#000;padding:6px 14px;border-radius:6px;font-weight:700">Reserveren</a></li>` : '';
+                        html += `<header><div class="container"><nav><div class="logo">${data.businessName}</div><ul><li><a href="#about">About</a></li><li><a href="#services">Services</a></li>${selectedSections.includes('reserve')?`<li><a href="#reserve">Reserveren</a></li>`:''}<li><a href="#contact">Contact</a></li></ul>${data.whatsapp ? `<a href="https://wa.me/${data.whatsapp.replace(/\\D/g, '')}" class="whatsapp-btn">💬 WhatsApp</a>` : ''}</nav></div></header>`;
+                        break;
+                    case 'hero': {
+                        const heroStyle = state.currentHero || 'classic';
+                        if (heroStyle === 'split') {
+                            html += `<section class="hero hero-split"><div class="container" style="display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;text-align:left"><div><h1 style="text-align:left">${data.heroHeadline}</h1><p style="text-align:left;margin-left:0">${data.heroSubtitle}</p><button class="hero-cta">${data.ctaText}</button></div><div><img src="${data.heroUrl}" alt="${data.businessName}" style="width:100%;border-radius:var(--radius-lg);aspect-ratio:4/5;object-fit:cover;box-shadow:0 20px 60px rgba(0,0,0,0.35)"></div></div></section>`;
+                        } else if (heroStyle === 'minimal') {
+                            html += `<section class="hero hero-minimal" style="background:${isLight?'#fafafa':'#0e1318'};background-image:none;padding:140px 20px"><div class="container" style="text-align:center"><h1 style="font-size:clamp(44px,7vw,84px);color:${isLight?'#111':'#fff'};letter-spacing:-0.02em">${data.heroHeadline}</h1><p style="color:${isLight?'#555':'#94a3b8'};font-size:20px">${data.heroSubtitle}</p><button class="hero-cta">${data.ctaText}</button></div></section>`;
+                        } else if (heroStyle === 'overlay') {
+                            html += `<section class="hero hero-overlay" style="background-image:linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.85) 100%),url('${data.heroUrl}');min-height:88vh;display:flex;align-items:flex-end;padding-bottom:80px"><div class="container"><h1 style="font-size:clamp(48px,8vw,96px);line-height:1;color:#fff;max-width:900px;letter-spacing:-0.02em">${data.heroHeadline}</h1><p style="font-size:22px;max-width:620px">${data.heroSubtitle}</p><button class="hero-cta">${data.ctaText}</button></div></section>`;
+                        } else {
+                            html += `<section class="hero"><div class="container"><h1>${data.heroHeadline}</h1><p>${data.heroSubtitle}</p><button class="hero-cta">${data.ctaText}</button></div></section>`;
+                        }
+                        break;
+                    }
+                    case 'about':
+                        html += `<section id="about"><div class="container"><h2>${document.getElementById('aboutTitle')?.value || 'About Us'}</h2><p style="font-size: 16px; max-width: 800px; margin: 0 auto; text-align: center; line-height: 1.8;">${data.aboutText}</p><div class="usps">${data.usps.split(',').map(u => `<div class="usp-badge">${u.trim()}</div>`).join('')}</div></div></section>`;
+                        break;
+                    case 'services':
+                        if (data.services.length > 0) {
+                            html += `<section id="services"><div class="container"><h2>Our Services</h2><div class="services-grid">${data.services.map(s => `<div class="service-card"><h3>${s.name}</h3><p>${s.description}</p></div>`).join('')}</div></div></section>`;
+                        }
+                        break;
+                    case 'gallery':
+                        if (data.gallery.length > 0) {
+                            html += `<section><div class="container"><h2>Gallery</h2><div class="gallery-grid">${data.gallery.map(img => `<div class="gallery-item"><img src="${img}" alt="gallery"></div>`).join('')}</div></div></section>`;
+                        }
+                        break;
+                    case 'testimonials':
+                        if (data.testimonials.length > 0) {
+                            html += `<section><div class="container"><h2>Testimonials</h2><div class="testimonials-grid">${data.testimonials.map(t => `<div class="testimonial-card"><div class="testimonial-quote">"${t.quote}"</div><div class="testimonial-author">- ${t.author}</div>${t.business ? `<div style="font-size: 14px; color: #666; margin-top: 8px;">${t.business}</div>` : ''}</div>`).join('')}</div></div></section>`;
+                        }
+                        break;
+                    case 'menu': {
+                        const subColor = isLight ? '#555' : '#94a3b8';
+                        const rid = (data.domain || data.businessName || 'demo').toString().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'demo';
+                        const cats = data.menuCategories || [];
+                        const totalItems = cats.reduce((sum, c) => sum + (c.items?.length || 0), 0);
+                        const previewItems = cats.flatMap(c => c.items || []).slice(0, 3);
+                        const hasMenu = totalItems > 0;
+                        const subtitle = hasMenu
+                            ? `${totalItems} gerechten in ${cats.length} ${cats.length === 1 ? 'categorie' : 'categorieën'} · bestel online voor afhalen, of scan de QR aan tafel`
+                            : 'Bekijk het menu en bestel direct voor afhalen';
+                        html += `<section id="menu" style="background:${secondaryColor}"><div class="container"><h2>Menu</h2><div style="max-width:680px;margin:0 auto;text-align:center"><p style="color:${subColor};font-size:16px;margin-bottom:28px">${subtitle}</p>${hasMenu && previewItems.length ? `<div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:32px">${previewItems.map(it => `<span style="background:var(--primary-15);color:var(--primary);padding:8px 16px;border-radius:var(--radius-pill);font-size:13px;font-weight:600">${it.name}</span>`).join('')}${totalItems > previewItems.length ? `<span style="color:${subColor};padding:8px 4px;font-size:13px">+${totalItems - previewItems.length} meer</span>` : ''}</div>` : ''}<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a href="bestel.html?r=${rid}&m=takeaway" target="_blank" rel="noopener" style="display:inline-block;background:var(--primary);color:#000;padding:16px 32px;border-radius:var(--radius-pill);font-weight:700;text-decoration:none;font-size:16px;box-shadow:0 8px 24px ${primaryAlpha(0.35)};transition:transform .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">🛍️ Afhalen bestellen</a><a href="bestel.html?r=${rid}" target="_blank" rel="noopener" style="display:inline-block;background:transparent;color:${textColor};border:1.5px solid ${primaryAlpha(0.4)};padding:14.5px 30px;border-radius:var(--radius-pill);font-weight:700;text-decoration:none;font-size:16px;transition:all .2s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='${primaryAlpha(0.4)}'">📄 Bekijk menu</a></div></div></div></section>`;
+                        break;
+                    }
+                    case 'reserve': {
+                        const rid = (data.domain || data.businessName || 'restaurant').toString().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'restaurant';
+                        html += `<section id="reserve" style="background:linear-gradient(135deg,#0b0f14 0%,#141b23 100%);color:#fff;padding:64px 20px"><div class="container" style="max-width:720px;text-align:center">
+                            <div style="font-size:48px;margin-bottom:12px">🍽️</div>
+                            <h2 style="color:#fff;margin-bottom:8px">Reserveer je tafel</h2>
+                            <p style="color:#8097b0;margin-bottom:24px;font-size:16px;max-width:520px;margin-left:auto;margin-right:auto">Boek online in minder dan een minuut — je krijgt direct een bevestiging.</p>
+                            <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;color:#c8d2de;font-size:14px">
+                                <span>✓ 24/7 reserveren</span>
+                                <span>✓ Direct bevestigd</span>
+                                <span>✓ Geen kosten</span>
+                            </div>
+                            <a href="reserveer.html?r=${rid}" style="display:inline-block;background:#00c896;color:#000;padding:16px 36px;border-radius:12px;font-weight:800;text-decoration:none;font-size:16px;box-shadow:0 10px 30px rgba(0,200,150,0.3);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">Reserveer nu →</a>
+                            ${data.phone ? `<p style="margin-top:20px;color:#8097b0;font-size:13px">Of bel direct: <a href="tel:${data.phone}" style="color:#00c896;text-decoration:none;font-weight:600">${data.phone}</a></p>` : ''}
+                        </div></section>`;
+                        break;
+                    }
+                    case 'team':
+                        if (data.team.length > 0) {
+                            html += `<section><div class="container"><h2>Our Team</h2><div class="team-grid">${data.team.map(t => `<div class="team-member"><img src="${t.photo}" alt="${t.name}"><h3>${t.name}</h3><p>${t.role}</p></div>`).join('')}</div></div></section>`;
+                        }
+                        break;
+                    case 'faq':
+                        if (data.faq.length > 0) {
+                            html += `<section><div class="container"><h2>Frequently Asked Questions</h2><div style="max-width: 800px; margin: 0 auto;">${data.faq.map((f, i) => `<div class="faq-item"><div class="faq-question" onclick="this.parentElement.classList.toggle('active')"><span>${f.question}</span><span>+</span></div><div class="faq-answer">${f.answer}</div></div>`).join('')}</div></div></section>`;
+                        }
+                        break;
+                    case 'contact':
+                        html += `<section id="contact"><div class="container"><h2>Get in Touch</h2><div class="contact-section"><div class="contact-info">${data.phone ? `<div class="contact-item"><h3>📞 Phone</h3><p>${data.phone}</p></div>` : ''}${data.email ? `<div class="contact-item"><h3>✉️ Email</h3><p>${data.email}</p></div>` : ''}${data.address ? `<div class="contact-item"><h3>📍 Address</h3><p>${data.address}</p></div>` : ''}${data.city ? `<div class="contact-item"><h3>🌍 City</h3><p>${data.city}</p></div>` : ''}</div>${data.whatsapp ? `<a href="https://wa.me/${data.whatsapp.replace(/\\D/g, '')}" class="whatsapp-btn" style="font-size: 16px; padding: 12px 30px; margin-top: 20px;">Chat on WhatsApp</a>` : ''}</div></div></section>`;
+                        break;
+                    case 'map': {
+                        const mapQuery = encodeURIComponent([data.address, data.city, 'The Gambia'].filter(Boolean).join(', ') || 'Gambia');
+                        html += `<section id="map"><div class="container"><h2>Find Us</h2><p style="text-align:center;margin-bottom:28px;font-size:16px;color:${isLight?'#555':'#94a3b8'}">${[data.address, data.city].filter(Boolean).join(' · ') || 'The Gambia'}</p><div style="max-width:900px;margin:0 auto;border-radius:var(--radius-lg);overflow:hidden;border:1px solid rgba(${isLight?'0,0,0':'255,255,255'},0.1)"><iframe src="https://www.google.com/maps?q=${mapQuery}&output=embed" width="100%" height="380" style="border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map"></iframe></div></div></section>`;
+                        break;
+                    }
+                    case 'footer':
+                        html += `<footer><div class="container"><h3>${data.businessName}</h3><p>${data.footerTagline}</p><p style="margin-top: 20px; font-size: 14px; opacity: 0.8;">© ${new Date().getFullYear()} ${data.businessName}. All rights reserved.</p><div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">${data.facebook ? `<a href="${data.facebook}" target="_blank" style="color: ${textColor}; text-decoration: none;">Facebook</a>` : ''}${data.instagram ? `<a href="https://instagram.com/${data.instagram.replace('@', '')}" target="_blank" style="color: ${textColor}; text-decoration: none;">Instagram</a>` : ''}${data.tiktok ? `<a href="https://tiktok.com/@${data.tiktok.replace('@', '')}" target="_blank" style="color: ${textColor}; text-decoration: none;">TikTok</a>` : ''}${data.linkedin ? `<a href="https://linkedin.com/company/${data.linkedin}" target="_blank" style="color: ${textColor}; text-decoration: none;">LinkedIn</a>` : ''}</div></div></footer>`;
+                        break;
+                }
+            }
+
+            if (data.whatsapp) {
+                html += `<a href="https://wa.me/${data.whatsapp.replace(/\\D/g, '')}" class="float-whatsapp">💬</a>`;
+            }
+
+            const anim = state.currentAnimation && state.currentAnimation !== 'none' ? 'true' : 'false';
+            html += `<scr` + `ipt>document.querySelectorAll('.faq-question').forEach(q => {q.addEventListener('click', function() {this.parentElement.classList.toggle('active');});});if(${anim}){const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');io.unobserve(e.target);}});},{threshold:0.12});document.querySelectorAll('section').forEach(s=>{s.classList.add('anim-on-scroll');io.observe(s);});}</scr` + `ipt></body></html>`;
+
+            return html;
+        }
+
+        function updatePreview() {
+            const html = generatePreviewHTML();
+            document.getElementById('previewIframe').srcdoc = html;
+            document.getElementById('urlDisplay').textContent = (collectFormData().domain || 'yourbusiness.web.gm');
+        }
+
+        async function generateWithAI() {
+            const businessName = document.getElementById('businessName').value;
+            if (!businessName) {
+                showToast('Please enter a business name first', 'error');
+                return;
+            }
+
+            const generateBtn = event.target.closest('.btn-primary');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<span class="spinner"></span> Generating...';
+            generateBtn.disabled = true;
+
+            try {
+                const data = collectFormData();
+                const prompt = `Generate compelling website content for this Gambian business in JSON: Name: ${data.businessName}, Sector: ${document.getElementById('sector').value}, Location: ${data.city}. Return: {heroHeadline, heroSubtitle, services: [{name, description}], testimonials: [{quote, author, business}], faq: [{question, answer}], footerTagline}`;
+
+                let response;
+                if (state.useAnthropic) {
+                    const apiKey = document.getElementById('anthropicKey').value;
+                    if (!apiKey) {
+                        showToast('Please enter your Anthropic API key', 'error');
+                        return;
+                    }
+
+                    const res = await fetch('https://api.anthropic.com/v1/messages', {
+                        method: 'POST',
+                        headers: {
+                            'x-api-key': apiKey,
+                            'anthropic-version': '2023-06-01',
+                            'content-type': 'application/json',
+                            'anthropic-dangerous-direct-browser-access': 'true'
+                        },
+                        body: JSON.stringify({
+                            model: 'claude-sonnet-4-20250514',
+                            max_tokens: 1024,
+                            messages: [{ role: 'user', content: prompt }]
+                        })
+                    });
+
+                    if (!res.ok) throw new Error('Anthropic API error');
+                    const json = await res.json();
+                    response = json.content[0].text;
+                } else {
+                    const ollamaUrl = document.getElementById('ollamaUrl').value;
+                    const model = document.getElementById('modelSelect').value;
+
+                    if (!model) {
+                        showToast('Please connect to Ollama and select a model', 'error');
+                        return;
+                    }
+
+                    const res = await fetch(`${ollamaUrl}/api/generate`, {
+                        method: 'POST',
+                        body: JSON.stringify({ model, prompt, stream: false })
+                    });
+
+                    if (!res.ok) throw new Error('Ollama error');
+                    const json = await res.json();
+                    response = json.response;
+                }
+
+                const jsonMatch = response.match(/\{[\s\S]*\}/);
+                const content = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
+
+                if (content.heroHeadline) document.getElementById('heroHeadline').value = content.heroHeadline;
+                if (content.heroSubtitle) document.getElementById('heroSubtitle').value = content.heroSubtitle;
+                if (content.footerTagline) document.getElementById('footerTagline').value = content.footerTagline;
+
+                if (content.services && Array.isArray(content.services)) {
+                    const list = document.getElementById('servicesList');
+                    list.innerHTML = '';
+                    content.services.forEach((s, i) => {
+                        const item = document.createElement('div');
+                        item.className = 'service-item';
+                        item.innerHTML = `<input type="text" placeholder="Service Name" id="service${i}Name" value="${s.name || ''}" oninput="updatePreview()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px;"><textarea placeholder="Description" id="service${i}Desc" oninput="updatePreview()" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; min-height: 60px;">${s.description || ''}</textarea><div class="item-controls"><button class="btn-remove" onclick="removeService(${i})">Remove</button></div>`;
+                        list.appendChild(item);
+                    });
+                }
+
+                showToast('Content generated successfully!', 'success');
+                updatePreview();
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+            }
+        }
+
+        function downloadHTML() {
+            const html = generatePreviewHTML();
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (collectFormData().domain || 'website') + '.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Website downloaded!', 'success');
+        }
+
+        function copyHTML() {
+            const html = generatePreviewHTML();
+            navigator.clipboard.writeText(html).then(() => {
+                showToast('HTML copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy HTML', 'error');
+            });
+        }
+
+        function openInTab() {
+            const html = generatePreviewHTML();
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            showToast('Opened in new tab', 'success');
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.25s ease forwards';
+                setTimeout(() => toast.remove(), 250);
+            }, 3000);
+        }
+
+        async function loadOllamaModels() {
+            try {
+                const url = document.getElementById('ollamaUrl').value || 'http://localhost:11434';
+                const response = await fetch(`${url}/api/tags`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const select = document.getElementById('modelSelect');
+                    select.innerHTML = '';
+                    if (data.models && data.models.length > 0) {
+                        data.models.forEach(model => {
+                            const option = document.createElement('option');
+                            option.value = model.name;
+                            option.textContent = model.name;
+                            select.appendChild(option);
+                        });
+                        document.getElementById('statusDot').className = 'status-dot connected';
+                    }
+                }
+            } catch (e) {
+                document.getElementById('statusDot').className = 'status-dot disconnected';
+            }
+        }
+
+        function initPhotoTab() {
+            const galleryContainer = document.getElementById('galleryInputs');
+            galleryContainer.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                galleryContainer.innerHTML += `<div class="form-group"><label>Image ${i + 1} (URL)</label><input type="text" id="gallery${i}" placeholder="https://picsum.photos/400/300" oninput="updatePreview()"></div>`;
+            }
+
+            const teamContainer = document.getElementById('teamInputs');
+            teamContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                teamContainer.innerHTML += `<div style="padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 12px;"><div class="form-group"><label>Photo ${i + 1} URL</label><input type="text" id="team${i}Photo" placeholder="https://picsum.photos/300/300" oninput="updatePreview()"></div><div class="form-group"><label>Name</label><input type="text" id="team${i}Name" placeholder="Team member name" oninput="updatePreview()"></div><div class="form-group"><label>Role</label><input type="text" id="team${i}Role" placeholder="Manager / Chef / Designer" oninput="updatePreview()"></div></div>`;
+            }
+        }
+
+        const sections = [
+            { id: 'nav', name: 'Navigation Bar', disabled: true, default: true },
+            { id: 'hero', name: 'Hero / Banner', default: true },
+            { id: 'about', name: 'About Us', default: true },
+            { id: 'services', name: 'Services / Products', default: true },
+            { id: 'menu', name: 'Menu / Price List', default: false },
+            { id: 'reserve', name: 'Reserveren (Restaurant)', default: false },
+            { id: 'gallery', name: 'Photo Gallery', default: false },
+            { id: 'testimonials', name: 'Testimonials', default: false },
+            { id: 'team', name: 'Team', default: false },
+            { id: 'faq', name: 'FAQ', default: false },
+            { id: 'contact', name: 'Contact', default: true },
+            { id: 'map', name: 'Map / Location', default: true },
+            { id: 'footer', name: 'Footer', default: true }
+        ];
+
+        function initSectionsList() {
+            const list = document.getElementById('sectionsList');
+            list.innerHTML = sections.map((s) => `<div class="section-item" draggable="${!s.disabled}" data-section-id="${s.id}" style="user-select: none;"><span class="drag-handle" style="${s.disabled ? 'visibility: hidden;' : ''}">⋮⋮</span><label style="display: flex; align-items: center; gap: 8px; flex: 1; margin: 0;"><input type="checkbox" class="section-toggle" data-section="${s.id}" ${s.default ? 'checked' : ''} ${s.disabled ? 'disabled' : ''}>${s.name}</label>${s.disabled ? '<span style="color: var(--muted); font-size: 11px;">(required)</span>' : ''}<div class="toggle ${s.default ? 'on' : ''}" data-target="${s.id}" style="margin-left: auto; ${s.disabled ? 'opacity:0.4;cursor:not-allowed;pointer-events:none' : 'cursor:pointer'}"></div></div>`).join('');
+
+            // Add drag & drop event listeners
+            document.querySelectorAll('.section-item[draggable="true"]').forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragleave', handleDragLeave);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+
+            document.querySelectorAll('.section-toggle').forEach(cb => {
+                cb.onchange = function() {
+                    const toggle = this.closest('.section-item').querySelector('.toggle');
+                    if (this.checked) toggle.classList.add('on');
+                    else toggle.classList.remove('on');
+                    updateSections();
+                };
+            });
+
+            // Clicking the visual toggle pill flips the linked checkbox
+            document.querySelectorAll('#sectionsList .toggle[data-target]').forEach(toggle => {
+                toggle.onclick = function(e) {
+                    e.stopPropagation();
+                    const cb = this.closest('.section-item').querySelector('.section-toggle');
+                    if (!cb || cb.disabled) return;
+                    cb.checked = !cb.checked;
+                    cb.dispatchEvent(new Event('change', { bubbles: true }));
+                };
+            });
+        }
+
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+
+            if (this !== draggedElement) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (this !== draggedElement) {
+                // Reorder the sections array
+                const draggedIndex = Array.from(draggedElement.parentNode.children).indexOf(draggedElement);
+                const targetIndex = Array.from(this.parentNode.children).indexOf(this);
+
+                // Get the section IDs
+                const draggedId = draggedElement.dataset.sectionId;
+                const targetId = this.dataset.sectionId;
+
+                // Find indices in sections array
+                const draggedSectionIndex = sections.findIndex(s => s.id === draggedId);
+                const targetSectionIndex = sections.findIndex(s => s.id === targetId);
+
+                // Reorder the sections array
+                const [removed] = sections.splice(draggedSectionIndex, 1);
+                sections.splice(targetSectionIndex, 0, removed);
+
+                // Save the new order
+                saveSectionOrder();
+
+                // Re-render the list
+                initSectionsList();
+
+                // Update preview to reflect new order
+                updatePreview();
+            }
+
+            this.classList.remove('drag-over');
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.section-item').forEach(item => {
+                item.classList.remove('drag-over');
+            });
+        }
+
+        function saveSectionOrder() {
+            state.sectionOrder = sections.map(s => s.id);
+            saveState();
+        }
+
+        function restoreSectionOrder() {
+            if (state.sectionOrder && Array.isArray(state.sectionOrder)) {
+                const sectionMap = {};
+                sections.forEach(s => sectionMap[s.id] = s);
+
+                const orderedSections = [];
+                state.sectionOrder.forEach(id => {
+                    if (sectionMap[id]) {
+                        orderedSections.push(sectionMap[id]);
+                    }
+                });
+
+                // Add any new sections that aren't in saved order
+                sections.forEach(s => {
+                    if (!orderedSections.find(os => os.id === s.id)) {
+                        orderedSections.push(s);
+                    }
+                });
+
+                sections.length = 0;
+                sections.push(...orderedSections);
+            }
+        }
+
+        function updateSections() {
+            const enabled = document.querySelectorAll('.section-toggle:checked').length;
+            document.getElementById('sectionCount').textContent = `${enabled} of ${sections.length}`;
+            updatePreview();
+        }
+
+        function initContentTab() {
+            const container = document.getElementById('contentFields');
+            container.innerHTML = `<div class="form-group"><label>Hero Headline</label><input type="text" id="heroHeadline" placeholder="Welcome to our business" oninput="updatePreview()"></div><div class="form-group"><label>Hero Subtitle</label><input type="text" id="heroSubtitle" placeholder="Experience excellence" oninput="updatePreview()"></div><div class="form-group"><label>CTA Button Text</label><input type="text" id="ctaText" placeholder="Contact Us Now" oninput="updatePreview()"></div><div class="section-header">About Section</div><div class="form-group"><label>About Title</label><input type="text" id="aboutTitle" placeholder="About Our Business" oninput="updatePreview()"></div><div class="form-group"><label>About Text</label><textarea id="aboutTextContent" placeholder="Tell your story..." oninput="updatePreview()"></textarea></div><button class="btn-regenerate" onclick="regenerateSection('about')">Regenerate with AI</button><div class="section-header">Services / Products</div><div id="servicesList"></div><button class="btn btn-secondary" onclick="addService()" style="width: 100%; margin-top: 12px;">+ Add Service</button><button class="btn-regenerate" onclick="regenerateSection('services')">Regenerate with AI</button><div class="section-header">Testimonials</div><div id="testimonialsList"></div><button class="btn btn-secondary" onclick="addTestimonial()" style="width: 100%; margin-top: 12px;">+ Add Testimonial</button><div class="section-header">FAQ</div><div id="faqList"></div><button class="btn btn-secondary" onclick="addFAQ()" style="width: 100%; margin-top: 12px;">+ Add FAQ</button><div class="section-header">Footer</div><div class="form-group"><label>Footer Tagline</label><input type="text" id="footerTagline" placeholder="Made with love in Gambia" oninput="updatePreview()"></div>`;
+
+            const list = document.getElementById('servicesList');
+            list.innerHTML = `<div class="service-item"><input type="text" placeholder="Service Name" id="service0Name" oninput="updatePreview()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px;"><textarea placeholder="Description" id="service0Desc" oninput="updatePreview()" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; min-height: 60px;"></textarea><div class="item-controls"><button class="btn-remove" onclick="removeService(0)">Remove</button></div></div>`;
+        }
+
+        function addService() {
+            const list = document.getElementById('servicesList');
+            const id = list.children.length;
+            const item = document.createElement('div');
+            item.className = 'service-item';
+            item.innerHTML = `<input type="text" placeholder="Service Name" id="service${id}Name" oninput="updatePreview()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px;"><textarea placeholder="Description" id="service${id}Desc" oninput="updatePreview()" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; min-height: 60px;"></textarea><div class="item-controls"><button class="btn-remove" onclick="removeService(${id})">Remove</button></div>`;
+            list.appendChild(item);
+        }
+
+        function removeService(id) {
+            document.getElementById(`service${id}Name`)?.closest('.service-item')?.remove();
+            updatePreview();
+        }
+
+        function addTestimonial() {
+            const list = document.getElementById('testimonialsList');
+            const id = list.children.length;
+            const item = document.createElement('div');
+            item.className = 'testimonial-item';
+            item.innerHTML = `<textarea placeholder="Quote" id="testimonial${id}Quote" oninput="updatePreview()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; min-height: 60px;"></textarea><input type="text" placeholder="Author name" id="testimonial${id}Author" oninput="updatePreview()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px;"><input type="text" placeholder="Business/Role" id="testimonial${id}Business" oninput="updatePreview()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px;"><div class="item-controls"><button class="btn-remove" onclick="removeTestimonial(${id})">Remove</button></div>`;
+            list.appendChild(item);
+        }
+
+        function removeTestimonial(id) {
+            document.getElementById(`testimonial${id}Quote`)?.closest('.testimonial-item')?.remove();
+            updatePreview();
+        }
+
+        function addFAQ() {
+            const list = document.getElementById('faqList');
+            const id = list.children.length;
+            const item = document.createElement('div');
+            item.className = 'faq-item';
+            item.innerHTML = `<input type="text" placeholder="Question" id="faq${id}Question" oninput="updatePreview()" style="width: 100%; padding: 8px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-weight: 600;"><textarea placeholder="Answer" id="faq${id}Answer" oninput="updatePreview()" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; min-height: 80px;"></textarea><div class="item-controls"><button class="btn-remove" onclick="removeFAQ(${id})">Remove</button></div>`;
+            list.appendChild(item);
+        }
+
+        function removeFAQ(id) {
+            document.getElementById(`faq${id}Question`)?.closest('.faq-item')?.remove();
+            updatePreview();
+        }
+
+        function regenerateSection(section) {
+            showToast('Section regenerated!', 'success');
+            updatePreview();
+        }
+
+        // TEMPLATE DATA for Style tab — each template is a preset of palette + font + layout + animation + hero style + default sections
+        // palette/font indexes reference PALETTES / FONTS arrays; layout ∈ LAYOUTS ids; animation ∈ ANIMATIONS ids; hero ∈ {classic,split,minimal,overlay}; sections = default-on section ids
+        const TEMPLATES_V2 = [
+            // ─── Food & Drink ───
+            { id: 'sunset',    category: 'Food & Drink',   pill: 'RESTAURANT', pillBg: '#f97316', pillColor: '#fff', name: 'Sunset Artisan', desc: 'Warm gradients, cozy restaurant', bars: ['#f97316','#fbbf24','#92400e'], palette: 7, font: 1, layout: 'centered', animation: 'rise', hero: 'overlay',  sections: ['nav','hero','about','menu','reserve','gallery','testimonials','contact','map','footer'] },
+            { id: 'beach',     category: 'Food & Drink',   pill: 'BEACH GRILL', pillBg: '#14b8a6', pillColor: '#fff', name: 'Beach Grill',      desc: 'Tropical, outdoor dining',       bars: ['#14b8a6','#0ea5e9','#f97316'],   palette: 14, font: 4, layout: 'wide',     animation: 'fade', hero: 'classic',  sections: ['nav','hero','about','menu','reserve','gallery','contact','map','footer'] },
+
+            // ─── Hospitality & Travel ───
+            { id: 'ocean',     category: 'Hospitality',    pill: 'RESORT',  pillBg: '#0ea5e9', pillColor: '#fff', name: 'Ocean & Sky',      desc: 'Deep blues, hotel vibes',        bars: ['#0ea5e9','#06b6d4','#0369a1'],   palette: 1, font: 5, layout: 'wide',     animation: 'fade', hero: 'split',    sections: ['nav','hero','about','services','gallery','testimonials','team','contact','map','footer'] },
+            { id: 'mosque',    category: 'Hospitality',    pill: 'SERENE', pillBg: '#06b6d4', pillColor: '#fff', name: 'Serene Stay',      desc: 'Respectful, calm hospitality',    bars: ['#06b6d4','#0e7490','#fbbf24'],   palette: 6, font: 3, layout: 'centered', animation: 'fade', hero: 'minimal',  sections: ['nav','hero','about','services','gallery','contact','map','footer'] },
+
+            // ─── Retail & Fashion ───
+            { id: 'market',    category: 'Retail & Fashion', pill: 'MARKET',   pillBg: '#f59e0b', pillColor: '#000', name: 'Gambia Market',    desc: 'Vibrant, multi-color retail',    bars: ['#f59e0b','#ef4444','#10b981','#3b82f6'], palette: 0,  font: 4, layout: 'wide',     animation: 'scale', hero: 'classic', sections: ['nav','hero','about','services','gallery','testimonials','contact','footer'] },
+            { id: 'editorial', category: 'Retail & Fashion', pill: 'FASHION',  pillBg: '#ef4444', pillColor: '#fff', name: 'Editorial',        desc: 'Magazine look, type-driven',     bars: ['#ef4444','#1e293b','#f97316','#fbbf24'],palette: 5,  font: 1, layout: 'narrow',   animation: 'slide', hero: 'minimal', sections: ['nav','hero','about','services','gallery','testimonials','contact','footer'] },
+
+            // ─── Business & Services ───
+            { id: 'tech',      category: 'Business',       pill: 'TECH',   pillBg: '#8b5cf6', pillColor: '#fff', name: 'Tech Purple',      desc: 'Futuristic startup look',         bars: ['#8b5cf6','#6366f1','#a855f7'],   palette: 8,  font: 5, layout: 'split',    animation: 'rise',  hero: 'split',   sections: ['nav','hero','about','services','team','faq','contact','footer'] },
+            { id: 'energy',    category: 'Business',       pill: 'BOLD',   pillBg: '#ef4444', pillColor: '#fff', name: 'Bold Energy',      desc: 'High-contrast, dynamic CTA',     bars: ['#ef4444','#1e1e1e','#f5f5f5'],   palette: 5,  font: 2, layout: 'fullscreen', animation: 'scale', hero: 'overlay', sections: ['nav','hero','about','services','testimonials','contact','footer'] },
+
+            // ─── Community & NGO ───
+            { id: 'nature',    category: 'Community & NGO', pill: 'COMMUNITY', pillBg: '#10b981', pillColor: '#fff', name: 'Nature & Earth', desc: 'Organic, sustainable, warm',   bars: ['#10b981','#065f46','#fbbf24'],   palette: 4,  font: 4, layout: 'wide',     animation: 'fade',  hero: 'classic', sections: ['nav','hero','about','services','gallery','testimonials','team','contact','footer'] },
+            { id: 'ngo',       category: 'Community & NGO', pill: 'NGO',       pillBg: '#10b981', pillColor: '#fff', name: 'NGO / Charity',    desc: 'Trustworthy, impactful',        bars: ['#10b981','#3b82f6','#fbbf24'],   palette: 12, font: 0, layout: 'centered', animation: 'rise',  hero: 'split',   sections: ['nav','hero','about','services','testimonials','team','contact','footer'] },
+
+            // ─── Health & Education ───
+            { id: 'clinic',    category: 'Health & Education', pill: 'CLINIC', pillBg: '#ef4444', pillColor: '#fff', name: 'Clinic / Health', desc: 'Clean, medical trust',          bars: ['#ef4444','#1e3a5f','#fff'],       palette: 10, font: 5, layout: 'wide',     animation: 'fade',  hero: 'minimal', sections: ['nav','hero','about','services','team','faq','contact','map','footer'] },
+            { id: 'school',    category: 'Health & Education', pill: 'SCHOOL', pillBg: '#3b82f6', pillColor: '#fff', name: 'School / Education', desc: 'Inspiring, structured',      bars: ['#3b82f6','#1e3a5f','#fbbf24','#ef4444'], palette: 6,  font: 0, layout: 'wide',    animation: 'rise',  hero: 'classic', sections: ['nav','hero','about','services','team','faq','contact','map','footer'] }
+        ];
+
+        const TEMPLATE_CATEGORIES = ['Food & Drink', 'Hospitality', 'Retail & Fashion', 'Business', 'Community & NGO', 'Health & Education'];
+
+        const PALETTES = [
+            { name: 'Gambia', colors: ['#10b981','#f59e0b'] },
+            { name: 'Ocean', colors: ['#0ea5e9','#06b6d4'] },
+            { name: 'Earth', colors: ['#92400e','#d97706','#fef3c7'] },
+            { name: 'Luxury', colors: ['#fbbf24','#f5f5dc','#d4af37'] },
+            { name: 'Forest', colors: ['#065f46','#10b981','#d97706'] },
+            { name: 'Fire', colors: ['#ef4444','#f97316','#fbbf24'] },
+            { name: 'Royal', colors: ['#1e3a5f','#3b82f6','#06b6d4'] },
+            { name: 'Sunset', colors: ['#f97316','#fbbf24','#ef4444'] },
+            { name: 'Purple', colors: ['#7c3aed','#a855f7','#c084fc'] },
+            { name: 'Sand', colors: ['#d4a574','#92400e','#fef3c7'] },
+            { name: 'Midnight', colors: ['#1e293b','#3b82f6','#06b6d4'] },
+            { name: 'Rose', colors: ['#ec4899','#f472b6','#fda4af'] },
+            { name: 'Nature', colors: ['#15803d','#fbbf24'] },
+            { name: 'Slate', colors: ['#475569','#94a3b8','#06b6d4'] },
+            { name: 'Teal', colors: ['#0d9488','#14b8a6','#2dd4bf'] },
+            { name: 'Custom ✎', colors: ['#00c896','#f5a200','#7c3aed'] }
+        ];
+
+        const FONTS = [
+            { label: 'Modern', name: 'Strong & Clear', desc: 'Professional body text for everyday reading.', heading: 'Syne', body: 'DM Sans' },
+            { label: 'Elegant', name: 'Refined Beauty', desc: 'Graceful flow and sophisticated character.', heading: 'Playfair Display', body: 'Inter' },
+            { label: 'Bold Impact', name: 'POWERFUL IMPACT', desc: 'Clear and direct, built for action.', heading: 'Montserrat', body: 'Lato' },
+            { label: 'Classic', name: 'Timeless Craft', desc: 'Traditional, trusted, like a fine newspaper.', heading: 'Georgia', body: 'Times New Roman' },
+            { label: 'Playful', name: 'Fun & Friendly', desc: 'Warm and approachable. Community brands.', heading: 'Nunito', body: 'Open Sans' },
+            { label: 'Minimal', name: 'Clean Precision', desc: 'Swiss precision. Every pixel intentional.', heading: 'Inter', body: 'Inter' },
+            { label: 'Display', name: 'DISPLAY BOLD', desc: 'Open, highly readable body at any size.', heading: 'Oswald', body: 'Source Sans Pro' },
+            { label: 'Luxury', name: 'Exquisite', desc: 'Crisp modern body that complements.', heading: 'Cormorant Garamond', body: 'Lato' }
+        ];
+
+        // Layout / animation / language options for the Style tab
+        const LAYOUTS = [
+            { id: 'wide',       label: 'Wide',       icon: '▭' },
+            { id: 'narrow',     label: 'Narrow',     icon: '▯' },
+            { id: 'centered',   label: 'Centered',   icon: '▮' },
+            { id: 'split',      label: 'Split',      icon: '▥' },
+            { id: 'sidebar',    label: 'Sidebar',    icon: '▦' },
+            { id: 'fullscreen', label: 'Fullscreen', icon: '▢' }
+        ];
+
+        const ANIMATIONS = [
+            { id: 'none',   label: 'None' },
+            { id: 'fade',   label: 'Fade in' },
+            { id: 'rise',   label: 'Rise up' },
+            { id: 'slide',  label: 'Slide left' },
+            { id: 'scale',  label: 'Scale in' },
+            { id: 'blur',   label: 'Blur sharpen' }
+        ];
+
+        const LANGUAGES = [
+            { id: 'en', label: 'English' },
+            { id: 'nl', label: 'Nederlands' },
+            { id: 'fr', label: 'Français' },
+            { id: 'wo', label: 'Wolof' },
+            { id: 'mnk', label: 'Mandinka' }
+        ];
+
+        // Helpers used by generatePreviewHTML
+        function hexToRgb(hex) {
+            const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+            if (!m) return { r: 0, g: 200, b: 150 };
+            return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
+        }
+
+        function themeCSS(tplId, isLight, primary, accent) {
+            const T = {
+                sunset: `body{background:${isLight?'#fdf6ee':'#1a120b'}}header{background:${isLight?'rgba(253,246,238,0.9)':'rgba(26,18,11,0.85)'};border-bottom:2px solid ${primary}}.service-card,.testimonial-card,.faq-question,.contact-section{background:${isLight?'#fff':'#241810'};border:1px solid ${primary}33}.usp-badge{background:transparent;color:${primary};border:1.5px solid ${primary}}section h2::after{content:'';display:block;width:60px;height:3px;background:${primary};margin:14px auto 0;border-radius:2px}`,
+                beach:  `body{background:${isLight?'#f4f7f8':'#0a1620'}}header{background:${isLight?'rgba(255,255,255,0.92)':'rgba(10,22,32,0.88)'};backdrop-filter:blur(12px)}.hero{box-shadow:inset 0 -120px 100px -60px ${isLight?'#f4f7f8':'#0a1620'}}.service-card{background:${isLight?'#fff':'rgba(255,255,255,0.04)'};border-radius:24px;border:none;box-shadow:0 8px 30px rgba(0,0,0,${isLight?'0.06':'0.35'})}.usp-badge{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,0.3)}`,
+                ocean:  `body{background:${isLight?'#f8fafc':'#0b1221'}}header{background:transparent;position:absolute;border:none;box-shadow:none}.hero{padding-top:140px}.hero h1{text-shadow:0 2px 30px rgba(0,0,0,0.4)}.service-card{background:linear-gradient(135deg,${isLight?'#fff,#f1f5f9':'rgba(255,255,255,0.04),rgba(255,255,255,0.01)'});border:1px solid ${isLight?'#e2e8f0':'rgba(255,255,255,0.08)'};backdrop-filter:blur(20px)}.contact-section{background:linear-gradient(135deg,${primary}15,${accent}10);border:1px solid ${primary}30}`,
+                mosque: `body{background:${isLight?'#faf9f6':'#0f1419'}}.container{max-width:980px}header{border-bottom:none;box-shadow:none;background:transparent;padding:24px 0}section{padding:100px 20px}section h2{font-weight:400;letter-spacing:.02em;position:relative;padding-bottom:24px}section h2::after{content:'◆';display:block;color:${primary};font-size:14px;margin-top:14px}.service-card,.contact-section{background:transparent;border:1px solid ${primary}33;border-radius:0}.usp-badge{background:transparent;color:${primary};border-bottom:1px solid ${primary};border-radius:0;padding:6px 0}`,
+                market: `body{background:${isLight?'#fff8e1':'#1a1408'}}header{background:${isLight?'#fff':'#241a0c'};border-bottom:3px dashed ${primary}}.service-card{background:${isLight?'#fff':'#241a0c'};border:none;border-top:5px solid ${primary};border-radius:4px;box-shadow:6px 6px 0 ${accent}}.usp-badge{background:${primary};color:#fff;transform:rotate(-2deg);box-shadow:3px 3px 0 ${accent};border-radius:4px}.usp-badge:nth-child(2n){transform:rotate(1.5deg);background:${accent}}section h2{transform:rotate(-1deg);display:inline-block;width:auto;background:${primary};color:#fff;padding:8px 24px;border-radius:4px}.section{text-align:center}`,
+                editorial: `body{background:${isLight?'#fafaf7':'#111'}}.container{max-width:880px}header{border-bottom:1px solid ${isLight?'#222':'#fff'}33;background:transparent}.hero h1{font-size:clamp(56px,9vw,120px);letter-spacing:-0.04em;line-height:0.92;font-weight:800}.hero p{font-style:italic;border-left:3px solid ${primary};padding-left:18px;max-width:500px;margin:0 0 30px;text-align:left}section h2{text-align:left;font-size:48px;letter-spacing:-0.02em;border-bottom:1px solid ${isLight?'#222':'#fff'}22;padding-bottom:18px;margin-bottom:48px}.service-card{background:transparent;border:none;border-top:1px solid ${isLight?'#222':'#fff'}22;text-align:left;padding:30px 0;border-radius:0}.service-card h3{font-size:28px;color:${isLight?'#111':'#fff'}}.usp-badge{background:transparent;color:${primary};padding:0;border:none;font-style:italic;font-weight:400}`,
+                tech:   `body{background:${isLight?'#f4f6fb':'#0a0e1a'};background-image:radial-gradient(ellipse at top,${primary}15 0%,transparent 50%)}header{background:${isLight?'rgba(244,246,251,0.8)':'rgba(10,14,26,0.8)'};backdrop-filter:blur(16px);border-bottom:1px solid ${primary}30}.hero{background-image:linear-gradient(135deg,${primary}25 0%,${accent}10 50%,transparent 100%),url('${''}')!important;background-size:cover}.service-card{background:linear-gradient(135deg,${isLight?'#fff':'rgba(255,255,255,0.03)'},${isLight?'#f4f6fb':'rgba(255,255,255,0.01)'});border:1px solid ${primary}40;box-shadow:0 0 30px ${primary}10}.service-card:hover{box-shadow:0 0 50px ${primary}40;border-color:${primary}}.usp-badge{background:transparent;color:${primary};border:1px solid ${primary};box-shadow:0 0 20px ${primary}30}`,
+                energy: `body{background:#000;color:#fff!important}header{background:#000;border-bottom:2px solid ${primary}}.hero h1{font-size:clamp(64px,10vw,140px)!important;letter-spacing:-0.03em;line-height:0.9;font-weight:800;text-transform:uppercase}.hero-cta{background:${primary}!important;color:#fff!important;border-radius:0!important;padding:18px 42px!important;font-size:18px!important;text-transform:uppercase;letter-spacing:.1em;border:2px solid ${primary}}.service-card{background:#0a0a0a;border:2px solid ${primary};border-radius:0;text-align:left}.service-card h3{text-transform:uppercase;letter-spacing:.05em}.usp-badge{background:#fff;color:#000;border-radius:0;text-transform:uppercase;letter-spacing:.08em}section h2{text-transform:uppercase;letter-spacing:-0.02em;font-size:48px}`,
+                nature: `body{background:${isLight?'#f5f1e8':'#1a1f15'}}header{background:${isLight?'#f5f1e8':'#1a1f15'};border-bottom:none;box-shadow:none}.hero{border-radius:0 0 60% 60% / 0 0 80px 80px;overflow:hidden}.service-card{background:${isLight?'#fff':'#222a1d'};border-radius:24px;border:none;text-align:left;box-shadow:0 4px 20px rgba(0,0,0,${isLight?'0.05':'0.3'})}.usp-badge{background:transparent;color:${primary};border:1.5px solid ${primary};border-radius:24px}.contact-section{background:${primary}15;border:none;border-radius:32px}`,
+                ngo:    `body{background:${isLight?'#fff':'#0f172a'}}header{background:${isLight?'#fff':'#0f172a'};border-bottom:1px solid ${primary}30}.hero{background-image:linear-gradient(135deg,${primary}f0,${accent}d0),url('')!important}.service-card{background:${isLight?'#f8fafc':'rgba(255,255,255,0.03)'};border:none;border-left:4px solid ${primary};border-radius:8px;text-align:left}.service-card h3{color:${isLight?'#0f172a':'#fff'}}.usp-badge{background:${primary}15;color:${primary};border:none}.testimonial-card{border-left-width:6px}section h2::before{content:'';display:block;width:40px;height:3px;background:${primary};margin:0 auto 20px}`,
+                clinic: `body{background:${isLight?'#f5f9fc':'#0a1422'}}header{background:${isLight?'#fff':'#0f1c30'};border-bottom:1px solid ${isLight?'#e2e8f0':'rgba(255,255,255,0.08)'};box-shadow:0 1px 0 rgba(0,0,0,0.04)}.service-card{background:${isLight?'#fff':'#0f1c30'};border:1px solid ${isLight?'#e2e8f0':'rgba(255,255,255,0.06)'};border-radius:16px;text-align:left;padding:28px}.service-card h3{display:flex;align-items:center;gap:10px}.service-card h3::before{content:'+';color:${primary};font-size:28px;line-height:1}.usp-badge{background:${primary}10;color:${primary};border:1px solid ${primary}30;border-radius:6px;font-weight:500}.contact-section{background:${primary}08;border:1px solid ${primary}25}`,
+                school: `body{background:${isLight?'#fff':'#0c1424'}}header{background:${primary};color:#fff;border-bottom:4px solid ${accent}}header .logo{color:#fff}header nav a{color:#fff}.hero{background-image:linear-gradient(135deg,${primary}cc,${primary}88),url('')!important}.service-card{background:${isLight?'#f8fafc':'#162032'};border:none;border-top:4px solid ${primary};border-radius:0 0 12px 12px;text-align:center}.usp-badge{background:${accent};color:#000;border-radius:4px;font-weight:700}section h2{display:inline-block;background:${primary};color:#fff;padding:8px 24px;border-radius:6px}.section{text-align:center}`
+            };
+            return T[tplId] || '';
+        }
+
+        function animationCSS(id) {
+            switch (id) {
+                case 'fade':  return `.anim-on-scroll{opacity:0;transition:opacity .7s ease}.anim-on-scroll.in-view{opacity:1}`;
+                case 'rise':  return `.anim-on-scroll{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}.anim-on-scroll.in-view{opacity:1;transform:none}`;
+                case 'slide': return `.anim-on-scroll{opacity:0;transform:translateX(-40px);transition:opacity .7s ease,transform .7s ease}.anim-on-scroll.in-view{opacity:1;transform:none}`;
+                case 'scale': return `.anim-on-scroll{opacity:0;transform:scale(.96);transition:opacity .7s ease,transform .7s ease}.anim-on-scroll.in-view{opacity:1;transform:none}`;
+                case 'blur':  return `.anim-on-scroll{opacity:0;filter:blur(6px);transition:opacity .7s ease,filter .7s ease}.anim-on-scroll.in-view{opacity:1;filter:none}`;
+                default:      return '';
+            }
+        }
+
+        function initStyleTab() {
+            // Templates — grouped by category
+            const tplEl = document.getElementById('templateGridV2');
+            if (tplEl) {
+                let html = '';
+                TEMPLATE_CATEGORIES.forEach(cat => {
+                    const entries = TEMPLATES_V2.map((t, i) => ({ t, i })).filter(x => x.t.category === cat);
+                    if (!entries.length) return;
+                    html += `<div class="tpl-category-header" style="grid-column:1/-1;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:10px 0 2px;padding-top:4px;border-top:1px solid var(--border)">${cat}</div>`;
+                    html += entries.map(({ t, i }) => `
+                        <div class="tpl-card${i === state.currentTemplate ? ' selected' : ''}" data-i="${i}" onclick="selectTemplate(${i})" title="${t.desc}">
+                            ${t.pill ? `<span class="tpl-pill" style="background:${t.pillBg};color:${t.pillColor}">${t.pill}</span>` : ''}
+                            <div class="tpl-bars">${t.bars.map(c => `<div class="tpl-bar" style="background:${c}"></div>`).join('')}</div>
+                            <div class="tpl-name">${t.name}</div>
+                            <div class="tpl-desc">${t.desc}</div>
+                        </div>`).join('');
+                });
+                tplEl.innerHTML = html;
+                // First header shouldn't have a top separator
+                const firstHeader = tplEl.querySelector('.tpl-category-header');
+                if (firstHeader) { firstHeader.style.borderTop = 'none'; firstHeader.style.marginTop = '0'; firstHeader.style.paddingTop = '0'; }
+            }
+
+            // Palettes
+            const palEl = document.getElementById('paletteGrid');
+            if (palEl) {
+                palEl.innerHTML = PALETTES.map((p, i) => `
+                    <div class="palette-item${i === state.currentPalette ? ' selected' : ''}" data-i="${i}" onclick="selectPalette(${i})">
+                        <div class="palette-colors">${p.colors.map(c => `<div class="palette-swatch" style="background:${c}"></div>`).join('')}</div>
+                        <div class="palette-label">${p.name}</div>
+                    </div>`).join('');
+            }
+
+            // Fonts
+            const fontEl = document.getElementById('fontGrid');
+            if (fontEl) {
+                fontEl.innerHTML = FONTS.map((f, i) => `
+                    <div class="font-card${i === state.currentFont ? ' selected' : ''}" data-i="${i}" onclick="selectFont(${i})">
+                        <div class="font-card-label">${f.label.toUpperCase()}</div>
+                        <div class="font-card-preview" style="font-family:'${f.heading}',sans-serif">${f.name}</div>
+                        <div class="font-card-desc" style="font-family:'${f.body}',sans-serif">${f.desc}</div>
+                    </div>`).join('');
+            }
+
+            // Layouts
+            const layoutEl = document.getElementById('layoutGrid');
+            if (layoutEl) {
+                layoutEl.innerHTML = LAYOUTS.map(l => `
+                    <div class="layout-card${l.id === state.currentLayout ? ' selected' : ''}" data-id="${l.id}" onclick="selectLayout('${l.id}')">
+                        <span class="layout-icon">${l.icon}</span>
+                        <div class="layout-label">${l.label}</div>
+                    </div>`).join('');
+            }
+
+            // Animations
+            const animEl = document.getElementById('animationPills');
+            if (animEl) {
+                animEl.innerHTML = ANIMATIONS.map(a => `
+                    <button class="style-pill${a.id === state.currentAnimation ? ' selected' : ''}" data-id="${a.id}" onclick="selectAnimation('${a.id}')">${a.label}</button>`).join('');
+            }
+
+            // Languages
+            const langEl = document.getElementById('langPills');
+            if (langEl) {
+                langEl.innerHTML = LANGUAGES.map(l => `
+                    <button class="style-pill${l.id === state.currentLang ? ' selected' : ''}" data-id="${l.id}" onclick="selectLang('${l.id}')">${l.label}</button>`).join('');
+            }
+
+            // Border radius select
+            const radiusEl = document.getElementById('borderRadiusSelect');
+            if (radiusEl) {
+                radiusEl.value = String(state.currentBorderRadius ?? 8);
+                radiusEl.onchange = () => { state.currentBorderRadius = +radiusEl.value; saveState(); updatePreview(); };
+            }
+
+            // Theme toggle reflects state
+            const themeEl = document.getElementById('themeToggle');
+            if (themeEl) themeEl.classList.toggle('on', !!state.isLight);
+        }
+
+        function selectTemplate(i) {
+            const tpl = TEMPLATES_V2[i];
+            if (!tpl) return;
+            state.currentTemplate = i;
+
+            // Apply palette, font, layout, animation, hero style from the template preset
+            if (Number.isInteger(tpl.palette) && PALETTES[tpl.palette]) state.currentPalette = tpl.palette;
+            if (Number.isInteger(tpl.font) && FONTS[tpl.font]) state.currentFont = tpl.font;
+            if (tpl.layout && LAYOUTS.find(l => l.id === tpl.layout)) state.currentLayout = tpl.layout;
+            if (tpl.animation && ANIMATIONS.find(a => a.id === tpl.animation)) state.currentAnimation = tpl.animation;
+            if (tpl.hero) state.currentHero = tpl.hero;
+
+            // Apply default sections: enable exactly the ones the template lists, respecting required sections
+            if (Array.isArray(tpl.sections)) {
+                const want = new Set(tpl.sections);
+                document.querySelectorAll('#sectionsList .section-toggle').forEach(cb => {
+                    const id = cb.dataset.section;
+                    const shouldBeOn = want.has(id) || cb.disabled; // required stays on
+                    if (cb.checked !== shouldBeOn) {
+                        cb.checked = shouldBeOn;
+                        cb.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                });
+            }
+
+            // Re-sync Style tab selections visually
+            document.querySelectorAll('#templateGridV2 .tpl-card').forEach(el => el.classList.toggle('selected', +el.dataset.i === i));
+            document.querySelectorAll('#paletteGrid .palette-item').forEach((el, idx) => el.classList.toggle('selected', idx === state.currentPalette));
+            document.querySelectorAll('#fontGrid .font-card').forEach((el, idx) => el.classList.toggle('selected', idx === state.currentFont));
+            document.querySelectorAll('#layoutGrid .layout-card').forEach(el => el.classList.toggle('selected', el.dataset.id === state.currentLayout));
+            document.querySelectorAll('#animationPills .style-pill').forEach(el => el.classList.toggle('selected', el.dataset.id === state.currentAnimation));
+
+            saveState();
+            updatePreview();
+        }
+
+        function selectPalette(i) {
+            state.currentPalette = i;
+            document.querySelectorAll('#paletteGrid .palette-item').forEach((el, idx) => el.classList.toggle('selected', idx === i));
+            saveState();
+            updatePreview();
+        }
+
+        function selectFont(i) {
+            state.currentFont = i;
+            document.querySelectorAll('#fontGrid .font-card').forEach((el, idx) => el.classList.toggle('selected', idx === i));
+            saveState();
+            updatePreview();
+        }
+
+        function selectLayout(id) {
+            state.currentLayout = id;
+            document.querySelectorAll('#layoutGrid .layout-card').forEach(el => el.classList.toggle('selected', el.dataset.id === id));
+            saveState();
+            updatePreview();
+        }
+
+        function selectAnimation(id) {
+            state.currentAnimation = id;
+            document.querySelectorAll('#animationPills .style-pill').forEach(el => el.classList.toggle('selected', el.dataset.id === id));
+            saveState();
+            updatePreview();
+        }
+
+        function selectLang(id) {
+            state.currentLang = id;
+            document.querySelectorAll('#langPills .style-pill').forEach(el => el.classList.toggle('selected', el.dataset.id === id));
+            saveState();
+            updatePreview();
+        }
+
+        function toggleTheme() {
+            state.isLight = !state.isLight;
+            const t = document.getElementById('themeToggle');
+            if (t) t.classList.toggle('on', state.isLight);
+            saveState();
+            updatePreview();
+        }
+
+        async function initBuilder() {
+            loadState();
+            restoreSectionOrder();
+            initSectionsList();
+            initPhotoTab();
+            initContentTab();
+            initStyleTab();
+            hydrateInputsFromState();
+            updatePreview();
+            // Async: optional cloud sync; silent if Ollama/API aren't reachable
+            loadOllamaModels().catch(() => {});
+            try {
+                const ok = await resolveAuth();
+                if (ok) {
+                    const loaded = await loadStateRemote();
+                    if (loaded) {
+                        // Re-apply after remote load
+                        if (!(state.selectedSections instanceof Set)) state.selectedSections = new Set();
+                        initSectionsList();
+                        initStyleTab();
+                        hydrateInputsFromState();
+                        updatePreview();
+                    }
+                } else {
+                    setSaveStatus('offline');
+                }
+            } catch (e) {
+                setSaveStatus('offline');
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initBuilder);
+        } else {
+            initBuilder();
+        }
+    </script>
+</body>
+</html>

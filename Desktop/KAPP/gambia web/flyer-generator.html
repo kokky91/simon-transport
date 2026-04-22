@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Event Flyer Generator — WebGen Gambia</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00c896">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#080c10;--bg2:#0e1318;--card:#111820;--border:#1e2d3d;
+  --teal:#00c896;--teal2:#00a87e;--gold:#f5a200;--text:#e8edf2;
+  --muted:#6b8099;--white:#fff;
+  --transition:0.25s cubic-bezier(0.4,0,0.2,1);
+  --shadow:0 4px 12px rgba(0,0,0,0.3);
+  --radius:14px;
+  --radius-sm:10px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;animation:fadeIn 0.5s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg2);border-radius:10px}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:10px;transition:background var(--transition)}
+::-webkit-scrollbar-thumb:hover{background:var(--teal2)}
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 5%}
+.hdr{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--white)}.logo span{color:var(--teal)}
+.back{font-size:13px;color:var(--muted);text-decoration:none;transition:color var(--transition)}.back:hover{color:var(--teal);transform:translateX(-2px)}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 5%}
+.page-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;animation:scaleIn 0.5s ease-out}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:22px;align-items:start}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;animation:scaleIn 0.4s ease-out;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.card:hover{box-shadow:0 8px 16px rgba(0,0,0,0.2)}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white);margin-bottom:14px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text);font-size:13px;outline:none;transition:all var(--transition);font-family:'DM Sans',sans-serif}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,150,0.15)}
+.form-group select option{background:var(--bg2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-teal{background:linear-gradient(135deg, #00c896, #00a87e);color:#000;border:none;border-radius:var(--radius-sm);padding:11px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition);box-shadow:0 2px 8px rgba(0,200,150,0.2)}
+.btn-teal:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,200,150,0.3)}
+.btn-teal:active{transform:translateY(0)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--transition)}
+.btn-ghost:hover{color:var(--text);border-color:var(--text);transform:translateY(-1px)}
+.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.tmpl{border-radius:var(--radius-sm);height:70px;cursor:pointer;border:2px solid transparent;transition:all var(--transition);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;flex-direction:column;gap:4px}
+.tmpl:hover,.tmpl.active{border-color:var(--teal);transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+.tmpl span{font-size:18px}
+/* FLYER CANVAS */
+#flyer-canvas{width:400px;min-height:560px;border-radius:var(--radius);overflow:hidden;position:relative;display:flex;flex-direction:column;justify-content:space-between;font-family:'Syne',sans-serif;animation:scaleIn 0.4s ease-out}
+.flyer-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.flyer-wrap:hover{box-shadow:0 8px 16px rgba(0,0,0,0.2)}
+.flyer-top-badge{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:8px;display:inline-block;animation:fadeIn 0.4s ease-out}
+.flyer-event{font-size:32px;font-weight:800;line-height:1.1;text-align:center;margin-bottom:8px;letter-spacing:-1px;animation:fadeIn 0.5s ease-out}
+.flyer-sub{font-size:14px;font-weight:400;text-align:center;opacity:.85;margin-bottom:16px;line-height:1.5;animation:fadeIn 0.6s ease-out}
+.flyer-details{display:flex;flex-direction:column;gap:8px;width:100%;padding:0 10px;animation:fadeIn 0.7s ease-out}
+.flyer-detail{display:flex;align-items:center;gap:10px;font-size:14px;transition:all var(--transition)}
+.flyer-detail:hover{transform:translateX(4px)}
+.flyer-detail .icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,.15);transition:all var(--transition)}
+.flyer-detail:hover .icon{transform:scale(1.1)}
+.flyer-divider{height:1px;width:100%;background:rgba(255,255,255,.15);margin:10px 0}
+.flyer-footer{text-align:center;font-size:12px;opacity:.7;padding:8px 0}
+.flyer-cta{font-weight:700;font-size:16px;padding:12px 24px;border-radius:30px;margin-top:10px;display:inline-block;text-align:center;transition:all var(--transition);cursor:pointer}
+.flyer-cta:hover{transform:scale(1.05)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--teal);color:#000;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:9999;animation:slideUp 0.3s ease-out;box-shadow:var(--shadow)}
+@keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.error{background:#e05555;color:var(--white)}
+</style>
+</head>
+<body>
+<header><div class="hdr"><div class="logo">WebGen<span>Gambia</span></div><div style="display:flex;gap:10px;align-items:center"><a href="portal.html" class="back" style="background:#00c896;color:#000;font-weight:700">Inloggen →</a><a href="landing.html" class="back">← Terug</a></div></div></header>
+<div class="wrap">
+  <div class="page-title">Event Flyer Generator</div>
+  <div class="page-sub">Maak professionele flyers voor tobraa's, promoties, feesten en evenementen — klaar voor WhatsApp en Facebook</div>
+  <div class="layout">
+    <div>
+      <div class="card">
+        <div class="card-title">Kies template</div>
+        <div class="template-grid">
+          <div class="tmpl active" style="background:linear-gradient(135deg,#0f2027,#203a43,#2c5364)" onclick="setTheme('ocean',this)"><span>🌊</span>Ocean</div>
+          <div class="tmpl" style="background:linear-gradient(135deg,#1a0533,#6b21a8,#a855f7)" onclick="setTheme('purple',this)"><span>✨</span>Royal</div>
+          <div class="tmpl" style="background:linear-gradient(135deg,#78350f,#d97706,#fbbf24)" onclick="setTheme('gold',this)"><span>👑</span>Gold</div>
+          <div class="tmpl" style="background:linear-gradient(135deg,#052e16,#166534,#16a34a)" onclick="setTheme('green',this)"><span>🌿</span>Nature</div>
+          <div class="tmpl" style="background:linear-gradient(135deg,#7f1d1d,#dc2626,#ef4444)" onclick="setTheme('red',this)"><span>🔥</span>Energy</div>
+          <div class="tmpl" style="background:linear-gradient(135deg,#0c1445,#1d4ed8,#60a5fa)" onclick="setTheme('blue',this)"><span>💎</span>Sapphire</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Event details</div>
+        <div class="form-group"><label>Event naam</label><input id="ev-name" placeholder="Tobraa Night 2025" oninput="updateFlyer()" onkeypress="handleEnter(event,updateFlyer)"></div>
+        <div class="form-group"><label>Type evenement</label><select id="ev-type" onchange="updateFlyer()">
+          <option>Tobraa / Feest</option><option>Promotie / Sale</option><option>Opening</option><option>Concert / Muziek</option><option>Sport evenement</option><option>Religieus evenement</option><option>Zakelijk evenement</option>
+        </select></div>
+        <div class="form-group"><label>Omschrijving / subtitle</label><textarea id="ev-sub" rows="2" placeholder="Een onvergetelijke avond vol muziek en dans" oninput="updateFlyer()"></textarea></div>
+        <div class="row2">
+          <div class="form-group"><label>Datum</label><input type="date" id="ev-date" oninput="updateFlyer()"></div>
+          <div class="form-group"><label>Tijd</label><input type="time" id="ev-time" value="20:00" oninput="updateFlyer()"></div>
+        </div>
+        <div class="form-group"><label>Locatie</label><input id="ev-loc" placeholder="Kairaba Hotel, Kololi" oninput="updateFlyer()" onkeypress="handleEnter(event,updateFlyer)"></div>
+        <div class="form-group"><label>Organisator / contact</label><input id="ev-org" placeholder="Fatou Events · +220 3XX XXXX" oninput="updateFlyer()" onkeypress="handleEnter(event,updateFlyer)"></div>
+        <div class="row2">
+          <div class="form-group"><label>Entree prijs (GMD)</label><input id="ev-price" placeholder="Gratis / 200" oninput="updateFlyer()" onkeypress="handleEnter(event,updateFlyer)"></div>
+          <div class="form-group"><label>CTA knop tekst</label><input id="ev-cta" placeholder="Kom langs!" oninput="updateFlyer()" onkeypress="handleEnter(event,updateFlyer)"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn-teal" onclick="downloadFlyer()">↓ Download afbeelding</button>
+        <button class="btn-ghost" onclick="shareWA()">💬 Delen via WhatsApp</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="flyer-wrap">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Flyer preview</div>
+        <div id="flyer-canvas">
+          <!-- JS rendered -->
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">400 × 560px · Klaar voor WhatsApp & Facebook</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showToast(msg, isError=false){
+  const toast=document.createElement('div');
+  toast.className='toast'+(isError?' error':'');
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+function handleEnter(e, callback){
+  if(e.key==='Enter'){callback();}
+}
+
+const THEMES={
+  ocean:{bg:'linear-gradient(160deg,#0f2027 0%,#203a43 50%,#2c5364 100%)',accent:'#38bdf8',badge:'rgba(56,189,248,.2)',text:'#fff'},
+  purple:{bg:'linear-gradient(160deg,#1a0533 0%,#6b21a8 60%,#a855f7 100%)',accent:'#e9d5ff',badge:'rgba(233,213,255,.2)',text:'#fff'},
+  gold:{bg:'linear-gradient(160deg,#78350f 0%,#d97706 60%,#fbbf24 100%)',accent:'#fef3c7',badge:'rgba(254,243,199,.2)',text:'#fff'},
+  green:{bg:'linear-gradient(160deg,#052e16 0%,#166534 60%,#16a34a 100%)',accent:'#bbf7d0',badge:'rgba(187,247,208,.2)',text:'#fff'},
+  red:{bg:'linear-gradient(160deg,#7f1d1d 0%,#dc2626 60%,#ef4444 100%)',accent:'#fecaca',badge:'rgba(254,202,202,.2)',text:'#fff'},
+  blue:{bg:'linear-gradient(160deg,#0c1445 0%,#1d4ed8 60%,#60a5fa 100%)',accent:'#bfdbfe',badge:'rgba(191,219,254,.2)',text:'#fff'},
+};
+let currentTheme='ocean';
+
+function setTheme(t,el){
+  currentTheme=t;
+  document.querySelectorAll('.tmpl').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  updateFlyer();
+}
+
+function formatDate(d){
+  if(!d)return '';
+  const [y,m,day]=d.split('-');
+  const months=['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
+  return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
+}
+
+function updateFlyer(){
+  const th=THEMES[currentTheme];
+  const name=document.getElementById('ev-name').value||'Event Naam';
+  const sub=document.getElementById('ev-sub').value||'Een bijzonder evenement';
+  const date=formatDate(document.getElementById('ev-date').value)||'Datum TBD';
+  const time=document.getElementById('ev-time').value||'20:00';
+  const loc=document.getElementById('ev-loc').value||'Locatie';
+  const org=document.getElementById('ev-org').value||'';
+  const price=document.getElementById('ev-price').value||'Gratis';
+  const cta=document.getElementById('ev-cta').value||'Kom langs!';
+  const type=document.getElementById('ev-type').value||'Event';
+
+  document.getElementById('flyer-canvas').style.background=th.bg;
+  document.getElementById('flyer-canvas').innerHTML=`
+    <div style="padding:28px 24px 0;text-align:center">
+      <div class="flyer-top-badge" style="background:${th.badge};color:${th.accent};border:1px solid ${th.accent}40">${type}</div>
+      <div class="flyer-event" style="color:${th.text}">${name}</div>
+      <div class="flyer-sub" style="color:${th.text}">${sub}</div>
+    </div>
+    <div style="padding:0 24px">
+      <div class="flyer-divider"></div>
+      <div class="flyer-details">
+        <div class="flyer-detail" style="color:${th.text}"><div class="flyer-detail icon" style="background:${th.badge}">📅</div>${date} — ${time}</div>
+        <div class="flyer-detail" style="color:${th.text}"><div class="flyer-detail icon" style="background:${th.badge}">📍</div>${loc}</div>
+        <div class="flyer-detail" style="color:${th.accent}"><div class="flyer-detail icon" style="background:${th.badge}">🎫</div>Entree: ${price}</div>
+        ${org?`<div class="flyer-detail" style="color:${th.text};opacity:.8"><div class="flyer-detail icon" style="background:${th.badge}">📞</div>${org}</div>`:''}
+      </div>
+      <div class="flyer-divider"></div>
+    </div>
+    <div style="padding:0 24px 24px;text-align:center">
+      <div class="flyer-cta" style="background:${th.accent};color:#000">${cta}</div>
+      <div class="flyer-footer" style="color:${th.text}">WebGen Gambia</div>
+    </div>`;
+}
+
+function downloadFlyer(){
+  const el=document.getElementById('flyer-canvas');
+  html2canvas(el,{scale:2,backgroundColor:null}).then(canvas=>{
+    const a=document.createElement('a');
+    a.download='flyer-webgen-gambia.png';
+    a.href=canvas.toDataURL('image/png');
+    a.click();
+    showToast('Flyer gedownload');
+  }).catch(err=>{
+    showToast('Fout bij downloaden van flyer', true);
+  });
+}
+
+function shareWA(){
+  const name=document.getElementById('ev-name').value||'event';
+  const msg=encodeURIComponent(`🎉 ${name}\n${document.getElementById('ev-sub').value}\n📅 ${formatDate(document.getElementById('ev-date').value)}\n📍 ${document.getElementById('ev-loc').value}`);
+  window.open(`https://wa.me/?text=${msg}`,'_blank');
+  showToast('WhatsApp geopend');
+}
+
+// init
+document.getElementById('ev-date').valueAsDate=new Date(Date.now()+7*86400000);
+updateFlyer();
+</script>
+</body>
+</html>
