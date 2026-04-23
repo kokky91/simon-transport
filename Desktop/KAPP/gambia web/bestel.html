@@ -225,10 +225,69 @@ h1,h2,h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-0.02em}
   <div class="hero-inner">
     <div>
       <div class="restaurant-name" id="rName">Restaurant</div>
-      <div class="restaurant-sub" id="rSub">Scan • Bestel • Geniet</div>
+      <div class="restaurant-sub" id="rSub" data-i18n="hero.sub">Scan • Bestel • Geniet</div>
     </div>
     <div class="table-badge" id="modeBadge">🪑 Tafel <span id="tNum">—</span></div>
   </div>
+</div>
+<script src="i18n.js"></script>
+<script src="currency.js"></script>
+<script>
+  Currency.init({ default: 'GMD' });
+  Currency.onChange(() => { try { if (typeof renderMenu==='function') renderMenu(); if (typeof updateCart==='function') updateCart(); if (typeof renderCart==='function') renderCart(); } catch(e){} });
+</script>
+<script>
+  I18n.init({
+    default: 'nl',
+    translations: {
+      nl: {
+        'hero.sub':'Scan • Bestel • Geniet',
+        'badge.takeaway':'🛍️ Afhalen','badge.table':'🪑 Tafel',
+        'cart.view':'Bekijk bestelling','cart.empty':'Nog geen gerechten','cart.none':'Geen gerechten gevonden',
+        'cart.title':'Jouw bestelling','cart.subtotal':'Subtotaal','cart.total':'Totaal',
+        'cart.placeOrder':'Bestelling plaatsen →','cart.whatsapp':'💬 WhatsApp',
+        'search.ph':'🔍 Zoek gerecht...',
+        'note.ph':'Opmerking voor de keuken (optioneel) — bijv. niet te pittig',
+        'takeaway.title':'🛍️ Afhaalgegevens','takeaway.name':'Jouw naam *','takeaway.phone':'Telefoon (bv. +220 3XX XXXX) *','takeaway.time':'Ophaaltijd',
+        'staff.title':'🤵 Bediening','staff.hint':'Kies tafel → voeg toe → Stuur naar keuken',
+        'success.title.takeaway':'🛍️ Afhaal bevestigd','success.title.dine':'Bestelling geplaatst',
+        'success.thanks':'Bedankt!','success.forwarded':'Je bestelling is doorgestuurd naar de keuken.',
+        'success.total':'Totaal:','success.again':'Nog iets bestellen','success.mail':'Zodra je bestelling klaar is ontvang je bericht op',
+        'status.new':'Nieuw','status.preparing':'Bereiden','status.ready':'Klaar','status.served':'Geserveerd','status.takeawayReady':'Klaar voor afhaal',
+        'toast.add':'✓ Toegevoegd','toast.missField':'Vul naam en telefoon in voor afhaal','toast.missOpt':'Maak eerst de verplichte keuze','toast.noWa':'Dit restaurant heeft geen WhatsApp-nummer ingesteld',
+        'deliv.takeawayAt':'Afhalen om','deliv.takeawayFor':'voor','deliv.table':'We brengen het zo snel mogelijk naar tafel'
+      },
+      en: {
+        'hero.sub':'Scan • Order • Enjoy',
+        'badge.takeaway':'🛍️ Takeaway','badge.table':'🪑 Table',
+        'cart.view':'View order','cart.empty':"No dishes yet",'cart.none':'No dishes found',
+        'cart.title':'Your order','cart.subtotal':'Subtotal','cart.total':'Total',
+        'cart.placeOrder':'Place order →','cart.whatsapp':'💬 WhatsApp',
+        'search.ph':'🔍 Search dishes...',
+        'note.ph':'Note for the kitchen (optional) — e.g. not too spicy',
+        'takeaway.title':'🛍️ Pickup details','takeaway.name':'Your name *','takeaway.phone':'Phone (e.g. +220 3XX XXXX) *','takeaway.time':'Pickup time',
+        'staff.title':'🤵 Waiter','staff.hint':'Pick table → add → Send to kitchen',
+        'success.title.takeaway':'🛍️ Pickup confirmed','success.title.dine':'Order placed',
+        'success.thanks':'Thank you!','success.forwarded':'Your order has been sent to the kitchen.',
+        'success.total':'Total:','success.again':'Order something else','success.mail':"As soon as your order is ready we'll message you at",
+        'status.new':'New','status.preparing':'Preparing','status.ready':'Ready','status.served':'Served','status.takeawayReady':'Ready for pickup',
+        'toast.add':'✓ Added','toast.missField':'Please fill in name and phone for pickup','toast.missOpt':'Please make the required choice first','toast.noWa':"This restaurant hasn't set a WhatsApp number yet",
+        'deliv.takeawayAt':'Pickup at','deliv.takeawayFor':'for','deliv.table':"We'll bring it to your table"
+      }
+    }
+  });
+  // Re-render dynamic parts on language change
+  I18n.onChange(() => { try { if (typeof renderMenu==='function') renderMenu(); if (typeof updateCart==='function') updateCart(); updateHeaderMode(); renderStaffBar(); const si=document.getElementById('search'); if (si) si.placeholder = I18n.t('search.ph'); } catch(e){} });
+  // Initial placeholder
+  addEventListener('DOMContentLoaded',()=>{ const si=document.getElementById('search'); if (si) si.placeholder = I18n.t('search.ph'); });
+</script>
+
+<div id="staffBar" style="display:none;position:sticky;top:0;z-index:20;background:linear-gradient(135deg,#0e1318,#162032);border-bottom:1px solid var(--border);padding:10px 16px;box-shadow:0 4px 16px rgba(0,0,0,0.3)">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+    <span style="font-weight:700;font-size:14px;color:#fff">🤵 Bediening</span>
+    <span style="color:var(--muted);font-size:11px">Kies tafel → voeg toe → Stuur naar keuken</span>
+  </div>
+  <div id="staffTablePicker" style="display:flex;gap:6px;flex-wrap:wrap;overflow-x:auto"></div>
 </div>
 
 <div id="dealStrip" style="display:none;padding:16px 20px 0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
@@ -245,7 +304,7 @@ h1,h2,h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-0.02em}
 <div class="cart-bar" id="cartBar" onclick="openCart()">
   <div class="cart-left">
     <div class="cart-count" id="cartCount">0</div>
-    <span>Bekijk bestelling</span>
+    <span data-i18n="cart.view">Bekijk bestelling</span>
   </div>
   <div class="cart-total" id="cartTotal">GMD 0</div>
 </div>
@@ -272,17 +331,17 @@ h1,h2,h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-0.02em}
 <div class="modal-bg" id="cartModal">
   <div class="modal">
     <div class="modal-head">
-      <h2 id="modalTitle">Jouw bestelling</h2>
+      <h2 id="modalTitle" data-i18n="cart.title">Jouw bestelling</h2>
       <button class="modal-close" onclick="closeCart()">✕</button>
     </div>
     <div class="modal-body" id="cartItems"></div>
     <div class="totals" id="totalsBox">
-      <div class="total-row"><span>Subtotaal</span><span id="subtotal">GMD 0</span></div>
-      <div class="total-row big"><span>Totaal</span><span id="total">GMD 0</span></div>
+      <div class="total-row"><span data-i18n="cart.subtotal">Subtotaal</span><span id="subtotal">GMD 0</span></div>
+      <div class="total-row big"><span data-i18n="cart.total">Totaal</span><span id="total">GMD 0</span></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
-      <button class="btn-order" id="orderBtn" onclick="placeOrder()">Bestelling plaatsen →</button>
-      <button class="btn-order" id="waBtn" onclick="placeOrderWhatsApp()" title="Stuur de bestelling ook via WhatsApp" style="background:#25d366;color:#fff;padding:0 16px;display:inline-flex;align-items:center;gap:6px;font-weight:700">💬 WhatsApp</button>
+      <button class="btn-order" id="orderBtn" onclick="placeOrder()" data-i18n="cart.placeOrder">Bestelling plaatsen →</button>
+      <button class="btn-order" id="waBtn" onclick="placeOrderWhatsApp()" title="Stuur de bestelling ook via WhatsApp" style="background:#25d366;color:#fff;padding:0 16px;display:inline-flex;align-items:center;gap:6px;font-weight:700" data-i18n="cart.whatsapp">💬 WhatsApp</button>
     </div>
   </div>
 </div>
@@ -293,15 +352,86 @@ h1,h2,h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-0.02em}
 // ---------- CONFIG ----------
 const params = new URLSearchParams(location.search);
 const restaurantId = params.get('r') || 'demo';
+// Staff mode (`?w=1`): the waiter/waitress uses their phone to take orders at the table.
+//   - Table picker at top, afhaal-toggle
+//   - After submit: flash toast + instant reset (no big success screen)
+//   - No customer info required
+const staffMode = params.get('w') === '1' || params.get('w') === 'true' || params.get('staff') === '1';
 // Mode: explicit `?m=takeaway` OR no table param → takeaway; else dine-in with table number
 const explicitMode = (params.get('m') || params.get('mode') || '').toLowerCase();
 const hasTable = params.has('t');
-const mode = explicitMode === 'takeaway' ? 'takeaway' : (hasTable ? 'dine-in' : 'takeaway');
-const tableNum = mode === 'dine-in' ? (params.get('t') || '1') : '';
+let mode = explicitMode === 'takeaway' ? 'takeaway' : (hasTable || staffMode ? 'dine-in' : 'takeaway');
+let tableNum = mode === 'dine-in' ? (params.get('t') || '1') : '';
 const storeKey = 'wg_menu_' + restaurantId;
 const ordersKey = 'wg_orders_' + restaurantId;
 const dealsKey = 'wg_deals_' + restaurantId;
 const channel = new BroadcastChannel('wg_orders_' + restaurantId);
+
+// Cloud / LAN sync (push-only — klant hoeft niet te polllen, kassa ziet 't)
+const CLOUD_API_BASE = 'https://webgen-gambia.diederikkok123.workers.dev';
+const offlineQueueKey = 'wg_offline_queue_' + restaurantId;
+
+function getApiBases(){
+  // Priority: user-configured LAN (if any) → cloud. 'lan' mode skips cloud. 'cloud' skips LAN.
+  const mode = localStorage.getItem('wg_api_mode') || 'auto';
+  const lan = (localStorage.getItem('wg_lan_api_base') || '').replace(/\/$/,'');
+  // If the page is itself served from the LAN server, treat that origin as an implicit LAN base
+  const originLan = (location.hostname && location.hostname !== 'localhost' && !location.hostname.match(/pages\.dev$|webgen-gambia/))
+    ? location.origin : null;
+  const lanUrl = lan || originLan;
+  if (mode === 'cloud') return [CLOUD_API_BASE];
+  if (mode === 'lan')   return lanUrl ? [lanUrl] : [CLOUD_API_BASE];
+  // auto: try the one that matches current origin first, else cloud first with LAN fallback
+  return originLan ? [originLan, CLOUD_API_BASE] : (lanUrl ? [CLOUD_API_BASE, lanUrl] : [CLOUD_API_BASE]);
+}
+
+const MAX_QUEUE = 100;
+const QUEUE_TTL_MS = 48 * 60 * 60 * 1000; // 48h — drop anything older
+function queueOffline(op){
+  let q = JSON.parse(localStorage.getItem(offlineQueueKey) || '[]');
+  const now = Date.now();
+  // drop expired
+  q = q.filter(item => !item.at || (now - item.at) < QUEUE_TTL_MS);
+  q.push({ ...op, at: now });
+  // cap FIFO
+  if (q.length > MAX_QUEUE) q = q.slice(-MAX_QUEUE);
+  localStorage.setItem(offlineQueueKey, JSON.stringify(q));
+}
+async function pushOrderCloud(order){
+  const path = `/api/kassa/${encodeURIComponent(restaurantId)}/orders`;
+  for (const base of getApiBases()) {
+    try {
+      const r = await fetch(base + path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(order) });
+      if (r.ok) return;
+    } catch (e) { /* try next */ }
+  }
+  queueOffline({ url: path, method:'POST', body: order });
+}
+async function flushOfflineQueue(){
+  let q = JSON.parse(localStorage.getItem(offlineQueueKey) || '[]');
+  if (!q.length) return;
+  const now = Date.now();
+  q = q.filter(op => !op.at || (now - op.at) < QUEUE_TTL_MS);
+  const remaining = [];
+  for (const op of q) {
+    let sent = false;
+    for (const base of getApiBases()) {
+      try {
+        const r = await fetch(base + op.url, { method: op.method, headers:{'Content-Type':'application/json'}, body: op.body ? JSON.stringify(op.body) : undefined });
+        if (r.ok) { sent = true; break; }
+        // 404 on PATCH/DELETE means the record is already gone — treat as success
+        if (r.status === 404 && (op.method === 'PATCH' || op.method === 'DELETE')) { sent = true; break; }
+      } catch (e) {}
+    }
+    if (!sent) remaining.push(op);
+  }
+  localStorage.setItem(offlineQueueKey, JSON.stringify(remaining));
+}
+window.addEventListener('online', flushOfflineQueue);
+// Register service worker for full offline support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
 
 // Load active deals
 let deals = [];
@@ -318,12 +448,13 @@ function isDealActiveNow(d){
 function activeDealForItem(itemId){
   return deals.find(d => isDealActiveNow(d) && (!d.items || !d.items.length || d.items.includes(itemId)));
 }
+function fmtPrice(amount){ return (window.Currency ? Currency.format(amount, menu.currency||'GMD') : (menu.currency||'GMD')+' '+amount); }
 function effectivePrice(item){
   const d = activeDealForItem(item.id);
-  if (!d) return { price: item.price, dealId: null };
-  if (d.type === 'fixed') return { price: d.value, dealId: d.id, originalPrice: item.price, dealLabel: 'Deal' };
-  if (d.type === 'discount') return { price: Math.round(item.price * (100 - d.value) / 100), dealId: d.id, originalPrice: item.price, dealLabel: '-'+d.value+'%' };
-  return { price: item.price, dealId: null };
+  if (!d) return { price: item.price, dealId: null, dealLabel: '' };
+  if (d.type === 'fixed') return { price: d.value, dealId: d.id, originalPrice: item.price, dealLabel: 'Deal', dealType: 'fixed', dealValue: d.value, dealName: d.name };
+  if (d.type === 'discount') return { price: Math.round(item.price * (100 - d.value) / 100), dealId: d.id, originalPrice: item.price, dealLabel: '-'+d.value+'%', dealType: 'discount', dealValue: d.value, dealName: d.name };
+  return { price: item.price, dealId: null, dealLabel: '' };
 }
 
 // ---------- DEMO MENU (fallback) ----------
@@ -363,12 +494,73 @@ let optPending = null; // { item, lineId? (if editing existing) }
 // ---------- RENDER ----------
 document.getElementById('rName').textContent = menu.name || 'Restaurant';
 document.getElementById('rSub').textContent = menu.subtitle || 'Menu';
-if (mode === 'takeaway') {
-  document.getElementById('modeBadge').innerHTML = '🛍️ Afhalen';
-  document.title = (menu.name || 'Menu') + ' — Afhalen';
-} else {
-  document.getElementById('tNum').textContent = tableNum;
-  document.title = (menu.name || 'Menu') + ' — Tafel ' + tableNum;
+
+function updateHeaderMode(){
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  if (mode === 'takeaway') {
+    document.getElementById('modeBadge').innerHTML = T('badge.takeaway');
+    document.title = (menu.name || 'Menu') + (staffMode ? ' — Staff · Takeaway' : ' — '+T('badge.takeaway').replace(/^..\s*/,''));
+  } else {
+    document.getElementById('tNum').textContent = tableNum;
+    document.getElementById('modeBadge').innerHTML = T('badge.table') + ' <span id="tNum">' + tableNum + '</span>';
+    document.title = (menu.name || 'Menu') + (staffMode ? ' — Staff · T' + tableNum : ' — '+T('badge.table').replace(/^..\s*/,'')+' ' + tableNum);
+  }
+}
+updateHeaderMode();
+
+// ---------- STAFF MODE ----------
+function renderStaffBar(){
+  const bar = document.getElementById('staffBar');
+  if (!staffMode) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  const numTables = (() => {
+    // Try to pick up kassa settings if available in same origin
+    try { const s = JSON.parse(localStorage.getItem('wg_settings_' + restaurantId) || '{}'); if (s.numTables) return s.numTables; } catch(e) {}
+    return 12;
+  })();
+  const picker = document.getElementById('staffTablePicker');
+  const tables = [];
+  for (let i = 1; i <= numTables; i++) tables.push(i);
+  picker.innerHTML = tables.map(i => {
+    const active = mode === 'dine-in' && String(tableNum) === String(i);
+    return `<button class="staff-t-btn" data-t="${i}" onclick="staffPickTable(${i})" style="flex-shrink:0;padding:8px 14px;border-radius:10px;border:1.5px solid ${active?'var(--teal,#00c896)':'#1e2d3d'};background:${active?'var(--teal,#00c896)':'transparent'};color:${active?'#000':'#e8edf2'};font-weight:700;cursor:pointer;font-size:13px;transition:all .15s">T${String(i).padStart(2,'0')}</button>`;
+  }).join('') + `<button class="staff-t-btn" data-t="takeaway" onclick="staffPickTakeaway()" style="flex-shrink:0;padding:8px 14px;border-radius:10px;border:1.5px solid ${mode==='takeaway'?'var(--gold,#f5a200)':'#1e2d3d'};background:${mode==='takeaway'?'var(--gold,#f5a200)':'transparent'};color:${mode==='takeaway'?'#000':'#e8edf2'};font-weight:700;cursor:pointer;font-size:13px;margin-left:8px">🛍️ Afhaal</button>`;
+}
+
+function staffPickTable(n){
+  // If cart has items, ask for confirmation before switching
+  if (Object.keys(cart).length && !confirm('Winkelmandje leegmaken en naar tafel ' + n + ' switchen?')) return;
+  Object.keys(cart).forEach(k => delete cart[k]);
+  mode = 'dine-in';
+  tableNum = String(n);
+  updateCart();
+  updateHeaderMode();
+  renderStaffBar();
+  toast('Tafel ' + n + ' geselecteerd');
+}
+
+function staffPickTakeaway(){
+  if (Object.keys(cart).length && !confirm('Winkelmandje leegmaken en naar afhaal switchen?')) return;
+  Object.keys(cart).forEach(k => delete cart[k]);
+  mode = 'takeaway';
+  tableNum = '';
+  updateCart();
+  updateHeaderMode();
+  renderStaffBar();
+  toast('Afhaal geselecteerd');
+}
+
+if (staffMode) {
+  // Visual cue the page is in bediening-mode
+  document.documentElement.style.setProperty('--bg2', '#0b1219');
+  renderStaffBar();
+  // Ask for the waiter's name once — it appears on every order they take
+  if (!sessionStorage.getItem('wg_waiter_name')) {
+    setTimeout(() => {
+      const name = prompt('Wie neemt de bestellingen op?\n(bijv. Isatou, Awa, Lamin)\nJe naam verschijnt bij elke order in de kassa.');
+      if (name && name.trim()) sessionStorage.setItem('wg_waiter_name', name.trim());
+    }, 250);
+  }
 }
 
 const CATEGORY_ORDER_BESTEL = ['Ontbijt','Voorgerecht','Hoofdgerecht','Bijgerecht','Menu','Drank','Dessert'];
@@ -430,8 +622,8 @@ function renderMenu(){
   const renderItem = (it) => {
     const ep = effectivePrice(it);
     const priceHtml = ep.dealId
-      ? `<div class="item-price" style="display:inline-flex;align-items:center;gap:8px"><span style="text-decoration:line-through;color:var(--muted);font-weight:400">${menu.currency||'GMD'} ${ep.originalPrice}</span><span style="color:var(--gold)">${menu.currency||'GMD'} ${ep.price}</span><span style="background:var(--gold);color:#000;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">${ep.dealLabel}</span></div>`
-      : `<div class="item-price">${menu.currency||'GMD'} ${it.price}</div>`;
+      ? `<div class="item-price" style="display:inline-flex;align-items:center;gap:8px"><span style="text-decoration:line-through;color:var(--muted);font-weight:400">${fmtPrice(ep.originalPrice)}</span><span style="color:var(--gold)">${fmtPrice(ep.price)}</span><span style="background:var(--gold);color:#000;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">${ep.dealLabel}</span></div>`
+      : `<div class="item-price">${fmtPrice(it.price)}</div>`;
     const img = it.photo
       ? `<div class="item-img" style="background:url('${it.photo}') center/cover;border-radius:10px"></div>`
       : `<div class="item-img">${it.emoji||'🍽️'}</div>`;
@@ -542,7 +734,7 @@ function cartTotal(){
 function updateCart(){
   const {total, count} = cartTotal();
   document.getElementById('cartCount').textContent = count;
-  document.getElementById('cartTotal').textContent = (menu.currency||'GMD')+' '+total;
+  document.getElementById('cartTotal').textContent = fmtPrice(total);
   document.getElementById('cartBar').classList.toggle('show', count>0);
 }
 function openCart(){
@@ -638,7 +830,7 @@ function renderCart(){
     return;
   }
   document.getElementById('orderBtn').disabled = false;
-  const c = menu.currency||'GMD';
+  const c = window.Currency ? Currency.current : (menu.currency||'GMD');
   box.innerHTML = cart.map(line => {
     const it = menu.items.find(i => i.id === line.itemId);
     if (!it) return '';
@@ -679,19 +871,22 @@ function renderCart(){
 function placeOrder(){
   if (!cart.length) return;
 
-  // Collect takeaway customer info if in takeaway mode
+  // Collect takeaway customer info if in takeaway mode.
+  // In staff-mode afhaal the waitress jots it on paper; we still ask but make it optional.
   let customer = null;
   if (mode === 'takeaway') {
     const name = (document.getElementById('pickupName')||{}).value?.trim() || '';
     const phone = (document.getElementById('pickupPhone')||{}).value?.trim() || '';
     const pickupTime = (document.getElementById('pickupTime')||{}).value || '';
-    if (!name || !phone) {
+    if (!staffMode && (!name || !phone)) {
       toast('Vul naam en telefoon in voor afhaal');
       return;
     }
-    sessionStorage.setItem('bestel-name', name);
-    sessionStorage.setItem('bestel-phone', phone);
-    customer = { name, phone, pickupTime };
+    if (!staffMode) {
+      sessionStorage.setItem('bestel-name', name);
+      sessionStorage.setItem('bestel-phone', phone);
+    }
+    customer = { name: name || (staffMode ? 'Aan de balie' : ''), phone, pickupTime };
   }
 
   const items = cart.map(line => {
@@ -706,7 +901,8 @@ function placeOrder(){
       emoji: it.emoji,
       ...(optLbl ? { optionsLabel: optLbl } : {}),
       ...(line.options && Object.keys(line.options).length ? { options: line.options } : {}),
-      ...(ep.dealId ? { dealId: ep.dealId, originalPrice: ep.originalPrice } : {})
+      // Snapshot the deal state so later changes to deals don't corrupt this order
+      ...(ep.dealId ? { dealId: ep.dealId, originalPrice: ep.originalPrice, dealLabel: ep.dealLabel, dealName: ep.dealName, dealType: ep.dealType, dealValue: ep.dealValue } : {})
     };
   });
   const {total} = cartTotal();
@@ -721,6 +917,8 @@ function placeOrder(){
     currency: menu.currency||'GMD',
     note: (document.getElementById('note')||{}).value || '',
     status: 'new', // new → preparing → ready → served → paid
+    channel: staffMode ? 'waiter' : undefined,
+    ...(staffMode ? { takenBy: sessionStorage.getItem('wg_waiter_name') || sessionStorage.getItem('bestel-waiter') || 'Bediening' } : {}),
     createdAt: Date.now()
   };
 
@@ -728,11 +926,18 @@ function placeOrder(){
   orders.unshift(order);
   localStorage.setItem(ordersKey, JSON.stringify(orders));
   channel.postMessage({type:'new_order', order});
+  pushOrderCloud(order); // fire-and-forget; queues offline if it fails
 
-  // Show confirmation
   cart.length = 0;
   updateCart();
-  showOrderSuccess(order);
+
+  if (staffMode) {
+    // Streamlined staff flow: flash confirmation and stay ready for the next table
+    closeCart();
+    toast('✓ ' + (mode === 'takeaway' ? 'Afhaal' : 'Tafel ' + tableNum) + ' — naar keuken (' + order.id + ')');
+  } else {
+    showOrderSuccess(order);
+  }
 }
 
 // ---------- ORDER via WhatsApp ----------
@@ -768,7 +973,8 @@ function placeOrderWhatsApp(){
       emoji: it.emoji,
       ...(optLbl ? { optionsLabel: optLbl } : {}),
       ...(line.options && Object.keys(line.options).length ? { options: line.options } : {}),
-      ...(ep.dealId ? { dealId: ep.dealId, originalPrice: ep.originalPrice } : {})
+      // Snapshot the deal state so later changes to deals don't corrupt this order
+      ...(ep.dealId ? { dealId: ep.dealId, originalPrice: ep.originalPrice, dealLabel: ep.dealLabel, dealName: ep.dealName, dealType: ep.dealType, dealValue: ep.dealValue } : {})
     };
   });
   const {total} = cartTotal();
@@ -793,6 +999,7 @@ function placeOrderWhatsApp(){
   orders.unshift(order);
   localStorage.setItem(ordersKey, JSON.stringify(orders));
   channel.postMessage({type:'new_order', order});
+  pushOrderCloud(order); // queue if offline
 
   // Build WhatsApp message
   const c = menu.currency||'GMD';
@@ -821,6 +1028,7 @@ function placeOrderWhatsApp(){
 }
 
 function showOrderSuccess(order){
+  orderPlaced = true; // prevent accidental dismiss via background click
   const isTakeaway = order.type === 'takeaway';
   const deliveryLine = isTakeaway
     ? `<p>Afhalen${order.customer?.pickupTime ? ` om <strong>${order.customer.pickupTime}</strong>` : ''}${order.customer?.name ? ` voor <strong>${order.customer.name}</strong>` : ''}.</p><p style="font-size:13px;color:var(--muted)">Zodra je bestelling klaar is ontvang je bericht op <strong>${order.customer?.phone || ''}</strong>.</p>`
@@ -880,8 +1088,12 @@ renderCategories();
 renderMenu();
 updateCart();
 
-// Close modal on background click
+// Close cart modal on background click — BUT only while cart-view is active.
+// After an order is placed the modal switches to success-view and we lock it
+// so the customer can read the reference / status tracker without accidental dismissal.
+let orderPlaced = false;
 document.getElementById('cartModal').addEventListener('click', (e) => {
+  if (orderPlaced) return;
   if (e.target.id === 'cartModal') closeCart();
 });
 </script>

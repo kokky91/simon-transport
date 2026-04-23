@@ -524,6 +524,19 @@ body {
   transform: translateY(-1px);
 }
 
+.tool-card-soon {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.tool-card-soon .tc-open-label::after {
+  content: '';
+}
+.tc-badge-soon {
+  background: rgba(180,180,180,.15) !important;
+  color: #aaa !important;
+}
+
 .tc-top {
   display: flex;
   align-items: flex-start;
@@ -1083,49 +1096,49 @@ footer {
       <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
     </a>
 
-    <a href="webgen-crm.html" class="tool-card" style="--hover-border:rgba(124,111,240,.4);--glow:rgba(124,111,240,.05)" data-tags="crm klanten beheer dashboard">
+    <span class="tool-card tool-card-soon" style="--hover-border:rgba(124,111,240,.4);--glow:rgba(124,111,240,.05)" data-tags="crm klanten beheer dashboard" aria-disabled="true" title="Binnenkort beschikbaar">
       <div class="tc-top">
         <div class="tc-icon" style="background:rgba(124,111,240,.12)">📋</div>
-        <div class="tc-badge" style="background:rgba(124,111,240,.12);color:var(--purple)">Full CRM</div>
+        <div class="tc-badge tc-badge-soon">Binnenkort</div>
       </div>
       <div class="tc-name">CRM Dashboard</div>
       <div class="tc-desc">Klantbeheer, abonnementen, taken en communicatiegeschiedenis.</div>
       <div class="tc-features"><span class="tc-feat">Klanten</span><span class="tc-feat">Facturen</span><span class="tc-feat">Analytics</span></div>
-      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
-    </a>
+      <div class="tc-open"><span class="tc-open-label">Binnenkort</span></div>
+    </span>
 
-    <a href="whatsapp-catalog-generator.html" class="tool-card" style="--hover-border:rgba(37,211,102,.4);--glow:rgba(37,211,102,.05)" data-tags="whatsapp catalog producten bestellen">
+    <span class="tool-card tool-card-soon" style="--hover-border:rgba(37,211,102,.4);--glow:rgba(37,211,102,.05)" data-tags="whatsapp catalog producten bestellen" aria-disabled="true" title="Binnenkort beschikbaar">
       <div class="tc-top">
         <div class="tc-icon" style="background:rgba(37,211,102,.12)">💬</div>
-        <div class="tc-badge" style="background:rgba(37,211,102,.12);color:#25d366">WhatsApp</div>
+        <div class="tc-badge tc-badge-soon">Binnenkort</div>
       </div>
       <div class="tc-name">WhatsApp Catalog</div>
       <div class="tc-desc">Productcatalogus met bestelknop en automatische berichtsjablonen.</div>
       <div class="tc-features"><span class="tc-feat">Foto's + prijzen</span><span class="tc-feat">Bestelknop</span><span class="tc-feat">Preview</span></div>
-      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
-    </a>
+      <div class="tc-open"><span class="tc-open-label">Binnenkort</span></div>
+    </span>
 
-    <a href="social-media-generator.html" class="tool-card" style="--hover-border:rgba(245,162,0,.4);--glow:rgba(245,162,0,.04)" data-tags="social media facebook instagram tiktok wolof posts">
+    <span class="tool-card tool-card-soon" style="--hover-border:rgba(245,162,0,.4);--glow:rgba(245,162,0,.04)" data-tags="social media facebook instagram tiktok wolof posts" aria-disabled="true" title="Binnenkort beschikbaar">
       <div class="tc-top">
         <div class="tc-icon" style="background:rgba(245,162,0,.12)">📱</div>
-        <div class="tc-badge" style="background:rgba(245,162,0,.12);color:var(--gold)">AI powered</div>
+        <div class="tc-badge tc-badge-soon">Binnenkort</div>
       </div>
       <div class="tc-name">Social Media Generator</div>
       <div class="tc-desc">AI schrijft posts voor Facebook, Instagram en TikTok in Wolof, Mandinka, Engels en Frans.</div>
       <div class="tc-features"><span class="tc-feat">Wolof</span><span class="tc-feat">Mandinka</span><span class="tc-feat">12 templates</span></div>
-      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
-    </a>
+      <div class="tc-open"><span class="tc-open-label">Binnenkort</span></div>
+    </span>
 
-    <a href="google-business-generator.html" class="tool-card" style="--hover-border:rgba(66,133,244,.4);--glow:rgba(66,133,244,.04)" data-tags="google business maps seo reviews">
+    <span class="tool-card tool-card-soon" style="--hover-border:rgba(66,133,244,.4);--glow:rgba(66,133,244,.04)" data-tags="google business maps seo reviews" aria-disabled="true" title="Binnenkort beschikbaar">
       <div class="tc-top">
         <div class="tc-icon" style="background:rgba(66,133,244,.12)">🗺️</div>
-        <div class="tc-badge" style="background:rgba(66,133,244,.12);color:#60a5fa">SEO</div>
+        <div class="tc-badge tc-badge-soon">Binnenkort</div>
       </div>
       <div class="tc-name">Google Business Generator</div>
       <div class="tc-desc">Google Maps profiel optimaliseren met AI-beschrijving, Q&A en review-antwoorden.</div>
       <div class="tc-features"><span class="tc-feat">750-char SEO</span><span class="tc-feat">Q&A</span><span class="tc-feat">Reviews</span></div>
-      <div class="tc-open"><span class="tc-open-label">Openen</span><span class="tc-open-arrow">↗</span></div>
-    </a>
+      <div class="tc-open"><span class="tc-open-label">Binnenkort</span></div>
+    </span>
 
     <a href="qr-generator.html" class="tool-card" style="--hover-border:rgba(0,200,150,.4);--glow:rgba(0,200,150,.04)" data-tags="qr code wave afrimoney whatsapp website betaling">
       <div class="tc-top">

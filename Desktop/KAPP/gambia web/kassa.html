@@ -385,6 +385,55 @@ button{font-family:inherit}
 </head>
 <body>
 
+<!-- ═══════════ PIN LOGIN LOCK SCREEN ═══════════ -->
+<div id="pinLock" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#080c10 0%,#141b23 100%);z-index:100000;flex-direction:column;align-items:center;justify-content:center;padding:20px">
+  <div style="text-align:center;max-width:380px;width:100%">
+    <div style="font-size:56px;margin-bottom:10px">🔐</div>
+    <h1 style="font-family:'Syne',sans-serif;font-weight:800;font-size:26px;color:#fff;margin-bottom:6px">WebGen <span style="color:var(--teal)">Kassa</span></h1>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:28px" id="pinSub" data-i18n="pin.subtitle">Voer je PIN in om in te loggen</div>
+
+    <!-- PIN dots -->
+    <div id="pinDots" style="display:flex;gap:14px;justify-content:center;margin-bottom:8px">
+      <div class="pin-dot" style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);background:transparent;transition:all .15s"></div>
+      <div class="pin-dot" style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);background:transparent;transition:all .15s"></div>
+      <div class="pin-dot" style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);background:transparent;transition:all .15s"></div>
+      <div class="pin-dot" style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);background:transparent;transition:all .15s"></div>
+    </div>
+    <div id="pinError" style="height:20px;color:#fca5a5;font-size:12px;font-weight:600;margin-bottom:20px;opacity:0;transition:opacity .2s" data-i18n="pin.wrong">Onjuiste PIN</div>
+
+    <!-- 12-key pad -->
+    <div id="pinPad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:280px;margin:0 auto">
+      <button class="pin-key" data-d="1" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">1</button>
+      <button class="pin-key" data-d="2" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">2</button>
+      <button class="pin-key" data-d="3" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">3</button>
+      <button class="pin-key" data-d="4" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">4</button>
+      <button class="pin-key" data-d="5" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">5</button>
+      <button class="pin-key" data-d="6" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">6</button>
+      <button class="pin-key" data-d="7" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">7</button>
+      <button class="pin-key" data-d="8" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">8</button>
+      <button class="pin-key" data-d="9" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">9</button>
+      <button class="pin-key" data-action="clear" style="aspect-ratio:1;background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--muted);border-radius:14px;font-size:14px;cursor:pointer;font-family:inherit;transition:all .12s" data-i18n="pin.clear">WIS</button>
+      <button class="pin-key" data-d="0" style="aspect-ratio:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:14px;font-size:24px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all .12s">0</button>
+      <button class="pin-key" data-action="back" style="aspect-ratio:1;background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--muted);border-radius:14px;font-size:18px;cursor:pointer;font-family:inherit;transition:all .12s">⌫</button>
+    </div>
+
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:8px">
+      <button onclick="pinLoginOwnerDefault()" id="pinOwnerBtn" style="background:transparent;color:var(--muted);border:none;padding:8px;cursor:pointer;font-size:11px;text-transform:uppercase;letter-spacing:.1em" data-i18n="pin.ownerDefault">👑 Eigenaar? standaard PIN 0000</button>
+      <a href="portal.html" style="color:var(--muted);font-size:11px;text-decoration:none" data-i18n="pin.backPortal">← Terug naar portaal</a>
+    </div>
+  </div>
+</div>
+<style>
+  .pin-key:active{transform:scale(0.96);background:rgba(0,200,150,0.15)!important;border-color:var(--teal)!important}
+  .pin-key:hover:not(:active){background:rgba(255,255,255,0.1)!important}
+  .pin-dot.filled{background:var(--teal)!important;border-color:var(--teal)!important;transform:scale(1.1)}
+  @keyframes pinShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .pin-shake{animation:pinShake 0.3s ease}
+</style>
+<!-- ═══════════════════════════════════════════════ -->
+
+
+
 <div class="app">
 
   <!-- SIDEBAR -->
@@ -399,56 +448,66 @@ button{font-family:inherit}
 
     <nav class="nav">
       <div class="nav-item active" data-page="tables" data-role="front">
-        <span class="nav-icon">🪑</span><span>Tafels</span>
+        <span class="nav-icon">🪑</span><span data-i18n="nav.tables">Tafels</span>
         <span class="nav-badge" id="badgeTables" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="orders" data-role="front">
-        <span class="nav-icon">📋</span><span>Bestellingen</span>
+        <span class="nav-icon">📋</span><span data-i18n="nav.orders">Bestellingen</span>
         <span class="nav-badge red" id="badgeOrders" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="kitchen" data-role="kitchen">
-        <span class="nav-icon">👨‍🍳</span><span>Keuken</span>
+        <span class="nav-icon">👨‍🍳</span><span data-i18n="nav.kitchen">Keuken</span>
         <span class="nav-badge red" id="badgeKitchen" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="reservations" data-role="front">
-        <span class="nav-icon">📅</span><span>Reserveringen</span>
+        <span class="nav-icon">📅</span><span data-i18n="nav.reservations">Reserveringen</span>
         <span class="nav-badge" id="badgeRes" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="finance" data-role="manager">
-        <span class="nav-icon">💰</span><span>Financieel</span>
+        <span class="nav-icon">💰</span><span data-i18n="nav.finance">Financieel</span>
       </div>
       <div class="nav-item" data-page="deals" data-role="manager">
-        <span class="nav-icon">🎯</span><span>Deals</span>
+        <span class="nav-icon">🎯</span><span data-i18n="nav.deals">Deals</span>
         <span class="nav-badge" id="badgeDeals" style="display:none">0</span>
       </div>
-      <div class="nav-section">Configuratie</div>
+      <div class="nav-section" data-i18n="nav.configuration">Configuratie</div>
       <div class="nav-item" data-page="menu" data-role="manager">
-        <span class="nav-icon">🍽️</span><span>Menu</span>
+        <span class="nav-icon">🍽️</span><span data-i18n="nav.menu">Menu</span>
       </div>
       <div class="nav-item" data-page="staff" data-role="manager">
-        <span class="nav-icon">👥</span><span>Medewerkers</span>
+        <span class="nav-icon">👥</span><span data-i18n="nav.staff">Medewerkers</span>
         <span class="nav-badge" id="badgeStaff" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="qr" data-role="manager">
-        <span class="nav-icon">📱</span><span>QR codes</span>
+        <span class="nav-icon">📱</span><span data-i18n="nav.qr">QR codes</span>
       </div>
       <div class="nav-item" data-page="settings" data-role="manager">
-        <span class="nav-icon">⚙️</span><span>Instellingen</span>
+        <span class="nav-icon">⚙️</span><span data-i18n="nav.settings">Instellingen</span>
       </div>
     </nav>
 
-    <!-- Staff switcher (manager picks active role) -->
+    <!-- Active session + logout -->
     <div id="staffSwitcher" style="padding:12px 18px;border-top:1px solid var(--border);font-size:12px">
-      <label style="display:block;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:10px">Ingelogd als</label>
-      <select id="currentStaff" onchange="setCurrentStaff(this.value)" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 9px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer">
-        <option value="manager">👔 Manager (alles)</option>
-      </select>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div id="sessionAvatar" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--gold));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👑</div>
+        <div style="flex:1;min-width:0">
+          <div id="sessionName" style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Eigenaar</div>
+          <div id="sessionRole" style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em">Owner</div>
+        </div>
+        <button onclick="logoutStaff()" title="Logout (vergrendel)" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 9px;border-radius:6px;cursor:pointer;font-size:14px" onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">🔒</button>
+      </div>
+      <details style="margin-top:4px">
+        <summary style="cursor:pointer;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em" data-i18n="staff.switchQuick">Snel wisselen</summary>
+        <select id="currentStaff" onchange="setCurrentStaff(this.value)" style="width:100%;margin-top:6px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 9px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer">
+          <option value="owner">👑 Eigenaar</option>
+        </select>
+      </details>
     </div>
 
     <div class="sidebar-foot">
-      Vandaag<br>
+      <span data-i18n="sidebar.today">Vandaag</span><br>
       <b id="todayRevenue">GMD 0</b>
-      <span id="todayOrders">0 bestellingen</span>
+      <span id="todayOrders">0 <span data-i18n="sidebar.orders">bestellingen</span></span>
     </div>
   </aside>
 
@@ -456,26 +515,27 @@ button{font-family:inherit}
   <div class="main">
     <header class="topbar">
       <h1 class="page-title" id="pageTitle">Tafel overzicht</h1>
+      <span id="syncStatus" style="margin-left:12px;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.08em;background:rgba(0,200,150,0.12);color:#00c896">☁ Live</span>
       <div class="topbar-stats">
         <div class="mini-stat">
           <span class="mini-stat-icon">🔔</span>
           <div>
             <div class="mini-stat-val" id="statPending">0</div>
-            <div class="mini-stat-lbl">Nieuw</div>
+            <div class="mini-stat-lbl" data-i18n="stat.new">Nieuw</div>
           </div>
         </div>
         <div class="mini-stat">
           <span class="mini-stat-icon">👨‍🍳</span>
           <div>
             <div class="mini-stat-val" id="statPreparing">0</div>
-            <div class="mini-stat-lbl">In keuken</div>
+            <div class="mini-stat-lbl" data-i18n="stat.inKitchen">In keuken</div>
           </div>
         </div>
         <div class="mini-stat">
           <span class="mini-stat-icon">💰</span>
           <div>
             <div class="mini-stat-val" id="statRevenue">GMD 0</div>
-            <div class="mini-stat-lbl">Vandaag</div>
+            <div class="mini-stat-lbl" data-i18n="sidebar.today">Vandaag</div>
           </div>
         </div>
       </div>
@@ -490,29 +550,40 @@ button{font-family:inherit}
 
       <!-- PAGE: ORDERS -->
       <div class="page" id="page-orders">
-        <div class="orders-filters" id="ordersFilters"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+          <div class="orders-filters" id="ordersFilters" style="margin:0"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="openWaiterPage()" data-i18n-title="waiter.tooltip" title="Open de bedienpagina op je telefoon om bestellingen aan tafel op te nemen" data-i18n="waiter.btn">🤵 Bediening (telefoon)</button>
+          </div>
+        </div>
         <div class="orders-grid" id="ordersGrid"></div>
       </div>
 
       <!-- PAGE: KITCHEN — streamlined view for kitchen staff -->
       <div class="page" id="page-kitchen">
         <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-          <div style="padding:10px 18px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);border-radius:10px;font-size:13px"><b id="kitchenNewCount">0</b> nieuw</div>
-          <div style="padding:10px 18px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);border-radius:10px;font-size:13px"><b id="kitchenPrepCount">0</b> in bereiding</div>
-          <div style="padding:10px 18px;background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.35);border-radius:10px;font-size:13px"><b id="kitchenReadyCount">0</b> klaar</div>
+          <div style="padding:10px 18px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);border-radius:10px;font-size:13px"><b id="kitchenNewCount">0</b> <span data-i18n="kitchen.new">nieuw</span></div>
+          <div style="padding:10px 18px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);border-radius:10px;font-size:13px"><b id="kitchenPrepCount">0</b> <span data-i18n="kitchen.prep">in bereiding</span></div>
+          <div style="padding:10px 18px;background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.35);border-radius:10px;font-size:13px"><b id="kitchenReadyCount">0</b> <span data-i18n="kitchen.ready">klaar</span></div>
         </div>
         <div id="kitchenGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px"></div>
-        <div id="kitchenEmpty" style="display:none;text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:12px">🍳</div><p>Geen actieve bestellingen — de keuken is rustig.</p></div>
+        <div id="kitchenEmpty" style="display:none;text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:12px">🍳</div><p data-i18n="kitchen.empty">Geen actieve bestellingen — de keuken is rustig.</p></div>
       </div>
 
       <!-- PAGE: STAFF (Medewerkers) -->
       <div class="page" id="page-staff">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
           <div>
-            <h2 style="margin-bottom:4px">Medewerkers</h2>
-            <p style="color:var(--muted);font-size:13px">Voeg medewerkers toe en bepaal per persoon welke tabs ze kunnen zien.</p>
+            <h2 style="margin-bottom:4px" data-i18n="staff.title">Medewerkers</h2>
+            <p style="color:var(--muted);font-size:13px" data-i18n="staff.sub">Voeg medewerkers toe en bepaal per persoon welke tabs ze kunnen zien.</p>
           </div>
-          <button class="btn btn-primary" onclick="openStaffEdit()">+ Nieuwe medewerker</button>
+          <button class="btn btn-primary" onclick="openStaffEdit()" data-i18n="staff.addNew">+ Nieuwe medewerker</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px" id="staffHierarchy">
+          <div style="background:var(--card);border:1px solid rgba(245,162,0,0.3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px">👑</div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px" data-i18n="role.owner">Eigenaar</div><div style="font-size:10px;color:var(--muted);margin-top:2px" data-i18n="hier.owner">Volledige toegang</div></div>
+          <div style="background:var(--card);border:1px solid rgba(0,200,150,0.3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px">👔</div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px" data-i18n="role.manager">Manager</div><div style="font-size:10px;color:var(--muted);margin-top:2px" data-i18n="hier.manager">Alles behalve financieel</div></div>
+          <div style="background:var(--card);border:1px solid rgba(59,130,246,0.3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px">👨‍🍳</div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px" data-i18n="role.kitchen">Kok</div><div style="font-size:10px;color:var(--muted);margin-top:2px" data-i18n="hier.kitchen">Alleen keuken</div></div>
+          <div style="background:var(--card);border:1px solid rgba(168,85,247,0.3);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px">🤵</div><div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px" data-i18n="role.waiter">Serveerster</div><div style="font-size:10px;color:var(--muted);margin-top:2px" data-i18n="hier.waiter">Tafels + bestellingen</div></div>
         </div>
         <div id="staffList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px"></div>
       </div>
@@ -596,7 +667,7 @@ button{font-family:inherit}
             <input type="text" class="form-input" id="qrBase" readonly style="color:var(--muted);background:var(--bg)" placeholder="ga naar Instellingen om in te stellen">
             <div style="margin-top:4px;font-size:11px;color:var(--muted)">Wijzig de basis-URL onder <a href="#" onclick="document.querySelector('.nav-item[data-page=&quot;settings&quot;]').click();return false" style="color:var(--teal)">Instellingen</a>.</div>
           </div>
-          <button class="btn btn-primary" onclick="generateQRs()">Genereer QR's</button>
+          <button class="btn btn-primary" onclick="generateQRs()" data-i18n="qr.generate">Genereer QR's</button>
           <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
         </div>
         <div class="qr-grid" id="qrGrid"></div>
@@ -639,6 +710,29 @@ button{font-family:inherit}
               <input type="tel" class="form-input" id="setPhone" placeholder="+220 XXX XXXX">
             </div>
           </div>
+          <div style="margin:16px 0;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700">🖨️ Bluetooth printer (ESC/POS)</div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <button class="btn-sm" type="button" onclick="pairPrinter()">🔗 Koppel printer</button>
+              <button class="btn-sm" type="button" onclick="(async()=>{const o=orders.find(x=>x.status!=='paid');if(o)await printOrder(o.id);else toast('Geen order om te testen','warn')})()">🧪 Test print</button>
+              <button class="btn-sm" type="button" onclick="localStorage.removeItem(PRINTER_KEY);_btDevice=null;refreshPrinterStatus();toast('Printer ontkoppeld','info')">✕ Ontkoppel</button>
+            </div>
+            <div id="printerStatus" style="font-size:12px;font-family:monospace"></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">
+              Werkt met 58mm/80mm Bluetooth ESC/POS printers. Vereist <b>Chrome/Edge op Android of desktop</b> — iOS Safari ondersteunt Web Bluetooth niet.
+            </div>
+          </div>
+
+          <div style="margin:16px 0;padding:14px 16px;background:rgba(245,162,0,0.08);border:1px solid rgba(245,162,0,0.3);border-radius:12px">
+            <div style="font-size:12px;color:var(--gold);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700">🔐 Eigenaar-PIN</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" class="form-input" id="setOwnerPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="0000" style="font-family:monospace;font-size:18px;letter-spacing:.3em;text-align:center;max-width:140px">
+              <button class="btn-sm" type="button" onclick="saveOwnerPin()">Opslaan</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">
+              4 cijfers. Standaard is <code style="background:var(--bg);padding:1px 5px;border-radius:3px">0000</code> — verander 'm asap. Verplicht bij elke kassa-opening na 8u idle.
+            </div>
+          </div>
           <div class="form-group">
             <label class="form-label">Restaurant ID (in de QR-link)</label>
             <input type="text" class="form-input" id="setId" readonly style="color:var(--muted)">
@@ -656,11 +750,30 @@ button{font-family:inherit}
           </div>
 
           <div style="margin:16px 0;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700">☁ API server (sync tussen devices)</div>
+            <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+              <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="apiMode" value="auto" onchange="setApiMode(this.value)"> Auto (cloud → LAN fallback)</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="apiMode" value="cloud" onchange="setApiMode(this.value)"> Alleen cloud</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px"><input type="radio" name="apiMode" value="lan" onchange="setApiMode(this.value)"> Alleen LAN</label>
+            </div>
+            <input type="text" class="form-input" id="setLanUrl" placeholder="http://192.168.1.10:8787" style="font-family:monospace;font-size:12px" oninput="onLanUrlChange()">
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="detectLanUrl()" title="Vul automatisch in met detected IP">🔎 Auto-detect LAN</button>
+              <button type="button" class="btn-sm" onclick="testLanConnection()">🧪 Test verbinding</button>
+            </div>
+            <div id="lanStatus" style="margin-top:10px;font-size:12px"></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">
+              Draait de lokale server op het restaurant? Start hem met <code style="background:var(--bg);padding:1px 5px;border-radius:3px">python lan-server.py</code> en bestelt ook zonder internet tussen alle devices op jullie WiFi.
+            </div>
+          </div>
+
+          <div style="margin:16px 0;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px">
             <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700">📱 QR basis-URL (naar bestel-pagina)</div>
             <input type="text" class="form-input" id="setQrBase" oninput="onQrBaseChange()" placeholder="https://jouwsite.com/bestel.html" style="font-family:monospace;font-size:12px">
             <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="useLanUrl()" title="Gebruik het LAN IP van deze computer — werkt alleen op hetzelfde WiFi">📡 LAN IP gebruiken</button>
               <button type="button" class="btn-sm" onclick="useCustomDomain()">🌐 Eigen domein…</button>
+              <button type="button" class="btn-sm" onclick="resetQrBase()" title="Zet terug naar de standaard (huidige host + /bestel.html)">↩ Herstel standaard</button>
             </div>
             <div id="qrBaseWarning" style="display:none;margin-top:10px;padding:10px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.35);border-radius:8px;font-size:12px;color:#fca5a5">
               ⚠️ <b style="color:#fff">QR werkt niet op telefoons</b> — deze URL wijst naar <code id="qrWarnLocal">localhost</code>. Gebruik LAN IP (zelfde WiFi) of je publieke domein.
@@ -670,7 +783,7 @@ button{font-family:inherit}
             </div>
           </div>
 
-          <button class="btn btn-primary" onclick="saveSettings()">Opslaan</button>
+          <button class="btn btn-primary" onclick="saveSettings()" data-i18n="btn.save">Opslaan</button>
           <button class="btn btn-secondary" onclick="resetDemo()">🔄 Demo data herstellen</button>
         </div>
       </div>
@@ -726,8 +839,8 @@ button{font-family:inherit}
         </label>
       </div>
       <div style="display:flex;gap:8px;margin-top:18px">
-        <button class="btn btn-primary" style="flex:1" onclick="saveDeal()">Opslaan</button>
-        <button class="btn btn-secondary" onclick="closeModal('dealModal')">Annuleren</button>
+        <button class="btn btn-primary" style="flex:1" onclick="saveDeal()" data-i18n="btn.save">Opslaan</button>
+        <button class="btn btn-secondary" onclick="closeModal('dealModal')" data-i18n="btn.cancel">Annuleren</button>
         <button class="btn" id="dealDeleteBtn" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5" onclick="deleteDeal()">🗑</button>
       </div>
     </div>
@@ -748,12 +861,13 @@ button{font-family:inherit}
         <input type="text" class="form-input" id="staffName" placeholder="bv. Isatou Jallow">
       </div>
       <div class="form-group">
-        <label class="form-label">Rol</label>
+        <label class="form-label" data-i18n="staff.role">Rol</label>
         <select class="form-select" id="staffRole">
-          <option value="waiter">🤵 Bediening (Tafels · Bestellingen · Reserveringen)</option>
-          <option value="kitchen">👨‍🍳 Keuken (alleen Keuken)</option>
-          <option value="manager">👔 Manager (alles)</option>
-          <option value="custom">✏️ Aangepast</option>
+          <option value="owner"   data-i18n="role.opt.owner">👑 Eigenaar (volledige toegang)</option>
+          <option value="manager" data-i18n="role.opt.manager">👔 Manager (alles behalve financieel)</option>
+          <option value="kitchen" data-i18n="role.opt.kitchen">👨‍🍳 Kok (alleen Keuken)</option>
+          <option value="waiter" selected data-i18n="role.opt.waiter">🤵 Serveerster (Tafels · Bestellingen · Reserveringen)</option>
+          <option value="custom"  data-i18n="role.opt.custom">✏️ Aangepast (kies per tab)</option>
         </select>
       </div>
       <div class="form-group">
@@ -765,8 +879,8 @@ button{font-family:inherit}
         <div id="staffPermsList" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
       </div>
       <div style="display:flex;gap:8px;margin-top:18px">
-        <button class="btn btn-primary" style="flex:1" onclick="saveStaff()">Opslaan</button>
-        <button class="btn btn-secondary" onclick="closeModal('staffModal')">Annuleren</button>
+        <button class="btn btn-primary" style="flex:1" onclick="saveStaff()" data-i18n="btn.save">Opslaan</button>
+        <button class="btn btn-secondary" onclick="closeModal('staffModal')" data-i18n="btn.cancel">Annuleren</button>
         <button class="btn" id="staffDeleteBtn" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5" onclick="deleteStaff()">🗑</button>
       </div>
     </div>
@@ -843,8 +957,8 @@ button{font-family:inherit}
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-secondary" onclick="closeModal('menuModal')">Annuleer</button>
-      <button class="btn btn-primary" onclick="saveMenuItem()">Opslaan</button>
+      <button class="btn btn-secondary" onclick="closeModal('menuModal')" data-i18n="btn.cancel">Annuleer</button>
+      <button class="btn btn-primary" onclick="saveMenuItem()" data-i18n="btn.save">Opslaan</button>
     </div>
   </div>
 </div>
@@ -868,7 +982,10 @@ button{font-family:inherit}
 
 <script>
 // ============ CONFIG ============
-const RESTAURANT_ID = localStorage.getItem('wg_restaurant_id') || 'demo';
+// Allow `?r=<id>` URL override so one device can host multiple restaurant demos.
+const _urlRid = new URLSearchParams(location.search).get('r');
+const RESTAURANT_ID = (_urlRid && /^[A-Za-z0-9_-]{1,40}$/.test(_urlRid)) ? _urlRid
+  : (localStorage.getItem('wg_restaurant_id') || 'demo');
 localStorage.setItem('wg_restaurant_id', RESTAURANT_ID);
 const menuKey = 'wg_menu_' + RESTAURANT_ID;
 const ordersKey = 'wg_orders_' + RESTAURANT_ID;
@@ -877,6 +994,229 @@ const settingsKey = 'wg_settings_' + RESTAURANT_ID;
 
 const orderChannel = new BroadcastChannel('wg_orders_' + RESTAURANT_ID);
 const resChannel = new BroadcastChannel('wg_res_' + RESTAURANT_ID);
+
+// ============ CLOUD SYNC ============
+const CLOUD_API_BASE = 'https://webgen-gambia.diederikkok123.workers.dev';
+const LAN_API_KEY = 'wg_lan_api_base';
+const API_MODE_KEY = 'wg_api_mode'; // 'auto' (default) | 'cloud' | 'lan'
+
+function getApiMode() { return localStorage.getItem(API_MODE_KEY) || 'auto'; }
+function getLanBase() { return (localStorage.getItem(LAN_API_KEY) || '').replace(/\/$/, ''); }
+
+// Preference cache — which base worked last, used by 'auto' mode
+let _lastWorkingBase = CLOUD_API_BASE;
+
+// Try base URLs in preferred order; skip blanks; uses HEAD/GET for low overhead
+async function pingBase(base) {
+  if (!base) return false;
+  try {
+    const r = await fetch(base + '/api/health', { method: 'GET', cache: 'no-store' });
+    if (r.ok) { return true; }
+    // Old Worker doesn't have /health — try kassa GET as a fallback check
+    const r2 = await fetch(base + `/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/orders`, { method: 'GET', cache: 'no-store' });
+    return r2.ok;
+  } catch (e) { return false; }
+}
+
+async function resolveApiBase() {
+  const mode = getApiMode();
+  const lan = getLanBase();
+  if (mode === 'cloud') return CLOUD_API_BASE;
+  if (mode === 'lan')   return lan || CLOUD_API_BASE; // fallback if no LAN configured
+  // auto: prefer last working; re-probe on failure
+  return _lastWorkingBase;
+}
+
+// Fetch against the active base; if it fails in 'auto' mode, swap to the other base and retry
+async function cloudFetchImpl(base, url, opts) {
+  const r = await fetch(base + url, { ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers||{}) } });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.json();
+}
+async function cloudFetch(url, opts = {}) {
+  const mode = getApiMode();
+  const lan = getLanBase();
+  const tried = [];
+  const order = mode === 'cloud'
+    ? [CLOUD_API_BASE]
+    : mode === 'lan'
+      ? [lan].filter(Boolean)
+      : (_lastWorkingBase === lan && lan ? [lan, CLOUD_API_BASE] : [CLOUD_API_BASE, lan].filter(Boolean));
+  let lastErr;
+  for (const base of order) {
+    try {
+      const result = await cloudFetchImpl(base, url, opts);
+      _lastWorkingBase = base;
+      return result;
+    } catch (e) { tried.push(base); lastErr = e; }
+  }
+  throw lastErr || new Error('No API base reachable');
+}
+
+// Backwards-compat export (some older code refs)
+const API_BASE = CLOUD_API_BASE;
+
+let lastOrderSyncAt = parseInt(localStorage.getItem(`wg_lastordersync_${RESTAURANT_ID}`)) || 0;
+let lastResSyncAt   = parseInt(localStorage.getItem(`wg_lastressync_${RESTAURANT_ID}`)) || 0;
+let syncErrorCount = 0;
+let isSyncing = false;
+
+async function cloudFetch(url, opts = {}) {
+  try {
+    const r = await fetch(API_BASE + url, { ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers||{}) } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } catch (e) { throw e; }
+}
+
+async function pushOrderCloud(order) {
+  const url = `/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/orders`;
+  try { await cloudFetch(url, { method:'POST', body: JSON.stringify(order) }); }
+  catch (e) { queueOffline({ url, method:'POST', body: order }); }
+}
+async function patchOrderCloud(id, patch) {
+  const url = `/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/orders/${encodeURIComponent(id)}`;
+  try { await cloudFetch(url, { method:'PATCH', body: JSON.stringify(patch) }); }
+  catch (e) { queueOffline({ url, method:'PATCH', body: patch }); }
+}
+async function deleteOrderCloud(id) {
+  const url = `/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/orders/${encodeURIComponent(id)}`;
+  try { await cloudFetch(url, { method:'DELETE' }); }
+  catch (e) { queueOffline({ url, method:'DELETE' }); }
+}
+async function pushReservationCloud(res) {
+  const url = `/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/reservations`;
+  try { await cloudFetch(url, { method:'POST', body: JSON.stringify(res) }); }
+  catch (e) { queueOffline({ url, method:'POST', body: res }); }
+}
+async function patchReservationCloud(id, patch) {
+  const url = `/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/reservations/${encodeURIComponent(id)}`;
+  try { await cloudFetch(url, { method:'PATCH', body: JSON.stringify(patch) }); }
+  catch (e) { queueOffline({ url, method:'PATCH', body: patch }); }
+}
+
+function mergeById(local, remote) {
+  const byId = new Map(local.map(o => [o.id, o]));
+  let changed = false;
+  remote.forEach(r => {
+    if (!r || !r.id) return;
+    const existing = byId.get(r.id);
+    if (!existing) {
+      byId.set(r.id, r);
+      changed = true;
+      return;
+    }
+    // Last-writer-wins: compare serverAt first, fall back to any *At timestamp
+    const remoteTs = r.serverAt || r.paidAt || r.readyAt || r.preparingAt || r.servedAt || r.createdAt || 0;
+    const localTs  = existing.serverAt || existing.paidAt || existing.readyAt || existing.preparingAt || existing.servedAt || existing.createdAt || 0;
+    if (remoteTs > localTs) {
+      byId.set(r.id, { ...existing, ...r });
+      changed = true;
+    }
+    // If timestamps are equal but status differs → prefer the more-advanced status (new<preparing<ready<served<paid)
+    else if (remoteTs === localTs && r.status !== existing.status) {
+      const rank = { new:0, preparing:1, ready:2, served:3, paid:4, cancelled:5 };
+      if ((rank[r.status] ?? 0) > (rank[existing.status] ?? 0)) {
+        byId.set(r.id, { ...existing, ...r });
+        changed = true;
+      }
+    }
+  });
+  const out = [...byId.values()].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  return { merged: out, changed };
+}
+
+async function syncFromCloud() {
+  if (isSyncing) return;
+  isSyncing = true;
+  try {
+    const [ordersRes, resvRes] = await Promise.all([
+      cloudFetch(`/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/orders${lastOrderSyncAt?`?since=${lastOrderSyncAt}`:''}`),
+      cloudFetch(`/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/reservations${lastResSyncAt?`?since=${lastResSyncAt}`:''}`)
+    ]);
+    let dirty = false;
+
+    if (ordersRes.orders && ordersRes.orders.length) {
+      const { merged, changed } = mergeById(orders, ordersRes.orders);
+      if (changed) {
+        // Detect truly new orders (from other devices) to fire a toast
+        const existingIds = new Set(orders.map(o => o.id));
+        const brandNew = ordersRes.orders.filter(o => !existingIds.has(o.id));
+        orders = merged;
+        saveJSON(ordersKey, orders);
+        dirty = true;
+        brandNew.forEach(o => {
+          toast(o.type === 'takeaway'
+            ? '🛍️ Nieuwe afhaal (cloud) · ' + (o.customer?.name || '')
+            : '🔔 Nieuwe bestelling (cloud) · Tafel ' + o.table, 'info');
+        });
+      }
+      lastOrderSyncAt = ordersRes.serverTime;
+      localStorage.setItem(`wg_lastordersync_${RESTAURANT_ID}`, lastOrderSyncAt);
+    } else if (ordersRes.serverTime) {
+      lastOrderSyncAt = ordersRes.serverTime;
+      localStorage.setItem(`wg_lastordersync_${RESTAURANT_ID}`, lastOrderSyncAt);
+    }
+
+    if (resvRes.reservations && resvRes.reservations.length) {
+      const { merged, changed } = mergeById(reservations, resvRes.reservations);
+      if (changed) {
+        reservations = merged;
+        saveJSON(resKey, reservations);
+        dirty = true;
+      }
+      lastResSyncAt = resvRes.serverTime;
+      localStorage.setItem(`wg_lastressync_${RESTAURANT_ID}`, lastResSyncAt);
+    } else if (resvRes.serverTime) {
+      lastResSyncAt = resvRes.serverTime;
+      localStorage.setItem(`wg_lastressync_${RESTAURANT_ID}`, lastResSyncAt);
+    }
+
+    if (dirty) {
+      renderTables();
+      renderOrders();
+      renderOrdersFilters();
+      renderReservations();
+      renderResFilters();
+      renderKitchen();
+      renderFinance();
+      refreshStats();
+    }
+    syncErrorCount = 0;
+    setSyncStatus('connected');
+  } catch (e) {
+    syncErrorCount++;
+    setSyncStatus('offline');
+  } finally {
+    isSyncing = false;
+  }
+}
+
+function setSyncStatus(state) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  const map = {
+    connected: { color: '#00c896', text: '☁ Live', bg: 'rgba(0,200,150,0.12)' },
+    offline:   { color: '#fca5a5', text: '⚠ Offline', bg: 'rgba(239,68,68,0.12)' },
+    syncing:   { color: '#60a5fa', text: '⟳ Sync…', bg: 'rgba(59,130,246,0.12)' }
+  };
+  const m = map[state] || map.connected;
+  el.style.color = m.color;
+  el.style.background = m.bg;
+  el.textContent = m.text;
+}
+
+// Poll every 4s when document is visible; throttle on hidden
+let cloudSyncTimer = null;
+function scheduleCloudSync() {
+  if (cloudSyncTimer) clearInterval(cloudSyncTimer);
+  const interval = document.hidden ? 15000 : 4000;
+  cloudSyncTimer = setInterval(syncFromCloud, interval);
+}
+document.addEventListener('visibilitychange', () => {
+  scheduleCloudSync();
+  if (!document.hidden) syncFromCloud();
+});
 const staffKey = 'wg_staff_' + RESTAURANT_ID;
 
 // All pages the system supports — single source of truth for permissions
@@ -892,8 +1232,15 @@ const ALL_PAGES = [
   { id:'qr',           label:'📱 QR codes' },
   { id:'settings',     label:'⚙️ Instellingen' }
 ];
+// Role hierarchy (top → bottom):
+//  owner   — ziet alles, inclusief financieel en personeel beheer
+//  manager — draait dagelijkse operatie
+//  kitchen — de kok, ziet alleen Keuken
+//  waiter  — de serveerster (bediening), Tafels/Bestellingen/Reserveringen
+//  custom  — handmatige permissies per checkbox
 const ROLE_PRESETS = {
-  manager: ALL_PAGES.map(p => p.id),
+  owner:   ALL_PAGES.map(p => p.id),
+  manager: ALL_PAGES.filter(p => p.id !== 'finance').map(p => p.id), // manager ziet alles behalve winst/verlies
   waiter:  ['tables','orders','reservations'],
   kitchen: ['kitchen'],
   custom:  []
@@ -973,7 +1320,8 @@ let orders = loadJSON(ordersKey, []);
 let reservations = loadJSON(resKey, []);
 let settings = loadJSON(settingsKey, { numTables: 8 });
 let staff = loadJSON(staffKey, []);
-let currentStaffId = sessionStorage.getItem('wg_current_staff_' + RESTAURANT_ID) || 'manager';
+// Default viewer = 'owner' (highest privilege). 'manager' kept as legacy alias.
+let currentStaffId = sessionStorage.getItem('wg_current_staff_' + RESTAURANT_ID) || 'owner';
 const dealsKey = 'wg_deals_' + RESTAURANT_ID;
 let deals = loadJSON(dealsKey, []);
 const DAY_LABELS = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
@@ -989,7 +1337,8 @@ function switchToPage(page){
   document.querySelector('.nav-item[data-page="'+page+'"]')?.classList.add('active');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+page)?.classList.add('active');
-  const titles = {tables:'Tafel overzicht',orders:'Bestellingen',kitchen:'Keuken',reservations:'Reserveringen',menu:'Menu beheer',staff:'Medewerkers',qr:'QR codes',settings:'Instellingen'};
+  const T = (k) => (window.I18n ? I18n.t(k) : k);
+  const titles = {tables:T('title.tables'),orders:T('title.orders'),kitchen:T('title.kitchen'),reservations:T('title.reservations'),menu:T('title.menu'),staff:T('title.staff'),qr:T('title.qr'),settings:T('title.settings'),finance:T('title.finance'),deals:T('title.deals')};
   document.getElementById('pageTitle').textContent = titles[page] || page;
   if (page==='qr') generateQRs();
   if (page==='settings') loadSettings();
@@ -1004,15 +1353,18 @@ document.querySelectorAll('.nav-item').forEach(el => {
 
 // ============ PERMISSIONS / STAFF ROLE FILTER ============
 function getCurrentPerms(){
-  if (currentStaffId === 'manager') return ALL_PAGES.map(p => p.id);
+  // Owner sees everything unconditionally.
+  if (currentStaffId === 'owner') return ALL_PAGES.map(p => p.id);
+  // Legacy 'manager' value — applies the manager preset (all except finance)
+  if (currentStaffId === 'manager') return ROLE_PRESETS.manager;
   const s = staff.find(x => x.id === currentStaffId);
   if (!s) return ALL_PAGES.map(p => p.id);
   return Array.isArray(s.permissions) ? s.permissions : (ROLE_PRESETS[s.role] || []);
 }
 function applyPermissions(){
   const allowed = new Set(getCurrentPerms());
-  // Manager always gets everything + staff mgmt
-  if (currentStaffId === 'manager') { allowed.add('staff'); }
+  // Owner/manager always have access to staff mgmt
+  if (currentStaffId === 'owner' || currentStaffId === 'manager') { allowed.add('staff'); }
   document.querySelectorAll('.nav-item[data-page]').forEach(item => {
     const page = item.dataset.page;
     item.style.display = allowed.has(page) ? '' : 'none';
@@ -1029,16 +1381,20 @@ function setCurrentStaff(id){
   sessionStorage.setItem('wg_current_staff_' + RESTAURANT_ID, id);
   applyPermissions();
   const s = staff.find(x => x.id === id);
-  toast(s ? 'Ingelogd als ' + s.name : 'Ingelogd als Manager', 'info');
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  toast(s ? T('staff.loggedIn') + ' ' + s.name : T('staff.loggedIn') + ' ' + T('role.owner'), 'info');
 }
 function renderStaffSwitcher(){
   const sel = document.getElementById('currentStaff');
-  const mgr = '<option value="manager">👔 Manager (alles)</option>';
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  const ownerOpt = `<option value="owner">👑 ${T('role.owner')}</option>`;
+  const mgrOpt   = (currentStaffId === 'manager' || staff.some(s=>s.role==='manager')) ? `<option value="manager">👔 ${T('role.manager')}</option>` : '';
   const opts = staff.map(s => `<option value="${s.id}" ${s.id===currentStaffId?'selected':''}>${roleEmoji(s.role)} ${escapeHtml(s.name)}</option>`).join('');
-  sel.innerHTML = mgr + opts;
+  sel.innerHTML = ownerOpt + mgrOpt + opts;
   sel.value = currentStaffId;
 }
-function roleEmoji(role){ return {manager:'👔',waiter:'🤵',kitchen:'👨‍🍳',custom:'✏️'}[role] || '👤'; }
+function roleEmoji(role){ return {owner:'👑',manager:'👔',waiter:'🤵',kitchen:'👨‍🍳',custom:'✏️'}[role] || '👤'; }
+function roleLabel(role){ const k='role.'+role; return (window.I18n ? I18n.t(k) : ({owner:'Eigenaar',manager:'Manager',waiter:'Serveerster',kitchen:'Kok',custom:'Aangepast'}[role] || role)); }
 function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 // ============ TABLES VIEW ============
@@ -1047,16 +1403,33 @@ function renderTables(){
   const grid = document.getElementById('tablesGrid');
   const out = [];
 
+  // ── Per-table mini status line(s) ──
+  const renderStatusList = (tableOrders) => {
+    // Sort by status severity (new > preparing > ready > served) then by age (oldest first)
+    const severity = { new:0, preparing:1, ready:2, served:3, paid:4 };
+    const sorted = [...tableOrders].sort((a,b) => severity[a.status]-severity[b.status] || a.createdAt-b.createdAt);
+    const show = sorted.slice(0, 3);
+    const more = sorted.length - show.length;
+    return show.map(o => {
+      const age = o.createdAt;
+      const lvl = ageLevel(age);
+      const timeColor = lvl==='urgent'?'#ef4444':lvl==='warn'?'#f5a200':'#8aa0aa';
+      const items = o.items.reduce((s,it)=>s+it.qty,0);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px;font-size:11px">${statusPill(o.status, age)}<span style="color:${timeColor};font-weight:600;font-variant-numeric:tabular-nums">${items}× · ${shortAgo(age)}</span></div>`;
+    }).join('') + (more>0 ? `<div style="font-size:10px;color:var(--muted);margin-top:4px">+${more} meer</div>` : '');
+  };
+
   // Takeaway card — always first
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
   const takeawayOrders = orders.filter(o => o.type === 'takeaway' && o.status !== 'paid');
   const taPending = takeawayOrders.some(o => o.status === 'new');
   const taReady = takeawayOrders.some(o => o.status === 'ready');
   const taTotal = takeawayOrders.reduce((s, o) => s + o.total, 0);
-  let taStatus = 'empty', taLabel = 'Geen afhaal';
+  let taStatus = 'empty', taLabel = T('table.noTakeaway');
   if (takeawayOrders.length) {
-    if (taPending) { taStatus = 'pending'; taLabel = 'Nieuw'; }
-    else if (taReady) { taStatus = 'ready'; taLabel = 'Klaar'; }
-    else { taStatus = 'occupied'; taLabel = 'In behandeling'; }
+    if (taPending) { taStatus = 'pending'; taLabel = takeawayOrders.length + ' ' + T('table.open'); }
+    else if (taReady) { taStatus = 'ready'; taLabel = T('table.readyPickup'); }
+    else { taStatus = 'occupied'; taLabel = T('table.inProgress'); }
   }
   out.push(`
     <div class="table-card status-${taStatus}" onclick="setOrderFilter('takeaway');document.querySelector('.nav-item[data-page=&quot;orders&quot;]').click()" style="border-style:dashed">
@@ -1065,9 +1438,7 @@ function renderTables(){
         <div class="tc-num" style="font-size:28px">🛍️</div>
         <div class="tc-status">${taLabel}</div>
       </div>
-      <div class="tc-info">
-        ${takeawayOrders.length ? `${takeawayOrders.reduce((s,o)=>s+o.items.reduce((a,b)=>a+b.qty,0),0)} items · Afhaal` : 'Afhaal'}
-      </div>
+      <div>${takeawayOrders.length ? renderStatusList(takeawayOrders) : '<div class="tc-info">'+T('table.takeaway')+'</div>'}</div>
       ${taTotal?`<div class="tc-amount">${menu.currency} ${taTotal}</div>`:''}
     </div>
   `);
@@ -1077,12 +1448,17 @@ function renderTables(){
     const hasPending = tableOrders.some(o => o.status==='new');
     const hasReady = tableOrders.some(o => o.status==='ready');
     const total = tableOrders.reduce((s,o)=>s+o.total,0);
-    let status = 'empty', label = 'Leeg';
+    let status = 'empty', label = T('table.empty');
     if (tableOrders.length){
-      if (hasPending){ status='pending'; label='Nieuw'; }
-      else if (hasReady){ status='ready'; label='Klaar'; }
-      else { status='occupied'; label='Bezet'; }
+      if (hasPending){ status='pending'; label=T('status.new'); }
+      else if (hasReady){ status='ready'; label=T('status.ready'); }
+      else { status='occupied'; label=T('table.occupied'); }
     }
+    const oldest = tableOrders.reduce((min, o) => Math.min(min, o.createdAt), Date.now());
+    const waitLvl = tableOrders.length ? ageLevel(oldest) : 'ok';
+    const waitTag = tableOrders.length && waitLvl !== 'ok'
+      ? `<div style="position:absolute;bottom:10px;right:10px;padding:2px 7px;border-radius:4px;background:${waitLvl==='urgent'?'rgba(239,68,68,0.2)':'rgba(245,162,0,0.2)'};color:${waitLvl==='urgent'?'#fca5a5':'#fbbf24'};font-size:10px;font-weight:700;letter-spacing:.04em">⏱ ${shortAgo(oldest)}</div>`
+      : '';
     out.push(`
       <div class="table-card status-${status}" onclick="openTableDetail(${i})">
         ${tableOrders.length?`<div class="tc-badge">${tableOrders.length}</div>`:''}
@@ -1090,10 +1466,9 @@ function renderTables(){
           <div class="tc-num">T${String(i).padStart(2,'0')}</div>
           <div class="tc-status">${label}</div>
         </div>
-        <div class="tc-info">
-          ${tableOrders.length? `${tableOrders.reduce((s,o)=>s+o.items.reduce((a,b)=>a+b.qty,0),0)} items` : 'Geen bestelling'}
-        </div>
+        <div>${tableOrders.length ? renderStatusList(tableOrders) : '<div class="tc-info">'+T('table.noOrders')+'</div>'}</div>
         ${total? `<div class="tc-amount">${menu.currency} ${total}</div>` : ''}
+        ${waitTag}
       </div>
     `);
   }
@@ -1111,7 +1486,7 @@ function openTableDetail(tableNum){
     document.getElementById('tdBody').innerHTML = `
       <div class="empty-state">
         <div class="emoji">🪑</div>
-        <p>Deze tafel heeft nog geen open bestellingen.</p>
+        <p>${(window.I18n?I18n.t('table.noOpen'):'Deze tafel heeft nog geen open bestellingen.')}</p>
       </div>
     `;
     document.getElementById('tdCloseBtn').style.display='none';
@@ -1120,7 +1495,7 @@ function openTableDetail(tableNum){
     const html = `
       <div class="td-head">
         <div>
-          <div style="font-size:12px;color:var(--muted)">Totaal te betalen</div>
+          <div style="font-size:12px;color:var(--muted)" data-i18n="table.toPay">Totaal te betalen</div>
           <div class="td-total">${menu.currency} ${total}</div>
         </div>
         <div>
@@ -1138,7 +1513,7 @@ function openTableDetail(tableNum){
 
 function closeTable(){
   if (!currentTable) return;
-  if (!confirm('Alle bestellingen van tafel '+currentTable+' markeren als betaald?')) return;
+  if (!confirm((window.I18n?I18n.t('confirm.closeTable'):'Alle bestellingen van tafel ')+currentTable+(window.I18n?I18n.t('confirm.closeTable2'):' markeren als betaald?'))) return;
   orders = orders.map(o => String(o.table)===String(currentTable) && o.status!=='paid' ? {...o,status:'paid',paidAt:Date.now()} : o);
   saveJSON(ordersKey, orders);
   closeModal('tableModal');
@@ -1159,16 +1534,17 @@ function renderOrdersFilters(){
     dinein: orders.filter(o => o.type!=='takeaway' && o.status!=='paid').length,
     all: orders.length,
   };
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
   const filters = [
-    {k:'active',l:'Actief',c:counts.active},
-    {k:'dinein',l:'🪑 Tafel',c:counts.dinein},
-    {k:'takeaway',l:'🛍️ Afhaal',c:counts.takeaway},
-    {k:'new',l:'Nieuw',c:counts.new},
-    {k:'preparing',l:'In keuken',c:counts.preparing},
-    {k:'ready',l:'Klaar',c:counts.ready},
-    {k:'served',l:'Geserveerd',c:counts.served},
-    {k:'paid',l:'Betaald',c:counts.paid},
-    {k:'all',l:'Alles',c:counts.all},
+    {k:'active',l:T('filter.active'),c:counts.active},
+    {k:'dinein',l:'🪑 '+T('filter.dinein'),c:counts.dinein},
+    {k:'takeaway',l:'🛍️ '+T('filter.takeaway'),c:counts.takeaway},
+    {k:'new',l:T('status.new'),c:counts.new},
+    {k:'preparing',l:T('stat.inKitchen'),c:counts.preparing},
+    {k:'ready',l:T('status.ready'),c:counts.ready},
+    {k:'served',l:T('status.served'),c:counts.served},
+    {k:'paid',l:T('status.paid'),c:counts.paid},
+    {k:'all',l:T('filter.all'),c:counts.all},
   ];
   document.getElementById('ordersFilters').innerHTML = filters.map(f =>
     `<div class="filter-pill ${f.k===orderFilter?'active':''}" onclick="setOrderFilter('${f.k}')">${f.l} <b style="opacity:0.7">${f.c}</b></div>`
@@ -1185,7 +1561,7 @@ function renderOrders(){
 
   const grid = document.getElementById('ordersGrid');
   if (!filtered.length){
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="emoji">📋</div><p>Geen bestellingen in deze categorie</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="emoji">📋</div><p>${(window.I18n?I18n.t('orders.emptyFilter'):'Geen bestellingen in deze categorie')}</p></div>`;
     return;
   }
   grid.innerHTML = filtered.map(o => renderOrderCard(o)).join('');
@@ -1193,7 +1569,8 @@ function renderOrders(){
 
 function renderOrderCard(o, compact=false){
   const ago = timeAgo(o.createdAt);
-  const statusLabels = {new:'Nieuw',preparing:'In keuken',ready:'Klaar',served:'Geserveerd',paid:'Betaald'};
+  const _T = (k)=> (window.I18n ? I18n.t(k) : k);
+  const statusLabels = {new:_T('status.new'),preparing:_T('stat.inKitchen'),ready:_T('status.ready'),served:_T('status.served'),paid:_T('status.paid')};
   const nextActions = {
     new: [{s:'preparing', l:'👨‍🍳 Accepteer', p:true}],
     preparing: [{s:'ready', l:'🔔 Klaar', p:true}],
@@ -1204,21 +1581,25 @@ function renderOrderCard(o, compact=false){
   const acts = nextActions[o.status] || [];
   const isTakeaway = o.type === 'takeaway';
   const isWhatsApp = o.channel === 'whatsapp';
+  const _Tb = (k)=> (window.I18n ? I18n.t(k) : k);
   const badge = isTakeaway
-    ? `<div class="oc-table" style="background:rgba(245,162,0,0.15);color:var(--gold);border:1px solid rgba(245,162,0,0.35)">🛍️ Afhalen${o.customer?.pickupTime ? ` · ${o.customer.pickupTime}` : ''}</div>`
-    : `<div class="oc-table">Tafel ${o.table}</div>`;
+    ? `<div class="oc-table" style="background:rgba(245,162,0,0.15);color:var(--gold);border:1px solid rgba(245,162,0,0.35)">🛍️ ${_Tb('filter.takeaway')}${o.customer?.pickupTime ? ` · ${o.customer.pickupTime}` : ''}</div>`
+    : `<div class="oc-table">${_Tb('nav.tables').replace(/s$/,'')} ${o.table}</div>`;
+  const isWaiter = o.channel === 'waiter';
   const channelBadge = isWhatsApp
     ? `<span style="display:inline-flex;align-items:center;gap:3px;margin-right:6px;padding:2px 6px;background:rgba(37,211,102,0.15);color:#4ade80;border:1px solid rgba(37,211,102,0.35);border-radius:4px;font-size:10px;font-weight:700">💬 WA</span>`
-    : '';
+    : isWaiter
+      ? `<span style="display:inline-flex;align-items:center;gap:3px;margin-right:6px;padding:2px 6px;background:rgba(168,85,247,0.15);color:#c084fc;border:1px solid rgba(168,85,247,0.35);border-radius:4px;font-size:10px;font-weight:700" title="${escapeHtml(o.takenBy || 'Bediening')}">🤵 ${escapeHtml(o.takenBy || 'WAITER')}</span>`
+      : '';
   const custLine = isTakeaway && o.customer
-    ? `<div class="oc-note" style="background:rgba(245,162,0,0.08);border-left:3px solid var(--gold)">👤 <strong>${o.customer.name}</strong> · <a href="tel:${o.customer.phone}" style="color:var(--teal);text-decoration:none">📞 ${o.customer.phone}</a>${o.customer.phone ? ` · <a href="https://wa.me/${o.customer.phone.replace(/\\D/g,'')}" target="_blank" style="color:#4ade80;text-decoration:none">💬 WhatsApp</a>` : ''}</div>`
+    ? `<div class="oc-note" style="background:rgba(245,162,0,0.08);border-left:3px solid var(--gold)">👤 <strong>${escapeHtml(o.customer.name||'')}</strong> · <a href="tel:${encodeURIComponent(o.customer.phone||'')}" style="color:var(--teal);text-decoration:none">📞 ${escapeHtml(o.customer.phone||'')}</a>${o.customer.phone ? ` · <a href="https://wa.me/${(o.customer.phone||'').replace(/\D/g,'')}" target="_blank" style="color:#4ade80;text-decoration:none">💬 WhatsApp</a>` : ''}</div>`
     : '';
   return `
     <div class="order-card">
       <div class="oc-head">
         <div>
           <div class="oc-id">${channelBadge}${o.id}</div>
-          <div class="oc-time">${ago}</div>
+          <div class="oc-time" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-variant-numeric:tabular-nums;color:${ageLevel(o.createdAt)==='urgent'?'#fca5a5':ageLevel(o.createdAt)==='warn'?'#fbbf24':'var(--muted)'};font-weight:600">${ago}</span><span style="color:var(--muted);font-size:11px">·</span><span style="color:var(--muted);font-family:monospace;font-size:11px">${new Date(o.createdAt).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})}</span></div>
         </div>
         <div style="text-align:right">
           ${badge}
@@ -1229,11 +1610,12 @@ function renderOrderCard(o, compact=false){
       <div class="oc-items">
         ${o.items.map(it => `<div class="oc-item"><span><span class="qty">${it.qty}×</span> ${it.emoji||''} ${it.name}${it.optionsLabel?`<br><span style="color:var(--teal);font-size:11px;margin-left:24px">✓ ${escapeHtml(it.optionsLabel)}</span>`:''}</span><span>${o.currency} ${it.price*it.qty}</span></div>`).join('')}
       </div>
-      ${o.note ? `<div class="oc-note">💬 ${o.note}</div>` : ''}
+      ${o.note ? `<div class="oc-note">💬 ${escapeHtml(o.note)}</div>` : ''}
       <div class="oc-foot">
         <div class="oc-total">${o.currency} ${o.total}</div>
         <div class="oc-actions">
           ${acts.map(a => `<button class="btn-sm ${a.p?'primary':''}" onclick="updateStatus('${o.id}','${a.s}')">${a.l}</button>`).join('')}
+          <button class="btn-sm" onclick="printOrder('${o.id}')" title="Print to Bluetooth printer">🖨</button>
           ${!compact && o.status!=='paid' ? `<button class="btn-sm danger" onclick="cancelOrder('${o.id}')">✕</button>` : ''}
         </div>
       </div>
@@ -1245,7 +1627,9 @@ function updateStatus(id, status){
   orders = orders.map(o => o.id===id ? {...o, status, [status+'At']:Date.now()} : o);
   saveJSON(ordersKey, orders);
   orderChannel.postMessage({type:'status_update', orderId:id, status});
-  const msg = {preparing:'In de keuken',ready:'Gemarkeerd als klaar',served:'Geserveerd',paid:'Betaald'};
+  patchOrderCloud(id, { status, [status+'At']: Date.now() });
+  const _T2 = (k)=> (window.I18n ? I18n.t(k) : k);
+  const msg = {preparing:_T2('toast.inKitchen'),ready:_T2('toast.markedReady'),served:_T2('status.served'),paid:_T2('status.paid')};
   toast(msg[status]||'Bijgewerkt','success');
   refreshAll();
 }
@@ -1254,6 +1638,7 @@ function cancelOrder(id){
   if (!confirm('Deze bestelling annuleren?')) return;
   orders = orders.filter(o => o.id!==id);
   saveJSON(ordersKey, orders);
+  deleteOrderCloud(id);
   toast('Bestelling geannuleerd','warn');
   refreshAll();
 }
@@ -1267,11 +1652,12 @@ function renderResFilters(){
     pending: reservations.filter(r => r.status==='pending').length,
     all: reservations.length,
   };
+  const _T3 = (k)=> (window.I18n ? I18n.t(k) : k);
   const filters = [
-    {k:'upcoming',l:'Komend',c:counts.upcoming},
-    {k:'today',l:'Vandaag',c:counts.today},
-    {k:'pending',l:'Nog bevestigen',c:counts.pending},
-    {k:'all',l:'Alles',c:counts.all},
+    {k:'upcoming',l:_T3('res.upcoming'),c:counts.upcoming},
+    {k:'today',l:_T3('sidebar.today'),c:counts.today},
+    {k:'pending',l:_T3('res.pending'),c:counts.pending},
+    {k:'all',l:_T3('filter.all'),c:counts.all},
   ];
   document.getElementById('resFilters').innerHTML = filters.map(f =>
     `<div class="filter-pill ${f.k===resFilter?'active':''}" onclick="setResFilter('${f.k}')">${f.l} <b style="opacity:0.7">${f.c}</b></div>`
@@ -1309,14 +1695,14 @@ function renderReservations(){
           <div class="res-date-m">${months[d.getMonth()]}</div>
         </div>
         <div class="res-main">
-          <div class="res-name">${r.name} · ${r.guests}p</div>
+          <div class="res-name">${escapeHtml(r.name||'')} · ${r.guests}p</div>
           <div class="res-meta">
-            <span>🕐 <b>${r.time}</b></span>
-            <span>📞 ${r.phone}</span>
-            ${r.email?`<span>✉️ ${r.email}</span>`:''}
+            <span>🕐 <b>${escapeHtml(r.time||'')}</b></span>
+            <span>📞 ${escapeHtml(r.phone||'')}</span>
+            ${r.email?`<span>✉️ ${escapeHtml(r.email)}</span>`:''}
             <span style="color:${statusStyle.c}">● ${statusStyle.l}</span>
           </div>
-          ${r.notes?`<div class="res-notes">💬 ${r.notes}</div>`:''}
+          ${r.notes?`<div class="res-notes">💬 ${escapeHtml(r.notes)}</div>`:''}
         </div>
         <div class="res-actions">
           ${r.status==='pending'?`<button class="btn-sm primary" onclick="updateRes('${r.id}','confirmed')">✓ Bevestig</button>`:''}
@@ -1389,8 +1775,8 @@ function renderMenuEditor(){
             <div class="menu-ed-price">${menu.currency} ${it.price}</div>
           </div>
           <div class="menu-ed-actions">
-            <button class="menu-ed-icon-btn" onclick="openMenuEdit('${it.id}')" title="Bewerk">✏️</button>
-            <button class="menu-ed-icon-btn del" onclick="deleteMenuItem('${it.id}')" title="Verwijder">🗑️</button>
+            <button class="menu-ed-icon-btn" onclick="openMenuEdit('${it.id}')" title="Bewerk" aria-label="Bewerk gerecht ${it.name}">✏️</button>
+            <button class="menu-ed-icon-btn del" onclick="deleteMenuItem('${it.id}')" title="Verwijder" aria-label="Verwijder gerecht ${it.name}">🗑️</button>
           </div>
         </div>`;
       });
@@ -1518,7 +1904,7 @@ function renderOptionGroups(){
           <option value="single" ${g.type==='single'?'selected':''}>⚪ Eén</option>
           <option value="multi" ${g.type==='multi'?'selected':''}>☑️ Meer</option>
         </select>
-        <button class="menu-ed-icon-btn del" type="button" onclick="removeOptionGroup(${gi})" title="Verwijder groep">🗑️</button>
+        <button class="menu-ed-icon-btn del" type="button" onclick="removeOptionGroup(${gi})" title="Verwijder groep" aria-label="Verwijder optiegroep">🗑️</button>
       </div>
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:8px;cursor:pointer">
         <input type="checkbox" ${g.required?'checked':''} onchange="updateOptionField(${gi},'required',this.checked)"> Verplicht kiezen
@@ -1528,7 +1914,7 @@ function renderOptionGroups(){
           <div style="display:grid;grid-template-columns:1fr 100px auto;gap:8px;align-items:center">
             <input class="form-input" style="padding:7px 10px" placeholder="Keuze (bv. Rijst)" value="${escapeHtml(c.label)}" oninput="updateOptionChoiceField(${gi},${ci},'label',this.value)">
             <input class="form-input" style="padding:7px 10px" type="number" step="10" placeholder="+0" value="${c.priceAdjust||0}" oninput="updateOptionChoiceField(${gi},${ci},'priceAdjust',this.value)" title="Prijs-toevoeging (bv. +30)">
-            <button class="menu-ed-icon-btn" type="button" onclick="removeOptionChoice(${gi},${ci})" title="Verwijder keuze">✕</button>
+            <button class="menu-ed-icon-btn" type="button" onclick="removeOptionChoice(${gi},${ci})" title="Verwijder keuze" aria-label="Verwijder keuze">✕</button>
           </div>
         `).join('')}
       </div>
@@ -1570,16 +1956,43 @@ function deleteMenuItem(id){
   renderMenuEditor();
 }
 
+// Compute a sane default base URL that ALWAYS ends with /bestel.html
+function defaultQrBase(){
+  const origin = location.origin;
+  let path = location.pathname;
+  // Normalise directory → /bestel.html
+  if (path.endsWith('/')) path = path + 'bestel.html';
+  else if (path.endsWith('kassa.html')) path = path.replace(/kassa\.html$/, 'bestel.html');
+  else if (!path.endsWith('bestel.html')) {
+    // Any other path — derive folder and append bestel.html
+    const folder = path.substring(0, path.lastIndexOf('/') + 1);
+    path = folder + 'bestel.html';
+  }
+  return origin + path;
+}
+
+function normalizeQrBase(base){
+  if (!base) return defaultQrBase();
+  base = base.trim().replace(/\/$/,'');
+  // Pad automatically if user forgot bestel.html
+  if (!/bestel\.html$/i.test(base)) {
+    // If they provided just a host, append /bestel.html
+    base = base + '/bestel.html';
+  }
+  return base;
+}
+
 // ============ QR CODES ============
 function generateQRs(){
   const n = parseInt(document.getElementById('qrCount').value) || 8;
   settings.numTables = n;
-  // Use a saved base URL if available; otherwise use current origin (localhost in dev)
+  // Use a saved base URL if available; otherwise use current origin.
   let base = document.getElementById('qrBase').value.trim();
-  if (!base){
-    base = settings.qrBase || (location.origin + location.pathname.replace('kassa.html','bestel.html'));
-    document.getElementById('qrBase').value = base;
-  }
+  if (!base) base = settings.qrBase || defaultQrBase();
+  base = normalizeQrBase(base);
+  document.getElementById('qrBase').value = base;
+  const setBase = document.getElementById('setQrBase');
+  if (setBase) setBase.value = base;
   settings.qrBase = base;
   saveJSON(settingsKey, settings);
   onQrBaseChange(); // trigger warning state
@@ -1622,6 +2035,36 @@ function generateQRs(){
     `;
     grid.appendChild(card);
     makeQR(document.getElementById('qr-'+i), url);
+  }
+}
+
+// ============ WAITER QR (staff phone entry) ============
+function openWaiterPage(){
+  // Build a URL that points to the currently-configured QR base (LAN-aware)
+  const base = (settings.qrBase || (location.origin + location.pathname.replace('kassa.html','bestel.html'))).replace(/\/$/,'');
+  const url = base + `?r=${encodeURIComponent(RESTAURANT_ID)}&w=1`;
+  const name = prompt('Naam van de serveerster (wordt bij elke bestelling getoond):', sessionStorage.getItem('wg_waiter_name') || '');
+  if (name !== null) sessionStorage.setItem('wg_waiter_name', name.trim());
+  // Show a modal with a QR for the waiter to scan + link to copy
+  let existing = document.getElementById('waiterModal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'waiterModal';
+  modal.className = 'modal-bg show';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000';
+  modal.innerHTML = `
+    <div class="modal" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:420px;width:calc(100% - 32px);text-align:center">
+      <h3 style="margin-bottom:6px;font-family:'Syne',sans-serif">🤵 Bedien-modus op je telefoon</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Scan de QR met je telefoon — je krijgt een snelle order-opnemer met tafel-picker.</p>
+      <div id="waiterQr" style="display:inline-block;padding:14px;background:#fff;border-radius:12px;margin-bottom:14px"></div>
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px"><input type="text" readonly value="${url}" style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--teal);padding:8px 10px;border-radius:8px;font-family:monospace;font-size:11px" onclick="this.select()"><button class="btn-sm" onclick="navigator.clipboard.writeText('${url}').then(()=>toast('Link gekopieerd','success'))">📋</button></div>
+      <div style="display:flex;gap:8px;justify-content:center"><a href="${url}" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none">Open op deze computer</a><button class="btn btn-secondary" onclick="document.getElementById('waiterModal').remove()">Sluiten</button></div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  if (typeof QRCode !== 'undefined') {
+    try { new QRCode(document.getElementById('waiterQr'), { text: url, width: 200, height: 200, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M }); }
+    catch (e) { document.getElementById('waiterQr').textContent = '(QR library niet geladen — open ' + url + ' direct)'; }
   }
 }
 
@@ -1684,15 +2127,32 @@ function useCustomDomain(){
 }
 
 function setBaseUrl(url){
-  ['setQrBase','qrBase'].forEach(id => { const el = document.getElementById(id); if (el) el.value = url; });
-  onQrBaseChange({target:{id:'setQrBase',value:url}});
-  // If user is on QR page, re-generate immediately
+  const normalised = normalizeQrBase(url);
+  ['setQrBase','qrBase'].forEach(id => { const el = document.getElementById(id); if (el) el.value = normalised; });
+  onQrBaseChange({target:{id:'setQrBase',value:normalised}});
+  settings.qrBase = normalised;
+  saveJSON(settingsKey, settings);
   if (document.getElementById('page-qr').classList.contains('active')) generateQRs();
   toast('QR basis-URL bijgewerkt','success');
 }
 
+function resetQrBase(){
+  const url = defaultQrBase();
+  setBaseUrl(url);
+}
+
 // ============ SETTINGS ============
+function saveOwnerPin(){
+  const v = (document.getElementById('setOwnerPin').value || '').trim();
+  if (!/^\d{4}$/.test(v)) { toast('PIN moet 4 cijfers zijn','warn'); return; }
+  localStorage.setItem(OWNER_PIN_KEY, v);
+  toast('PIN opgeslagen','success');
+}
+
 function loadSettings(){
+  refreshPrinterStatus();
+  const pinEl = document.getElementById('setOwnerPin');
+  if (pinEl) pinEl.value = getOwnerPin();
   document.getElementById('setName').value = menu.name||'';
   document.getElementById('setSub').value = menu.subtitle||'';
   document.getElementById('setCurrency').value = menu.currency||'GMD';
@@ -1702,12 +2162,79 @@ function loadSettings(){
   document.getElementById('setPhone').value = menu.phone || '';
   const base = location.origin + location.pathname.replace('kassa.html','reserveer.html');
   document.getElementById('setResUrl').value = base + '?r=' + encodeURIComponent(RESTAURANT_ID);
-  // QR base URL (persisted in settings)
+  // QR base URL — persisted in settings, but ALWAYS normalised to end with /bestel.html
   const qrBaseEl = document.getElementById('setQrBase');
-  const defaultBase = location.origin + location.pathname.replace('kassa.html','bestel.html');
-  qrBaseEl.value = settings.qrBase || defaultBase;
-  onQrBaseChange({target:{id:'setQrBase',value:qrBaseEl.value}});
+  const stored = settings.qrBase || '';
+  const normalised = normalizeQrBase(stored || defaultQrBase());
+  if (normalised !== stored) {
+    settings.qrBase = normalised;
+    saveJSON(settingsKey, settings);
+  }
+  qrBaseEl.value = normalised;
+  onQrBaseChange({target:{id:'setQrBase',value:normalised}});
+  // API-mode + LAN URL
+  const mode = getApiMode();
+  document.querySelectorAll('input[name="apiMode"]').forEach(r => r.checked = r.value === mode);
+  document.getElementById('setLanUrl').value = getLanBase();
+  updateLanStatus();
 }
+
+function setApiMode(m){
+  localStorage.setItem(API_MODE_KEY, m);
+  updateLanStatus();
+  toast('API-modus: ' + ({auto:'Auto (cloud → LAN)', cloud:'Alleen cloud', lan:'Alleen LAN'}[m] || m), 'info');
+  syncFromCloud();
+}
+
+function onLanUrlChange(){
+  const v = document.getElementById('setLanUrl').value.trim().replace(/\/$/,'');
+  if (v) localStorage.setItem(LAN_API_KEY, v); else localStorage.removeItem(LAN_API_KEY);
+  updateLanStatus();
+}
+
+function detectLanUrl(){
+  // Best effort: if we're already running on a LAN-server we know the host+port;
+  // otherwise suggest guessing based on current origin with port 8787.
+  const guess = location.hostname && location.hostname !== 'localhost' && !location.hostname.match(/\.pages\.dev$|webgen-gambia/)
+    ? `${location.protocol}//${location.hostname}:${location.port || 8787}`
+    : `http://${location.hostname || '192.168.1.10'}:8787`;
+  const url = prompt('LAN-server URL\n\nStart op de restaurant-computer:  python lan-server.py\nDe terminal toont het IP-adres.\n\nVoer hier in:', guess);
+  if (!url) return;
+  document.getElementById('setLanUrl').value = url.trim().replace(/\/$/,'');
+  onLanUrlChange();
+  testLanConnection();
+}
+
+async function testLanConnection(){
+  const url = getLanBase();
+  const statusEl = document.getElementById('lanStatus');
+  if (!url) { statusEl.innerHTML = '<span style="color:var(--muted)">Voer eerst een LAN-URL in</span>'; return; }
+  statusEl.innerHTML = '<span style="color:#60a5fa">⟳ Testen…</span>';
+  try {
+    const r = await fetch(url + '/api/health', { cache: 'no-store' });
+    if (r.ok) {
+      const data = await r.json();
+      statusEl.innerHTML = `<span style="color:#6ee7b7">✓ Verbonden · ${url} · ${data.lan ? 'lokale server' : 'cloud'}</span>`;
+    } else {
+      statusEl.innerHTML = `<span style="color:#fca5a5">✗ HTTP ${r.status}</span>`;
+    }
+  } catch (e) {
+    statusEl.innerHTML = `<span style="color:#fca5a5">✗ Niet bereikbaar (${e.message})</span>`;
+  }
+}
+
+function updateLanStatus(){
+  const el = document.getElementById('lanStatus');
+  if (!el) return;
+  const mode = getApiMode();
+  const lan = getLanBase();
+  const info = [];
+  info.push(`<b>Modus:</b> ${({auto:'Auto',cloud:'Alleen cloud',lan:'Alleen LAN'}[mode])}`);
+  if (lan) info.push(`<b>LAN:</b> <code style="background:var(--bg);padding:1px 5px;border-radius:3px">${lan}</code>`);
+  else if (mode !== 'cloud') info.push('<span style="color:#fca5a5">Geen LAN-URL ingesteld</span>');
+  el.innerHTML = info.join(' · ');
+}
+
 function copyResUrl(){
   const el = document.getElementById('setResUrl');
   el.select();
@@ -1827,7 +2354,7 @@ function renderDeals(){
     const daysLbl = (!d.days || !d.days.length) ? 'Elke dag' : d.days.map(i => DAY_LABELS[i]).join(' · ');
     const itemsLbl = (!d.items || !d.items.length) ? 'Heel het menu' : `${d.items.length} gerecht${d.items.length===1?'':'en'}`;
     return `<div style="background:var(--card);border:1px solid ${isActive?'rgba(0,200,150,0.4)':'var(--border)'};border-radius:14px;padding:16px;position:relative;overflow:hidden;${isActive?'box-shadow:0 4px 20px rgba(0,200,150,0.12)':''}">
-      ${isActive?'<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:rgba(0,200,150,0.2);color:#6ee7b7;border-radius:4px">Actief</div>':'<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:rgba(107,128,153,0.15);color:var(--muted);border-radius:4px">Uit</div>'}
+      ${isActive?'<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:rgba(0,200,150,0.2);color:#6ee7b7;border-radius:4px">'+(window.I18n?I18n.t('deal.active'):'Actief')+'</div>':'<div style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;background:rgba(107,128,153,0.15);color:var(--muted);border-radius:4px">'+(window.I18n?I18n.t('deal.off'):'Uit')+'</div>'}
       <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">
         <div style="font-size:32px;line-height:1">${d.emoji||'🎯'}</div>
         <div style="flex:1;min-width:0">
@@ -2088,13 +2615,14 @@ function renderKitchen(){
     const where = isTakeaway ? `🛍️ Afhaal${o.customer?.pickupTime ? ` · ${o.customer.pickupTime}` : ''}` : `🪑 Tafel ${o.table}`;
     const ageMin = Math.floor((Date.now()-o.createdAt)/60000);
     const ageColor = ageMin > 20 ? '#ef4444' : ageMin > 10 ? '#f5a200' : '#00c896';
-    const nextBtn = o.status === 'new' ? '<button class="btn btn-primary" style="width:100%" onclick="updateStatus(\''+o.id+'\',\'preparing\')">👨‍🍳 Start bereiden</button>'
-                  : o.status === 'preparing' ? '<button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#10b981,#059669)" onclick="updateStatus(\''+o.id+'\',\'ready\')">🔔 Markeer klaar</button>'
-                  : '<button class="btn btn-secondary" style="width:100%" onclick="updateStatus(\''+o.id+'\',\''+(isTakeaway?'paid':'served')+'\')">✓ '+(isTakeaway?'Afgehaald':'Uitgeserveerd')+'</button>';
+    const T = (k)=> (window.I18n ? I18n.t(k) : k);
+    const nextBtn = o.status === 'new' ? '<button class="btn btn-primary" style="width:100%" onclick="updateStatus(\''+o.id+'\',\'preparing\')">👨‍🍳 '+T('kitchen.btnStart')+'</button>'
+                  : o.status === 'preparing' ? '<button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#10b981,#059669)" onclick="updateStatus(\''+o.id+'\',\'ready\')">🔔 '+T('kitchen.btnReady')+'</button>'
+                  : '<button class="btn btn-secondary" style="width:100%" onclick="updateStatus(\''+o.id+'\',\''+(isTakeaway?'paid':'served')+'\')">✓ '+(isTakeaway?T('kitchen.btnPickedUp'):T('kitchen.btnServed'))+'</button>';
     return `<div style="background:var(--card);border:2px solid ${o.status==='new'?'rgba(239,68,68,0.5)':o.status==='preparing'?'rgba(59,130,246,0.5)':'rgba(0,200,150,0.5)'};border-radius:14px;padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:#fff">${where}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${o.id} · <span style="color:${ageColor};font-weight:600">${ageMin}m geleden</span></div></div>
-        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:${o.status==='new'?'rgba(239,68,68,0.2)':o.status==='preparing'?'rgba(59,130,246,0.2)':'rgba(0,200,150,0.2)'};color:${o.status==='new'?'#fca5a5':o.status==='preparing'?'#93c5fd':'#6ee7b7'};text-transform:uppercase;letter-spacing:.1em">${o.status==='new'?'Nieuw':o.status==='preparing'?'Bereiden':'Klaar'}</span>
+        <div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:#fff">${where}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${o.id} · <span style="color:${ageColor};font-weight:600">${ageMin}m ${T('time.ago')}</span></div></div>
+        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:${o.status==='new'?'rgba(239,68,68,0.2)':o.status==='preparing'?'rgba(59,130,246,0.2)':'rgba(0,200,150,0.2)'};color:${o.status==='new'?'#fca5a5':o.status==='preparing'?'#93c5fd':'#6ee7b7'};text-transform:uppercase;letter-spacing:.1em">${T('status.'+o.status)}</span>
       </div>
       <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;margin-bottom:10px">
         ${o.items.map(it => `<div style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px"><div style="font-weight:600;color:#fff">${it.qty}× ${it.emoji||''} ${escapeHtml(it.name)}</div>${it.optionsLabel?`<div style="color:var(--teal);font-size:12px;margin-top:2px;margin-left:22px">↳ ${escapeHtml(it.optionsLabel)}</div>`:''}</div>`).join('')}
@@ -2122,7 +2650,7 @@ function renderStaff(){
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div style="display:flex;align-items:center;gap:10px">
           <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--gold));display:flex;align-items:center;justify-content:center;font-size:20px">${roleEmoji(s.role)}</div>
-          <div><div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff">${escapeHtml(s.name)}</div><div style="font-size:11px;color:var(--muted);text-transform:capitalize">${s.role}${s.pin?' · PIN •••':''}</div></div>
+          <div><div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff">${escapeHtml(s.name)}</div><div style="font-size:11px;color:var(--muted)">${roleLabel(s.role)}${s.pin?' · PIN •••':''}</div></div>
         </div>
         <button class="icon-btn" onclick="openStaffEdit('${s.id}')" title="Bewerken">✎</button>
       </div>
@@ -2186,11 +2714,37 @@ function deleteStaff(){
 
 // ============ HELPERS ============
 function timeAgo(ts){
+  const T = (k)=> (window.I18n ? I18n.t(k) : ({'time.justNow':'net nu','time.min':'min','time.hr':'uur','time.ago':'geleden'}[k]));
   const s = Math.floor((Date.now()-ts)/1000);
-  if (s<60) return 'net nu';
-  if (s<3600) return Math.floor(s/60)+' min geleden';
-  if (s<86400) return Math.floor(s/3600)+' uur geleden';
-  return new Date(ts).toLocaleDateString('nl-NL');
+  const lang = (window.I18n ? I18n.lang : 'nl') || 'nl';
+  if (s<60) return T('time.justNow');
+  if (s<3600) return Math.floor(s/60)+' '+T('time.min')+' '+T('time.ago');
+  if (s<86400) return Math.floor(s/3600)+' '+T('time.hr')+' '+T('time.ago');
+  return new Date(ts).toLocaleDateString(lang==='en'?'en-GB':'nl-NL');
+}
+function shortAgo(ts){
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s<60) return Math.max(0,s)+'s';
+  if (s<3600) return Math.floor(s/60)+'m';
+  if (s<86400) return Math.floor(s/3600)+'u';
+  return Math.floor(s/86400)+'d';
+}
+// Wait-level by age (used for color-coding)
+function ageLevel(ts){
+  const m = (Date.now()-ts)/60000;
+  if (m > 20) return 'urgent';   // red
+  if (m > 10) return 'warn';     // orange
+  return 'ok';                   // teal
+}
+// Human label per status — resolved at render time via I18n
+const STATUS_LABEL = new Proxy({}, { get(_t, k){ return (window.I18n ? I18n.t('status.'+k) : ({new:'Besteld',preparing:'Kok bezig',ready:'Klaar',served:'Geserveerd',paid:'Betaald',cancelled:'Geannuleerd'}[k] || k)); } });
+const STATUS_COLOR = { new:'#ff9447', preparing:'#4ab3ff', ready:'#00c896', served:'#a855f7', paid:'#6b7a90' };
+const STATUS_EMOJI = { new:'📥', preparing:'👨‍🍳', ready:'🔔', served:'🍽️', paid:'💰' };
+function statusPill(status, age){
+  const color = STATUS_COLOR[status] || '#94a3b8';
+  const lvl = age !== undefined ? ageLevel(age) : 'ok';
+  const ring = lvl === 'urgent' ? 'box-shadow:0 0 0 2px rgba(239,68,68,0.35)' : lvl === 'warn' ? 'box-shadow:0 0 0 2px rgba(245,162,0,0.3)' : '';
+  return `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:20px;background:color-mix(in srgb,${color} 18%,transparent);color:${color};font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;${ring}">${STATUS_EMOJI[status]||''} ${STATUS_LABEL[status]||status}</span>`;
 }
 function toast(msg, type='info'){
   const t = document.createElement('div');
@@ -2225,17 +2779,473 @@ window.addEventListener('storage', e => {
   if (e.key === ordersKey || e.key === resKey || e.key === menuKey || e.key === dealsKey || e.key === staffKey) refreshAll();
 });
 
-// Refresh stats every minute to update time-ago labels
+// Refresh stats + time-dependent views every 30s so "5 min geleden" labels stay current
 setInterval(() => {
   if (document.getElementById('page-orders').classList.contains('active')) renderOrders();
+  if (document.getElementById('page-tables').classList.contains('active')) renderTables();
+  if (document.getElementById('page-kitchen').classList.contains('active')) renderKitchen();
   refreshStats();
 }, 30000);
+
+// ============ BLUETOOTH THERMAL PRINTER (ESC/POS) ============
+// Pairs once with a 58mm/80mm Bluetooth ESC/POS printer (Web Bluetooth API).
+// Works on Chrome/Edge for Android + Desktop. iOS Safari is unsupported (Apple).
+const PRINTER_KEY = 'wg_bt_printer_' + RESTAURANT_ID;
+let _btDevice = null;
+let _btCharacteristic = null;
+
+const ESC = 0x1B, GS = 0x1D;
+const ESCPOS = {
+  init:        new Uint8Array([ESC, 0x40]),
+  alignCenter: new Uint8Array([ESC, 0x61, 0x01]),
+  alignLeft:   new Uint8Array([ESC, 0x61, 0x00]),
+  boldOn:      new Uint8Array([ESC, 0x45, 0x01]),
+  boldOff:     new Uint8Array([ESC, 0x45, 0x00]),
+  doubleOn:    new Uint8Array([GS, 0x21, 0x11]),
+  doubleOff:   new Uint8Array([GS, 0x21, 0x00]),
+  cut:         new Uint8Array([GS, 0x56, 0x01]),
+  feed:        (n) => new Uint8Array([ESC, 0x64, n])
+};
+
+function txt(s) {
+  // ESC/POS expects CP437 / Latin-1; strip emoji, replace common diacritics
+  const clean = String(s||'')
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\u{1F300}-\u{1FAFF}]/gu, '')
+    .replace(/[—–]/g, '-').replace(/[“”]/g, '"').replace(/[’]/g, "'");
+  return new TextEncoder().encode(clean + '\n');
+}
+function txtRaw(s) {
+  const clean = String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[\u{1F300}-\u{1FAFF}]/gu,'').replace(/[—–]/g,'-');
+  return new TextEncoder().encode(clean);
+}
+function lineSeparator() { return txt('-'.repeat(32)); }
+
+async function pairPrinter(){
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  if (!navigator.bluetooth) { toast(T('printer.unsupported'),'warn'); return; }
+  try {
+    _btDevice = await navigator.bluetooth.requestDevice({
+      filters: [
+        { services: ['000018f0-0000-1000-8000-00805f9b34fb'] }, // Standard ESC/POS printer service
+        { namePrefix: 'Printer' },
+        { namePrefix: 'BT' },
+        { namePrefix: 'POS' }
+      ],
+      optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
+    });
+    const server = await _btDevice.gatt.connect();
+    const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+    _btCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
+    localStorage.setItem(PRINTER_KEY, _btDevice.name || _btDevice.id);
+    toast('🖨️ ' + (_btDevice.name||'Printer') + ' ' + T('printer.paired'),'success');
+    refreshPrinterStatus();
+  } catch (e) {
+    if (e.name !== 'NotFoundError') toast(T('printer.failed') + ': ' + e.message,'warn');
+  }
+}
+
+async function ensurePrinterConnected(){
+  if (_btCharacteristic && _btDevice?.gatt?.connected) return true;
+  if (!_btDevice) return false;
+  try {
+    const server = await _btDevice.gatt.connect();
+    const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+    _btCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
+    return true;
+  } catch(e) { return false; }
+}
+
+async function sendBytes(bytes){
+  // BLE characteristic max ~512 bytes per write — chunk it
+  const CHUNK = 200;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    await _btCharacteristic.writeValue(bytes.slice(i, i + CHUNK));
+  }
+}
+
+async function printOrder(orderId){
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  const o = orders.find(x => x.id === orderId);
+  if (!o) return;
+  if (!navigator.bluetooth) { toast(T('printer.unsupported'),'warn'); return; }
+  if (!_btDevice) { await pairPrinter(); if (!_btDevice) return; }
+  if (!(await ensurePrinterConnected())) { toast(T('printer.connectFail'),'warn'); return; }
+
+  const lines = [];
+  // Header
+  lines.push(ESCPOS.init);
+  lines.push(ESCPOS.alignCenter);
+  lines.push(ESCPOS.boldOn, ESCPOS.doubleOn);
+  lines.push(txt(menu.name || 'Restaurant'));
+  lines.push(ESCPOS.doubleOff, ESCPOS.boldOff);
+  if (menu.subtitle) lines.push(txt(menu.subtitle));
+  lines.push(txt(new Date(o.createdAt).toLocaleString('nl-NL')));
+  lines.push(txt(o.id));
+  lines.push(lineSeparator());
+
+  // Where
+  lines.push(ESCPOS.alignLeft, ESCPOS.boldOn, ESCPOS.doubleOn);
+  lines.push(o.type === 'takeaway' ? txt('AFHAAL') : txt('TAFEL ' + o.table));
+  lines.push(ESCPOS.doubleOff, ESCPOS.boldOff);
+
+  if (o.customer) {
+    if (o.customer.name) lines.push(txt('Naam: ' + o.customer.name));
+    if (o.customer.phone) lines.push(txt('Tel:  ' + o.customer.phone));
+    if (o.customer.pickupTime) lines.push(txt('Tijd: ' + o.customer.pickupTime));
+  }
+  if (o.takenBy) lines.push(txt('Door: ' + o.takenBy));
+  lines.push(lineSeparator());
+
+  // Items
+  o.items.forEach(it => {
+    const qty = String(it.qty);
+    const name = (it.name || '').slice(0, 24);
+    const price = String(it.price * it.qty);
+    const padded = qty.padStart(2) + ' ' + name.padEnd(24) + ' ' + price.padStart(5);
+    lines.push(txt(padded));
+    if (it.optionsLabel) lines.push(txt('   + ' + it.optionsLabel));
+  });
+  lines.push(lineSeparator());
+
+  // Total
+  lines.push(ESCPOS.boldOn, ESCPOS.alignLeft);
+  const totalLine = 'TOTAAL'.padEnd(22) + ((o.currency || menu.currency || 'GMD') + ' ' + o.total).padStart(10);
+  lines.push(txt(totalLine));
+  lines.push(ESCPOS.boldOff);
+
+  if (o.note) {
+    lines.push(lineSeparator());
+    lines.push(txt('Notitie: ' + o.note));
+  }
+
+  lines.push(ESCPOS.alignCenter);
+  lines.push(txt('Bedankt!'));
+  lines.push(ESCPOS.feed(3));
+  lines.push(ESCPOS.cut);
+
+  const total = lines.reduce((sum, b) => sum + b.length, 0);
+  const buffer = new Uint8Array(total);
+  let off = 0;
+  for (const b of lines) { buffer.set(b, off); off += b.length; }
+  try {
+    await sendBytes(buffer);
+    toast('🖨️ ' + T('printer.printed') + ' ' + o.id, 'success');
+  } catch (e) {
+    toast(T('printer.failed') + ': ' + e.message, 'warn');
+  }
+}
+
+function refreshPrinterStatus(){
+  const el = document.getElementById('printerStatus');
+  if (!el) return;
+  const name = localStorage.getItem(PRINTER_KEY);
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  if (name) el.innerHTML = `<span style="color:#6ee7b7">🖨️ ${escapeHtml(name)}</span>`;
+  else el.innerHTML = `<span style="color:var(--muted)">${T('printer.notPaired')}</span>`;
+}
+
+// ============ PIN LOGIN ============
+const SESSION_KEY = 'wg_session_' + RESTAURANT_ID;
+const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
+const OWNER_PIN_KEY = 'wg_owner_pin_' + RESTAURANT_ID;
+const DEFAULT_OWNER_PIN = '0000';
+let pinBuffer = '';
+
+function getSession() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (!s || !s.at) return null;
+    if (Date.now() - s.at > SESSION_TTL) { localStorage.removeItem(SESSION_KEY); return null; }
+    return s;
+  } catch(e) { return null; }
+}
+function setSession(session) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ ...session, at: Date.now() }));
+}
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem('wg_current_staff_' + RESTAURANT_ID);
+}
+function getOwnerPin() {
+  return localStorage.getItem(OWNER_PIN_KEY) || DEFAULT_OWNER_PIN;
+}
+
+async function tryPinLogin(pin) {
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  // 1) Try server-side validation (returns a signed session token)
+  try {
+    const r = await fetch(`${CLOUD_API_BASE}/api/kassa/${encodeURIComponent(RESTAURANT_ID)}/staff/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ pin })
+    });
+    if (r.ok) {
+      const data = await r.json();
+      setSession({ id: data.id, role: data.role, name: data.name, token: data.token });
+      currentStaffId = data.id;
+      sessionStorage.setItem('wg_current_staff_' + RESTAURANT_ID, data.id);
+      return { ok:true, role: data.role, name: data.name };
+    }
+    if (r.status === 401) return { ok:false }; // explicit wrong PIN — don't fall back
+  } catch (e) { /* offline → fall back to local */ }
+
+  // 2) Local fallback (offline or worker unreachable)
+  if (pin === getOwnerPin()) {
+    setSession({ id:'owner', role:'owner', name: T('role.owner') });
+    currentStaffId = 'owner';
+    sessionStorage.setItem('wg_current_staff_' + RESTAURANT_ID, 'owner');
+    return { ok:true, role:'owner', name: T('role.owner') };
+  }
+  const match = staff.find(s => s.pin && s.pin === pin);
+  if (match) {
+    setSession({ id: match.id, role: match.role, name: match.name });
+    currentStaffId = match.id;
+    sessionStorage.setItem('wg_current_staff_' + RESTAURANT_ID, match.id);
+    return { ok:true, role: match.role, name: match.name };
+  }
+  return { ok:false };
+}
+
+function showPinLock() {
+  const el = document.getElementById('pinLock');
+  if (!el) return;
+  el.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  pinBuffer = '';
+  renderPinDots();
+}
+function hidePinLock() {
+  const el = document.getElementById('pinLock');
+  if (!el) return;
+  el.style.display = 'none';
+  document.body.style.overflow = '';
+}
+function renderPinDots() {
+  document.querySelectorAll('#pinDots .pin-dot').forEach((dot, i) => {
+    dot.classList.toggle('filled', i < pinBuffer.length);
+  });
+}
+function pinShake() {
+  const dots = document.getElementById('pinDots');
+  dots.classList.add('pin-shake');
+  document.getElementById('pinError').style.opacity = '1';
+  setTimeout(() => { dots.classList.remove('pin-shake'); }, 300);
+  setTimeout(() => { document.getElementById('pinError').style.opacity = '0'; }, 1500);
+}
+
+async function pinPress(digit) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  renderPinDots();
+  if (pinBuffer.length === 4) {
+    const result = await tryPinLogin(pinBuffer);
+    if (result.ok) {
+      hidePinLock();
+      const T = (k)=> (window.I18n ? I18n.t(k) : k);
+      toast(T('toast.welcome') + ', ' + result.name, 'success');
+      refreshSession();
+      applyPermissions();
+      renderStaffSwitcher();
+      if (typeof refreshAll === 'function') refreshAll();
+    } else {
+      pinShake();
+      setTimeout(() => { pinBuffer = ''; renderPinDots(); }, 400);
+    }
+  }
+}
+function pinBack() { pinBuffer = pinBuffer.slice(0, -1); renderPinDots(); }
+function pinClear() { pinBuffer = ''; renderPinDots(); }
+
+function pinLoginOwnerDefault() {
+  // Quick way to auto-fill if user hasn't changed the default PIN — shows the 4 dots
+  if (getOwnerPin() !== DEFAULT_OWNER_PIN) return;
+  pinBuffer = '';
+  renderPinDots();
+  ['0','0','0','0'].forEach((d, i) => setTimeout(() => pinPress(d), 120 * (i + 1)));
+}
+
+function logoutStaff() {
+  clearSession();
+  currentStaffId = 'owner';
+  showPinLock();
+}
+
+function refreshSession() {
+  const s = getSession();
+  if (!s) return;
+  const T = (k)=> (window.I18n ? I18n.t(k) : k);
+  const emoji = roleEmoji(s.role);
+  const avatarEl = document.getElementById('sessionAvatar');
+  if (avatarEl) avatarEl.textContent = emoji;
+  const nameEl = document.getElementById('sessionName');
+  if (nameEl) nameEl.textContent = s.name;
+  const roleEl = document.getElementById('sessionRole');
+  if (roleEl) roleEl.textContent = T('role.' + (s.role || 'owner'));
+}
+
+// Wire up PIN pad buttons
+document.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('.pin-key');
+  if (!btn) return;
+  const digit = btn.dataset.d;
+  const action = btn.dataset.action;
+  if (digit != null) pinPress(digit);
+  else if (action === 'back') pinBack();
+  else if (action === 'clear') pinClear();
+});
+
+// Physical keyboard support: digits + Backspace + Escape
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('pinLock').style.display !== 'flex') return;
+  if (e.key >= '0' && e.key <= '9') { pinPress(e.key); e.preventDefault(); }
+  else if (e.key === 'Backspace') { pinBack(); e.preventDefault(); }
+  else if (e.key === 'Escape') { pinClear(); e.preventDefault(); }
+});
+
+// On load: enforce session
+const _currentSession = getSession();
+if (!_currentSession) {
+  showPinLock();
+} else {
+  currentStaffId = _currentSession.id;
+  refreshSession();
+}
 
 // ============ INIT ============
 refreshAll();
 applyPermissions();
 // Refresh kitchen view when new orders come in
 orderChannel.addEventListener('message', () => { renderKitchen(); });
+
+// language switch triggers full re-render below (see i18n block)
+
+// Cloud sync — first pull + start polling
+syncFromCloud();
+scheduleCloudSync();
+
+// Flush queued offline operations when browser goes online
+window.addEventListener('online', () => { setSyncStatus('syncing'); flushOfflineQueue().then(syncFromCloud); });
+window.addEventListener('offline', () => setSyncStatus('offline'));
+
+// Offline queue — any cloud operation that fails is stashed here and retried
+const OFFLINE_QUEUE_MAX = 200;
+const OFFLINE_QUEUE_TTL = 48 * 60 * 60 * 1000;
+function queueOffline(op) {
+  const key = `wg_offline_queue_${RESTAURANT_ID}`;
+  const now = Date.now();
+  let q = JSON.parse(localStorage.getItem(key) || '[]');
+  q = q.filter(i => !i.at || (now - i.at) < OFFLINE_QUEUE_TTL);
+  q.push({ ...op, at: now });
+  if (q.length > OFFLINE_QUEUE_MAX) q = q.slice(-OFFLINE_QUEUE_MAX);
+  localStorage.setItem(key, JSON.stringify(q));
+}
+async function flushOfflineQueue() {
+  const key = `wg_offline_queue_${RESTAURANT_ID}`;
+  const now = Date.now();
+  let q = JSON.parse(localStorage.getItem(key) || '[]');
+  q = q.filter(i => !i.at || (now - i.at) < OFFLINE_QUEUE_TTL);
+  if (!q.length) { localStorage.setItem(key, '[]'); return; }
+  const remaining = [];
+  for (const op of q) {
+    try {
+      await cloudFetch(op.url, { method: op.method, body: op.body ? JSON.stringify(op.body) : undefined });
+    } catch (e) {
+      // Treat 404 on PATCH/DELETE as "already gone" — don't requeue
+      const code = (e.message || '').match(/HTTP (\d+)/);
+      if (code && code[1] === '404' && (op.method === 'PATCH' || op.method === 'DELETE')) continue;
+      remaining.push(op);
+    }
+  }
+  localStorage.setItem(key, JSON.stringify(remaining));
+  if (!remaining.length && q.length) toast('✓ Offline-wijzigingen gesynchroniseerd (' + q.length + ')', 'success');
+}
+
+// Register Service Worker for offline support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW register failed:', err.message));
+}
+</script>
+
+<script src="i18n.js"></script>
+<script>
+  I18n.init({
+    default:'nl',
+    translations:{
+      nl:{
+        'nav.tables':'Tafels','nav.orders':'Bestellingen','nav.kitchen':'Keuken','nav.reservations':'Reserveringen',
+        'nav.finance':'Financieel','nav.deals':'Deals','nav.configuration':'Configuratie','nav.menu':'Menu',
+        'nav.staff':'Medewerkers','nav.qr':'QR codes','nav.settings':'Instellingen',
+        'title.tables':'Tafel overzicht','title.orders':'Bestellingen','title.kitchen':'Keuken','title.reservations':'Reserveringen',
+        'title.finance':'Financieel','title.deals':'Deals','title.menu':'Menu beheer','title.staff':'Medewerkers','title.qr':'QR codes','title.settings':'Instellingen',
+        'status.new':'Besteld','status.preparing':'Kok bezig','status.ready':'Klaar','status.served':'Geserveerd','status.paid':'Betaald','status.cancelled':'Geannuleerd',
+        'table.empty':'Leeg','table.occupied':'Bezet','table.open':'open','table.noOrders':'Geen bestelling','table.takeaway':'Afhaal',
+        'table.noTakeaway':'Geen afhaal','table.readyPickup':'Klaar voor ophaal','table.inProgress':'In behandeling',
+        'kitchen.new':'nieuw','kitchen.prep':'in bereiding','kitchen.ready':'klaar',
+        'kitchen.empty':'Geen actieve bestellingen — de keuken is rustig.',
+        'kitchen.btnStart':'Start bereiden','kitchen.btnReady':'Markeer klaar','kitchen.btnServed':'Uitgeserveerd','kitchen.btnPickedUp':'Afgehaald',
+        'time.ago':'geleden',
+        'role.owner':'Eigenaar','role.manager':'Manager','role.kitchen':'Kok','role.waiter':'Serveerster','role.custom':'Aangepast',
+        'role.opt.owner':'👑 Eigenaar (volledige toegang)','role.opt.manager':'👔 Manager (alles behalve financieel)','role.opt.kitchen':'👨‍🍳 Kok (alleen Keuken)','role.opt.waiter':'🤵 Serveerster (Tafels · Bestellingen · Reserveringen)','role.opt.custom':'✏️ Aangepast (kies per tab)',
+        'hier.owner':'Volledige toegang','hier.manager':'Alles behalve financieel','hier.kitchen':'Alleen keuken','hier.waiter':'Tafels + bestellingen',
+        'staff.role':'Rol','staff.title':'Medewerkers','staff.sub':'Voeg medewerkers toe en bepaal per persoon welke tabs ze kunnen zien.',
+        'staff.addNew':'+ Nieuwe medewerker','staff.loggedIn':'Ingelogd als','staff.loggedInAs':'Ingelogd als','staff.ownerAll':'👑 Eigenaar (volledige toegang)',
+        'sidebar.today':'Vandaag','sidebar.orders':'bestellingen',
+        'stat.new':'Nieuw','stat.inKitchen':'In keuken',
+        'btn.save':'Opslaan','btn.cancel':'Annuleren',
+        'filter.active':'Actief','filter.dinein':'Tafel','filter.takeaway':'Afhaal','filter.all':'Alles',
+        'orders.emptyFilter':'Geen bestellingen in deze categorie',
+        'toast.inKitchen':'In de keuken','toast.markedReady':'Gemarkeerd als klaar',
+        'confirm.closeTable':'Alle bestellingen van tafel ','confirm.closeTable2':' markeren als betaald?',
+        'table.noOpen':'Deze tafel heeft nog geen open bestellingen.','table.toPay':'Totaal te betalen',
+        'res.upcoming':'Komend','res.pending':'Nog bevestigen',
+        'deal.active':'Actief','deal.off':'Uit',
+        'qr.generate':"Genereer QR's",
+        'waiter.btn':'🤵 Bediening (telefoon)','waiter.tooltip':'Open de bedienpagina op je telefoon om bestellingen aan tafel op te nemen',
+        'time.justNow':'net nu','time.min':'min','time.hr':'uur',
+        'pin.subtitle':'Voer je PIN in om in te loggen','pin.wrong':'Onjuiste PIN','pin.clear':'WIS','pin.ownerDefault':'👑 Eigenaar? standaard PIN 0000','pin.backPortal':'← Terug naar portaal',
+        'staff.switchQuick':'Snel wisselen','toast.welcome':'Welkom'
+      },
+      en:{
+        'nav.tables':'Tables','nav.orders':'Orders','nav.kitchen':'Kitchen','nav.reservations':'Reservations',
+        'nav.finance':'Finance','nav.deals':'Deals','nav.configuration':'Configuration','nav.menu':'Menu',
+        'nav.staff':'Staff','nav.qr':'QR codes','nav.settings':'Settings',
+        'title.tables':'Tables overview','title.orders':'Orders','title.kitchen':'Kitchen','title.reservations':'Reservations',
+        'title.finance':'Finance','title.deals':'Deals','title.menu':'Menu management','title.staff':'Staff','title.qr':'QR codes','title.settings':'Settings',
+        'status.new':'Ordered','status.preparing':'Cooking','status.ready':'Ready','status.served':'Served','status.paid':'Paid','status.cancelled':'Cancelled',
+        'table.empty':'Empty','table.occupied':'Seated','table.open':'open','table.noOrders':'No order','table.takeaway':'Takeaway',
+        'table.noTakeaway':'No takeaway','table.readyPickup':'Ready for pickup','table.inProgress':'In progress',
+        'kitchen.new':'new','kitchen.prep':'preparing','kitchen.ready':'ready',
+        'kitchen.empty':'No active orders — kitchen is quiet.',
+        'kitchen.btnStart':'Start preparing','kitchen.btnReady':'Mark ready','kitchen.btnServed':'Served','kitchen.btnPickedUp':'Picked up',
+        'time.ago':'ago',
+        'role.owner':'Owner','role.manager':'Manager','role.kitchen':'Cook','role.waiter':'Waitress','role.custom':'Custom',
+        'role.opt.owner':'👑 Owner (full access)','role.opt.manager':'👔 Manager (all except finance)','role.opt.kitchen':'👨‍🍳 Cook (kitchen only)','role.opt.waiter':'🤵 Waitress (Tables · Orders · Reservations)','role.opt.custom':'✏️ Custom (pick per tab)',
+        'hier.owner':'Full access','hier.manager':'All except finance','hier.kitchen':'Kitchen only','hier.waiter':'Tables + orders',
+        'staff.role':'Role','staff.title':'Staff','staff.sub':'Add staff and choose per person which tabs they can see.',
+        'staff.addNew':'+ New staff member','staff.loggedIn':'Logged in as','staff.loggedInAs':'Logged in as','staff.ownerAll':'👑 Owner (full access)',
+        'sidebar.today':'Today','sidebar.orders':'orders',
+        'stat.new':'New','stat.inKitchen':'In kitchen',
+        'btn.save':'Save','btn.cancel':'Cancel',
+        'filter.active':'Active','filter.dinein':'Table','filter.takeaway':'Takeaway','filter.all':'All',
+        'orders.emptyFilter':'No orders in this category',
+        'toast.inKitchen':'In the kitchen','toast.markedReady':'Marked as ready',
+        'confirm.closeTable':'Mark all orders for table ','confirm.closeTable2':' as paid?',
+        'table.noOpen':'This table has no open orders.','table.toPay':'Total to pay',
+        'res.upcoming':'Upcoming','res.pending':'To confirm',
+        'deal.active':'Active','deal.off':'Off',
+        'qr.generate':'Generate QR codes',
+        'waiter.btn':'🤵 Waiter (phone)','waiter.tooltip':'Open the waiter-mode on your phone to take orders at the table',
+        'time.justNow':'just now','time.min':'min','time.hr':'hr',
+        'pin.subtitle':'Enter your PIN to sign in','pin.wrong':'Wrong PIN','pin.clear':'CLR','pin.ownerDefault':'👑 Owner? default PIN 0000','pin.backPortal':'← Back to portal',
+        'staff.switchQuick':'Quick switch','toast.welcome':'Welcome'
+      }
+    }
+  });
+  // When language flips, rerun every renderer + refresh page title
+  I18n.onChange(() => {
+    try { refreshAll(); } catch(e){}
+    const activePage = document.querySelector('.nav-item.active')?.dataset.page;
+    if (activePage) switchToPage(activePage);
+  });
 </script>
 </body>
 </html>

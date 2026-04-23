@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+Allow: /landing.html
+Allow: /index.html
+Allow: /portal.html
+Allow: /webgen-gambia-v3.html
+Allow: /sitemap.html
+Allow: /bestel.html
+Allow: /reserveer.html
+Allow: /menu.html
+
+# Keep admin / backoffice flows out of search results
+Disallow: /admin.html
+Disallow: /kassa.html
+Disallow: /medewerker.html
+Disallow: /klant.html
+Disallow: /agent.html
+Disallow: /MASTER-REVIEW.html
+Disallow: /*.json$
+Disallow: /worktrees/
+Disallow: /.claude/
+
+Sitemap: https://webgen-gambia.pages.dev/sitemap.xml

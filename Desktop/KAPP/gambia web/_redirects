@@ -1,0 +1,8 @@
+# Cloudflare Pages redirects
+# When a real domain is connected (e.g. webgengambia.com), traffic to *.pages.dev → custom domain.
+# Uncomment the line below after wiring DNS:
+#
+# https://webgen-gambia.pages.dev/*  https://webgengambia.com/:splat  301!
+#
+# SEO friendly redirects from the old menu URLs:
+/menu.html   /bestel.html?r=demo  302

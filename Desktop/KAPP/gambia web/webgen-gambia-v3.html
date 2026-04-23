@@ -1585,12 +1585,66 @@
             const radius = Number.isFinite(+state.currentBorderRadius) ? +state.currentBorderRadius : 8;
             const layoutMax = ({ 'wide': '1200px', 'narrow': '960px', 'centered': '820px', 'split': '1280px', 'sidebar': '1200px', 'fullscreen': '100%' })[state.currentLayout] || '1200px';
 
+            // ────────── SEO meta + Schema.org/LocalBusiness JSON-LD ──────────
+            const _sector = document.getElementById('sector')?.value || 'restaurant';
+            const _schemaType = ({restaurant:'Restaurant', hotel:'LodgingBusiness', fashion:'ClothingStore', salon:'BeautySalon', transport:'AutomotiveBusiness', retail:'Store', services:'ProfessionalService', healthcare:'MedicalBusiness', education:'EducationalOrganization', realestate:'RealEstateAgent', tech:'ProfessionalService'})[_sector] || 'LocalBusiness';
+            const _canonical = data.domain ? `https://${data.domain.replace(/^https?:\/\//,'').replace(/\/$/,'')}/` : '';
+            const _description = (data.aboutText || data.tagline || `${data.businessName} — ${data.city || 'The Gambia'}`).toString().replace(/\s+/g,' ').trim().slice(0, 155);
+            const _title = `${data.businessName}${data.city?` · ${data.city}`:''} — ${data.tagline || 'Menu & reserveren'}`.slice(0, 70);
+            const _hero = data.heroUrl || '';
+            const _phoneDigits = (data.phone || '').replace(/\D/g,'');
+            const _waDigits   = (data.whatsapp || data.phone || '').replace(/\D/g,'');
+            const _ridSlug    = (data.domain || data.businessName || 'restaurant').toString().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || 'restaurant';
+            const _menuItems  = (data.menuCategories || []).flatMap(c => (c.items||[]).map(it => ({'@type':'MenuItem', name:String(it.name||''), description:it.desc||undefined, offers:{'@type':'Offer', price:String(it.price||'').replace(/[^0-9.]/g,'')||'0', priceCurrency:'GMD'}}))).slice(0, 30);
+            const _jsonLd = {
+                '@context':'https://schema.org',
+                '@type': _schemaType,
+                name: data.businessName,
+                description: _description,
+                image: _hero || undefined,
+                telephone: data.phone || undefined,
+                email: data.email || undefined,
+                url: _canonical || undefined,
+                priceRange: 'GMD 50 – 650',
+                address: (data.address || data.city) ? {
+                    '@type':'PostalAddress',
+                    streetAddress: data.address || undefined,
+                    addressLocality: data.city || undefined,
+                    addressCountry: 'GM'
+                } : undefined,
+                openingHours: data.hours || undefined,
+                servesCuisine: _sector === 'restaurant' ? ['Gambian','West African'] : undefined,
+                hasMenu: _menuItems.length ? {'@type':'Menu', name:`${data.businessName} Menu`, hasMenuSection:[{'@type':'MenuSection', name:'Gerechten', hasMenuItem:_menuItems}]} : undefined,
+                sameAs: [data.facebook, data.instagram && `https://instagram.com/${data.instagram.replace(/^@/,'')}`, data.linkedin].filter(Boolean)
+            };
+            // Strip undefined keys so the rendered JSON stays clean
+            const _cleanJsonLd = JSON.parse(JSON.stringify(_jsonLd));
+
             let html = `<!DOCTYPE html>
 <html lang="${state.currentLang || 'en'}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${data.businessName}</title>
+    <title>${_title}</title>
+    <meta name="description" content="${_description}">
+    <meta name="author" content="${data.businessName}">
+    <meta name="theme-color" content="${primary}">
+    ${_canonical ? `<link rel="canonical" href="${_canonical}">` : ''}
+    <!-- Open Graph -->
+    <meta property="og:type" content="${_sector === 'restaurant' ? 'restaurant.restaurant' : 'business.business'}">
+    <meta property="og:title" content="${_title}">
+    <meta property="og:description" content="${_description}">
+    <meta property="og:site_name" content="${data.businessName}">
+    ${_canonical ? `<meta property="og:url" content="${_canonical}">` : ''}
+    ${_hero ? `<meta property="og:image" content="${_hero}">` : ''}
+    <meta property="og:locale" content="${(state.currentLang||'en').replace('-','_')}">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${_title}">
+    <meta name="twitter:description" content="${_description}">
+    ${_hero ? `<meta name="twitter:image" content="${_hero}">` : ''}
+    <!-- Schema.org structured data -->
+    <scr` + `ipt type="application/ld+json">${JSON.stringify(_cleanJsonLd).replace(/<\/script>/gi,'<\\/script>')}</scr` + `ipt>
     <link href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(font.heading).replace(/%20/g,'+')}:wght@400;600;700;800&family=${encodeURIComponent(font.body).replace(/%20/g,'+')}:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root { --primary: ${primary}; --accent: ${accent}; --primary-15: ${primaryAlpha(0.15)}; --primary-05: ${primaryAlpha(0.05)}; --radius: ${radius}px; --radius-lg: ${radius * 1.5}px; --radius-pill: ${Math.max(radius * 3, 20)}px; }

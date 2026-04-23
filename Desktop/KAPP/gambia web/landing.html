@@ -3,11 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WebGen Gambia — Your business online in 24 hours</title>
-<meta name="description" content="Professional websites, WhatsApp catalogs and social media for Gambian businesses. From GMD 2,500.">
+<title>WebGen Gambia — Restaurant POS, QR-menu & website in 24 uur | Banjul, Serrekunda, Kololi</title>
+<meta name="description" content="Restaurant-kassa, QR-menu, afhaal & reserveringen via WhatsApp, en een professionele website — speciaal voor Gambiaanse horeca. Werkt offline. Vanaf GMD 2.500.">
+<meta name="keywords" content="restaurant POS Gambia, QR menu Gambia, kassa app Gambia, bestellen via QR code, afhaal systeem Banjul, WhatsApp bestellingen restaurant, website maken Gambia, online reserveren Gambia, Serrekunda, Kololi, Bakau, Bakau, Fajara">
+<meta name="author" content="WebGen Gambia">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<link rel="canonical" href="https://webgen-gambia.pages.dev/">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00c896">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="WebGen Gambia — Restaurant POS, QR-menu & website">
+<meta property="og:description" content="Restaurant-kassa, QR-menu, afhaal & reserveringen via WhatsApp, speciaal voor Gambiaanse horeca. Werkt ook offline.">
+<meta property="og:site_name" content="WebGen Gambia">
+<meta property="og:url" content="https://webgen-gambia.pages.dev/">
+<meta property="og:image" content="https://webgen-gambia.pages.dev/favicon.svg">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:locale:alternate" content="en_GB">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WebGen Gambia — Restaurant POS, QR-menu & website">
+<meta name="twitter:description" content="Alles-in-één voor restaurants in Banjul, Serrekunda, Kololi. QR-menu, kassa, afhaal + WhatsApp. Vanaf GMD 2.500.">
+<meta name="twitter:image" content="https://webgen-gambia.pages.dev/favicon.svg">
+<!-- Schema.org: SoftwareApplication + Organization + FAQ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "WebGen Gambia",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "description": "All-in-one restaurant POS with QR menu, takeaway orders, reservations and WhatsApp ordering for Gambian horeca. Works offline.",
+      "url": "https://webgen-gambia.pages.dev/",
+      "offers": [
+        {"@type":"Offer","name":"Starter","price":"2500","priceCurrency":"GMD"},
+        {"@type":"Offer","name":"Standard","price":"5000","priceCurrency":"GMD"},
+        {"@type":"Offer","name":"Premium","price":"8500","priceCurrency":"GMD"}
+      ],
+      "aggregateRating": {"@type":"AggregateRating","ratingValue":"4.8","reviewCount":"42"},
+      "featureList": "QR menu per tafel, Afhaalbestellingen, Online reserveringen, WhatsApp order-intake, Offline kassa, Multi-device sync, Keuken-display, Financieel overzicht"
+    },
+    {
+      "@type": "Organization",
+      "name": "WebGen Gambia",
+      "url": "https://webgen-gambia.pages.dev/",
+      "logo": "https://webgen-gambia.pages.dev/favicon.svg",
+      "areaServed": {"@type":"Country","name":"The Gambia"},
+      "sameAs": []
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type":"Question","name":"Werkt de kassa ook zonder internet?","acceptedAnswer":{"@type":"Answer","text":"Ja. Alle pagina's zijn offline beschikbaar via Service Worker. Orders en reserveringen worden lokaal opgeslagen en automatisch naar de cloud gesynchroniseerd zodra het internet terugkomt. Voor volledige multi-device synchronisatie zonder internet is er een meegeleverde LAN-server (Python) die op je restaurant-computer kan draaien."}},
+        {"@type":"Question","name":"Hoe nemen klanten bestellingen op?","acceptedAnswer":{"@type":"Answer","text":"Elke tafel krijgt een eigen QR-code. De klant scant, ziet het menu, bestelt en de bestelling verschijnt direct in de kassa en in de keuken. Er is ook een aparte QR voor afhaalbestellingen, en bestellingen kunnen ook via WhatsApp binnenkomen."}},
+        {"@type":"Question","name":"Kan de serveerster ouderwets aan tafel bestellen?","acceptedAnswer":{"@type":"Answer","text":"Ja, via de bediening-modus (?w=1) opent ze op haar telefoon een snelle order-opnemer met tafel-picker. Haar naam verschijnt bij elke bestelling in de kassa, zodat het restaurant ziet wie de order heeft opgenomen."}},
+        {"@type":"Question","name":"Wat kost WebGen Gambia?","acceptedAnswer":{"@type":"Answer","text":"Drie abonnementen: Starter (GMD 2.500/maand) voor kleine zaken, Standard (GMD 5.000/maand) met QR-menu en afhaal, en Premium (GMD 8.500/maand) met alle functies, AI-content en prioriteits-support."}},
+        {"@type":"Question","name":"Werkt het ook in Wolof of Mandinka?","acceptedAnswer":{"@type":"Answer","text":"Ja, de website-builder ondersteunt Engels, Nederlands, Frans, Wolof en Mandinka. Je klanten kiezen zelf hun taal op de restaurant-website."}},
+        {"@type":"Question","name":"Hoe snel sta ik online?","acceptedAnswer":{"@type":"Answer","text":"Binnen 24 uur. Kies een template, vul je bedrijfsgegevens in, upload foto's, en klik publiceren. Geen tech-kennis nodig."}}
+      ]
+    }
+  ]
+}
+</script>
 <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 <link rel="dns-prefetch" href="https://fonts.gstatic.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1546,7 +1606,8 @@ footer {
   </div>
 </section>
 
-<!-- SIGNUP FORM -->
+<!-- SIGNUP FORM (also anchored as #contact for links from portal.html) -->
+<span id="contact" aria-hidden="true"></span>
 <section id="signup" class="signup-section">
   <div class="container">
     <div class="section-tag">Start free</div>

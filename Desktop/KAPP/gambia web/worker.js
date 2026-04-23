@@ -1362,30 +1362,8 @@ Return ONLY a JSON array of 3 strings, no commentary. Example: ["post 1 text", "
       }
 
       // ═══════════ RESELLER / AGENT API ═══════════
-
-      // POST /api/agents/register — Agent self-registration
-      if (path === '/api/agents/register' && request.method === 'POST') {
-        if (!checkRateLimit(clientIP, 5)) {
-          return new Response(JSON.stringify({ error: 'Too many requests' }), { status: 429, headers });
-        }
-        const { name, phone, email, password, location } = sanitizeObject(await request.json());
-        if (!name || !phone || !password) {
-          return new Response(JSON.stringify({ error: 'Name, phone, and password required' }), { status: 400, headers });
-        }
-        const agentCode = 'AG-' + String(Math.random()).slice(2, 8).toUpperCase();
-        const hashedPw = await hashPassword(password);
-        const agent = {
-          code: agentCode, name, phone, email: email || '', location: location || '',
-          password: hashedPw, role: 'agent', status: 'pending',
-          clients: [], totalCommission: 0, paidCommission: 0,
-          joinedAt: new Date().toISOString()
-        };
-        await env.WEBGEN_KV.put(`agent:${agentCode}`, JSON.stringify(agent));
-        const agentList = await env.WEBGEN_KV.get('agents:list', 'json') || [];
-        agentList.push(agentCode);
-        await env.WEBGEN_KV.put('agents:list', JSON.stringify(agentList));
-        return new Response(JSON.stringify({ success: true, agentCode, message: 'Registration pending admin approval' }), { headers });
-      }
+      // NOTE: POST /api/agents/register is defined below in the RESELLER/AGENT API section (line ~1745)
+      // with stricter validation (email required, 8+ char password). Duplicate removed 2026-04-23.
 
       // GET /api/agents — List all agents (admin only)
       if (path === '/api/agents' && request.method === 'GET') {
@@ -2257,6 +2235,204 @@ Return ONLY a JSON array of 3 strings, no commentary. Example: ["post 1 text", "
             'GET /api/agents/:code/earnings'
           ]
         }), { headers });
+      }
+
+      // ═══════════ KASSA STAFF AUTH (PIN-based) ═══════════
+      // POST /api/kassa/<rid>/staff/login {pin} → returns {token, role, name} if PIN matches a staff member
+      // POST /api/kassa/<rid>/staff/verify {token} → returns {valid, role, name}
+      const staffLoginMatch = path.match(/^\/api\/kassa\/([A-Za-z0-9_-]+)\/staff\/login$/);
+      const staffVerifyMatch = path.match(/^\/api\/kassa\/([A-Za-z0-9_-]+)\/staff\/verify$/);
+      const staffSetMatch = path.match(/^\/api\/kassa\/([A-Za-z0-9_-]+)\/staff$/);
+
+      if (staffLoginMatch && request.method === 'POST') {
+        if (!checkRateLimit(`staff:login:${clientIP}`, 10)) {
+          return new Response(JSON.stringify({ error: 'Too many attempts' }), { status: 429, headers });
+        }
+        const rid = staffLoginMatch[1];
+        const { pin } = sanitizeObject(await request.json());
+        if (!pin || !/^\d{4,8}$/.test(String(pin))) {
+          return new Response(JSON.stringify({ error: 'Invalid PIN format' }), { status: 400, headers });
+        }
+        const ownerPin = await env.WEBGEN_KV.get(`kassa:${rid}:owner-pin`) || '0000';
+        const list = await env.WEBGEN_KV.get(`kassa:${rid}:staff`, 'json') || [];
+        let match = null;
+        if (pin === ownerPin) match = { id:'owner', role:'owner', name:'Owner', permissions: ['*'] };
+        else {
+          const s = list.find(x => x.pin === pin);
+          if (s) match = { id: s.id, role: s.role, name: s.name, permissions: s.permissions || [] };
+        }
+        if (!match) return new Response(JSON.stringify({ error: 'Wrong PIN' }), { status: 401, headers });
+        const token = generateToken();
+        const expires = Date.now() + 8 * 60 * 60 * 1000;
+        await env.WEBGEN_KV.put(`kassa:${rid}:session:${token}`, JSON.stringify({ ...match, expires }), { expirationTtl: 60*60*8 });
+        return new Response(JSON.stringify({ token, expires, ...match }), { headers });
+      }
+
+      if (staffVerifyMatch && request.method === 'POST') {
+        const rid = staffVerifyMatch[1];
+        const { token } = sanitizeObject(await request.json());
+        if (!token) return new Response(JSON.stringify({ valid: false }), { headers });
+        const session = await env.WEBGEN_KV.get(`kassa:${rid}:session:${token}`, 'json');
+        if (!session || session.expires < Date.now()) return new Response(JSON.stringify({ valid: false }), { headers });
+        return new Response(JSON.stringify({ valid: true, role: session.role, name: session.name, id: session.id, permissions: session.permissions }), { headers });
+      }
+
+      // PUT /api/kassa/<rid>/staff — replace the staff list (kassa side)
+      if (staffSetMatch && (request.method === 'PUT' || request.method === 'POST')) {
+        const rid = staffSetMatch[1];
+        const body = sanitizeObject(await request.json());
+        if (!body || !Array.isArray(body.staff)) return new Response(JSON.stringify({ error:'staff[] required' }), { status:400, headers });
+        await env.WEBGEN_KV.put(`kassa:${rid}:staff`, JSON.stringify(body.staff));
+        if (body.ownerPin && /^\d{4,8}$/.test(body.ownerPin)) await env.WEBGEN_KV.put(`kassa:${rid}:owner-pin`, body.ownerPin);
+        return new Response(JSON.stringify({ success:true }), { headers });
+      }
+
+      if (staffSetMatch && request.method === 'GET') {
+        const rid = staffSetMatch[1];
+        const list = await env.WEBGEN_KV.get(`kassa:${rid}:staff`, 'json') || [];
+        // never return PINs
+        const safe = list.map(({pin, ...rest}) => rest);
+        return new Response(JSON.stringify({ staff: safe }), { headers });
+      }
+
+      // ═══════════ KASSA MULTI-DEVICE SYNC (orders & reservations) ═══════════
+      // Public endpoints — any device with the restaurantId can POST orders/reservations.
+      // Rate-limited per IP to prevent abuse. Kassa polls GET for near-realtime sync.
+      // Storage: KV key `kassa:<rid>:orders` and `kassa:<rid>:reservations` → JSON array (newest first, capped at 500).
+
+      const kassaOrdersMatch = path.match(/^\/api\/kassa\/([A-Za-z0-9_-]+)\/orders$/);
+      const kassaOrderPatch = path.match(/^\/api\/kassa\/([A-Za-z0-9_-]+)\/orders\/([A-Z0-9-]+)$/i);
+      const kassaResMatch = path.match(/^\/api\/kassa\/([A-Za-z0-9_-]+)\/reservations$/);
+      const kassaResPatch = path.match(/^\/api\/kassa\/([A-Za-z0-9_-]+)\/reservations\/([A-Z0-9-]+)$/i);
+
+      const kassaCap = 500; // retention limit per restaurant
+
+      // POST /api/kassa/:rid/orders — new order (klant side)
+      if (kassaOrdersMatch && request.method === 'POST') {
+        if (!checkRateLimit(`kassa:order:${clientIP}`, 30)) {
+          return new Response(JSON.stringify({ error: 'Rate limit' }), { status: 429, headers });
+        }
+        const rid = kassaOrdersMatch[1];
+        const body = sanitizeObject(await request.json());
+        if (!body || !body.id || !Array.isArray(body.items)) {
+          return new Response(JSON.stringify({ error: 'Invalid order: id + items required' }), { status: 400, headers });
+        }
+        const key = `kassa:${rid}:orders`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const order = {
+          ...body,
+          restaurantId: rid,
+          createdAt: body.createdAt || Date.now(),
+          serverAt: Date.now(),
+          status: body.status || 'new'
+        };
+        // Replace if id exists (idempotent), else prepend
+        const idx = list.findIndex(o => o.id === order.id);
+        if (idx >= 0) list[idx] = order; else list.unshift(order);
+        if (list.length > kassaCap) list.length = kassaCap;
+        await env.WEBGEN_KV.put(key, JSON.stringify(list));
+        return new Response(JSON.stringify({ success: true, order }), { headers });
+      }
+
+      // GET /api/kassa/:rid/orders?since=<ts> — poll (kassa side)
+      if (kassaOrdersMatch && request.method === 'GET') {
+        const rid = kassaOrdersMatch[1];
+        const since = parseInt(url.searchParams.get('since')) || 0;
+        const key = `kassa:${rid}:orders`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const filtered = since ? list.filter(o => (o.serverAt || o.createdAt || 0) > since) : list;
+        return new Response(JSON.stringify({ orders: filtered, serverTime: Date.now() }), { headers });
+      }
+
+      // PATCH /api/kassa/:rid/orders/:id — update status (kassa side)
+      if (kassaOrderPatch && (request.method === 'PATCH' || request.method === 'PUT')) {
+        const rid = kassaOrderPatch[1];
+        const orderId = kassaOrderPatch[2];
+        const patch = sanitizeObject(await request.json());
+        const key = `kassa:${rid}:orders`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const idx = list.findIndex(o => o.id === orderId);
+        if (idx < 0) return new Response(JSON.stringify({ error: 'Order not found' }), { status: 404, headers });
+        // Only allow certain fields to be patched
+        const allowed = ['status', 'note', 'paidAt', 'preparingAt', 'readyAt', 'servedAt', 'cancelled'];
+        allowed.forEach(f => { if (f in patch) list[idx][f] = patch[f]; });
+        list[idx].serverAt = Date.now();
+        await env.WEBGEN_KV.put(key, JSON.stringify(list));
+        return new Response(JSON.stringify({ success: true, order: list[idx] }), { headers });
+      }
+
+      // DELETE /api/kassa/:rid/orders/:id — cancel order (kassa side)
+      if (kassaOrderPatch && request.method === 'DELETE') {
+        const rid = kassaOrderPatch[1];
+        const orderId = kassaOrderPatch[2];
+        const key = `kassa:${rid}:orders`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const next = list.filter(o => o.id !== orderId);
+        await env.WEBGEN_KV.put(key, JSON.stringify(next));
+        return new Response(JSON.stringify({ success: true }), { headers });
+      }
+
+      // POST /api/kassa/:rid/reservations — new reservation (klant side)
+      if (kassaResMatch && request.method === 'POST') {
+        if (!checkRateLimit(`kassa:res:${clientIP}`, 20)) {
+          return new Response(JSON.stringify({ error: 'Rate limit' }), { status: 429, headers });
+        }
+        const rid = kassaResMatch[1];
+        const body = sanitizeObject(await request.json());
+        if (!body || !body.id || !body.date) {
+          return new Response(JSON.stringify({ error: 'Invalid reservation: id + date required' }), { status: 400, headers });
+        }
+        const key = `kassa:${rid}:reservations`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const res = {
+          ...body,
+          restaurantId: rid,
+          createdAt: body.createdAt || Date.now(),
+          serverAt: Date.now(),
+          status: body.status || 'pending'
+        };
+        const idx = list.findIndex(r => r.id === res.id);
+        if (idx >= 0) list[idx] = res; else list.unshift(res);
+        if (list.length > kassaCap) list.length = kassaCap;
+        await env.WEBGEN_KV.put(key, JSON.stringify(list));
+        return new Response(JSON.stringify({ success: true, reservation: res }), { headers });
+      }
+
+      // GET /api/kassa/:rid/reservations?since=<ts>
+      if (kassaResMatch && request.method === 'GET') {
+        const rid = kassaResMatch[1];
+        const since = parseInt(url.searchParams.get('since')) || 0;
+        const key = `kassa:${rid}:reservations`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const filtered = since ? list.filter(r => (r.serverAt || r.createdAt || 0) > since) : list;
+        return new Response(JSON.stringify({ reservations: filtered, serverTime: Date.now() }), { headers });
+      }
+
+      // PATCH /api/kassa/:rid/reservations/:id
+      if (kassaResPatch && (request.method === 'PATCH' || request.method === 'PUT')) {
+        const rid = kassaResPatch[1];
+        const resId = kassaResPatch[2];
+        const patch = sanitizeObject(await request.json());
+        const key = `kassa:${rid}:reservations`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const idx = list.findIndex(r => r.id === resId);
+        if (idx < 0) return new Response(JSON.stringify({ error: 'Reservation not found' }), { status: 404, headers });
+        const allowed = ['status', 'notes', 'seatedAt', 'cancelledAt'];
+        allowed.forEach(f => { if (f in patch) list[idx][f] = patch[f]; });
+        list[idx].serverAt = Date.now();
+        await env.WEBGEN_KV.put(key, JSON.stringify(list));
+        return new Response(JSON.stringify({ success: true, reservation: list[idx] }), { headers });
+      }
+
+      // DELETE /api/kassa/:rid/reservations/:id
+      if (kassaResPatch && request.method === 'DELETE') {
+        const rid = kassaResPatch[1];
+        const resId = kassaResPatch[2];
+        const key = `kassa:${rid}:reservations`;
+        const list = await env.WEBGEN_KV.get(key, 'json') || [];
+        const next = list.filter(r => r.id !== resId);
+        await env.WEBGEN_KV.put(key, JSON.stringify(next));
+        return new Response(JSON.stringify({ success: true }), { headers });
       }
 
       return new Response(JSON.stringify({ error: 'Not found', path }), { status: 404, headers });
